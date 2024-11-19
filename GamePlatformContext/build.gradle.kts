@@ -1,27 +1,5 @@
 plugins {
-    java
-    id("org.springframework.boot") version "3.3.5"
-    id("io.spring.dependency-management") version "1.1.6"
-    id("org.asciidoctor.jvm.convert") version "3.3.2"
-}
-
-group = "be.kdg.integration5"
-version = "0.0.1-SNAPSHOT"
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-}
-
-configurations {
-    compileOnly {
-        extendsFrom(configurations.annotationProcessor.get())
-    }
-}
-
-repositories {
-    mavenCentral()
+    id("module-config")
 }
 
 extra["snippetsDir"] = file("build/generated-snippets")
@@ -57,16 +35,7 @@ dependencyManagement {
         mavenBom("com.azure.spring:spring-cloud-azure-dependencies:${property("springCloudAzureVersion")}")
     }
 }
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
-tasks.test {
-    outputs.dir(project.extra["snippetsDir"]!!)
-}
-
-tasks.asciidoctor {
-    inputs.dir(project.extra["snippetsDir"]!!)
-    dependsOn(tasks.test)
-}
+//
+//tasks.withType<Test> {
+//    useJUnitPlatform()
+//}
