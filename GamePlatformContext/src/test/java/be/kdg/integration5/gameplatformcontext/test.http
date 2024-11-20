@@ -1,0 +1,17 @@
+POST http://localhost:8180/realms/Bandit%20Games/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id = client &
+client_secret = UY85nBmZeRixYZy177yKkCtskdn31GUn &
+username = developer &
+password = password &
+grant_type = password &
+scope = openid
+
+//saving the access token
+> {%
+    client.global.set("access_token", response.body.access_token);
+    console.log("Access Token:", client.global.get("access_token"));
+%}
+
+###
