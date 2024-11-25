@@ -47,8 +47,10 @@ public class LobbyJpaEntity {
     private List<PlayerJpaEntity> players;
 
 
-
-
+    public LobbyJpaEntity(UUID lobbyId, boolean isPrivate) {
+        this.lobbyId = lobbyId;
+        this.isPrivate = isPrivate;
+    }
 
     public Lobby toDomain() {
         return new Lobby(
@@ -63,9 +65,7 @@ public class LobbyJpaEntity {
     public static LobbyJpaEntity of(Lobby lobby) {
         return new LobbyJpaEntity(
                 lobby.getLobbyId().uuid(),
-                lobby.isPrivate(),
-
-
+                lobby.isPrivate()
         );
     }
 }
