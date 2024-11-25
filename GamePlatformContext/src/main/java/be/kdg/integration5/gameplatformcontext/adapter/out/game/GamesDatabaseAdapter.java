@@ -1,4 +1,4 @@
-package be.kdg.integration5.gameplatformcontext.adapter.out;
+package be.kdg.integration5.gameplatformcontext.adapter.out.game;
 
 import be.kdg.integration5.gameplatformcontext.domain.Game;
 import be.kdg.integration5.gameplatformcontext.port.out.FindGamePort;

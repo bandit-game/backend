@@ -1,10 +1,13 @@
 package be.kdg.integration5.gameplatformcontext.domain;
 
+import be.kdg.integration5.gameplatformcontext.domain.exception.NoLobbiesProvidedException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -16,6 +19,36 @@ public class Player {
     private Gender gender;
     private List<Role> roles;
     private List<Achievement> earnedAchievements;
+    private List<Player> friends;
+
+    public Lobby findBestLobbyMatch(Collection<Lobby> lobbyList) {
+        //TODO
+        // It is a very simple implementation of the lobby selection.
+        // Might write a more complex one later.
+        return lobbyList.stream().findFirst().orElseThrow(
+                () -> new NoLobbiesProvidedException("No lobbies were provided to select from.")
+        );
+    }
+
+    public Lobby createNewPublicLobbyForGame(GameId gameId) {
+        return new Lobby(false, gameId, this);
+    }
+
+    public boolean isFriendsWithPlayer(Player player) {
+        return this.friends.contains(player);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return Objects.equals(playerId, player.playerId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(playerId);
+    }
 
     public enum Gender {
         MALE, FEMALE
