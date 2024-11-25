@@ -20,7 +20,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @ContextConfiguration(classes = { GamePlatformContextApplication.class })
 @SpringBootTest
 public class LobbyAdapterTest {
@@ -65,5 +64,10 @@ public class LobbyAdapterTest {
 
         // Assert
         assertEquals(lobbies.size(), 0);
+    }
+
+    @Test
+    void testMethod() {
+        System.out.println("Hellow");
     }
 }
