@@ -44,6 +44,15 @@ public class PlayerJpaEntity {
     @ManyToMany
     private List<PlayerJpaEntity> friends;
 
+    private Player toSimpleDomain() {
+        return new Player(
+                new PlayerId(this.playerId),
+                this.username,
+                this.age,
+                this.gender
+        );
+    }
+
     public Player toDomain() {
         return new Player(
                 new PlayerId(this.playerId),
@@ -53,7 +62,7 @@ public class PlayerJpaEntity {
                 //TODO Add list of roles
                 new ArrayList<>(),
                 new ArrayList<>(this.earnedAchievements.stream().map(AchievementJpaEntity::toDomain).toList()),
-                new ArrayList<>(this.friends.stream().map(playerJpaEntity -> ))
+                new ArrayList<>(this.friends.stream().map(PlayerJpaEntity::toSimpleDomain).toList())
         );
     }
 }

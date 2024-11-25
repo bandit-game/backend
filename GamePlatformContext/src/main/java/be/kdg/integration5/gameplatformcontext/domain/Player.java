@@ -21,6 +21,13 @@ public class Player {
     private List<Achievement> earnedAchievements;
     private List<Player> friends;
 
+    public Player(PlayerId playerId, String username, int age, Gender gender) {
+        this.playerId = playerId;
+        this.username = username;
+        this.age = age;
+        this.gender = gender;
+    }
+
     public Lobby findBestLobbyMatch(Collection<Lobby> lobbyList) {
         //TODO
         // It is a very simple implementation of the lobby selection.
