@@ -38,15 +38,19 @@ public class GameJpaEntity {
     @Column(nullable = false)
     private String currencyCode;
 
+    @Column(nullable = false)
+    private int maxLobbyPlayerAmount;
+
     @OneToMany(mappedBy = "game")
     private List<AchievementJpaEntity> achievements;
 
     public Game toDomain() {
         return new Game(
                 new GameId(this.gameId),
-                this.title,
                 this.description,
+                this.title,
                 new Price(this.priceAmount, Currency.getInstance(this.currencyCode)),
+                this.maxLobbyPlayerAmount,
                 new ArrayList<>(this.achievements.stream().map(AchievementJpaEntity::toDomain).toList())
         );
     }

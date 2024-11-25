@@ -15,18 +15,18 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Lobby {
     //TODO Move to properties file
-    private static final int MAX_PLAYERS = 2;
+
 
     private LobbyId lobbyId;
     private boolean isPrivate;
-    private GameId playingGameId;
+    private Game playingGame;
     private Player lobbyOwner;
     private List<Player> players;
 
-    public Lobby(boolean isPrivate, GameId playingGameId, Player lobbyOwner) {
+    public Lobby(boolean isPrivate, Game playingGame, Player lobbyOwner) {
         this.lobbyId = new LobbyId(UUID.randomUUID());
         this.isPrivate = isPrivate;
-        this.playingGameId = playingGameId;
+        this.playingGame = playingGame;
         this.lobbyOwner = lobbyOwner;
         this.players = new ArrayList<>(List.of(lobbyOwner));
     }
@@ -34,7 +34,7 @@ public class Lobby {
     public void addPlayer(Player player) {
         if (players.contains(player)) return;
 
-        if (players.size() >= MAX_PLAYERS)
+        if (players.size() >= playingGame.getMaxPlayers())
             throw new LobbyIsFullException("Lobby [%s] is full".formatted(this.lobbyId.uuid()));
 
         if (!isPrivate || lobbyOwner.isFriendsWithPlayer(player))
@@ -45,6 +45,6 @@ public class Lobby {
     }
 
     public boolean isFull() {
-        return players.size() == MAX_PLAYERS;
+        return players.size() == playingGame.getMaxPlayers();
     }
 }

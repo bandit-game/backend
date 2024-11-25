@@ -3,10 +3,7 @@ package be.kdg.integration5.gameplatformcontext.core;
 import be.kdg.integration5.gameplatformcontext.domain.*;
 import be.kdg.integration5.gameplatformcontext.port.in.FindQuickMatchCommand;
 import be.kdg.integration5.gameplatformcontext.port.in.FindQuickMatchUseCase;
-import be.kdg.integration5.gameplatformcontext.port.out.FindLobbyPort;
-import be.kdg.integration5.gameplatformcontext.port.out.FindPlayerPort;
-import be.kdg.integration5.gameplatformcontext.port.out.NotifyLobbyUpdatePort;
-import be.kdg.integration5.gameplatformcontext.port.out.PersistLobbyPort;
+import be.kdg.integration5.gameplatformcontext.port.out.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +17,15 @@ public class FindQuickMatchUseCaseImpl implements FindQuickMatchUseCase {
     private final PersistLobbyPort persistLobbyPort;
     private final FindPlayerPort findPlayerPort;
     private final NotifyLobbyUpdatePort notifyLobbyUpdatePort;
+    private final FindGamePort findGamePort;
 
     @Autowired
-    public FindQuickMatchUseCaseImpl(FindLobbyPort findLobbyPort, PersistLobbyPort persistLobbyPort, FindPlayerPort findPlayerPort, NotifyLobbyUpdatePort notifyLobbyUpdatePort) {
+    public FindQuickMatchUseCaseImpl(FindLobbyPort findLobbyPort, PersistLobbyPort persistLobbyPort, FindPlayerPort findPlayerPort, NotifyLobbyUpdatePort notifyLobbyUpdatePort, FindGamePort findGamePort) {
         this.findLobbyPort = findLobbyPort;
         this.persistLobbyPort = persistLobbyPort;
         this.findPlayerPort = findPlayerPort;
         this.notifyLobbyUpdatePort = notifyLobbyUpdatePort;
+        this.findGamePort = findGamePort;
     }
 
     @Override
@@ -36,9 +35,10 @@ public class FindQuickMatchUseCaseImpl implements FindQuickMatchUseCase {
         Player player = findPlayerPort.findPlayerById(playerId);
 
         GameId gameId = findQuickMatchCommand.gameId();
+        Game game = findGamePort.findGameById(gameId);
         List<Lobby> lobbyList = findLobbyPort.findAllNotFilledNonPrivateLobbiesByGameId(gameId);
 
-        Lobby selectedLobby = findLobbyForPlayer(lobbyList, player, gameId);
+        Lobby selectedLobby = findLobbyForPlayer(lobbyList, player, game);
         selectedLobby.addPlayer(player);
 
         Lobby savedLobby = persistLobbyPort.save(selectedLobby);
@@ -48,11 +48,11 @@ public class FindQuickMatchUseCaseImpl implements FindQuickMatchUseCase {
         return savedLobby;
     }
 
-    private Lobby findLobbyForPlayer(Collection<Lobby> lobbies, Player player, GameId gameId) {
+    private Lobby findLobbyForPlayer(Collection<Lobby> lobbies, Player player, Game game) {
         Lobby selectedLobby;
 
         if (lobbies.isEmpty())
-            selectedLobby = player.createNewPublicLobbyForGame(gameId);
+            selectedLobby = player.createNewPublicLobbyForGame(game);
         else
             selectedLobby = player.findBestLobbyMatch(lobbies);
 

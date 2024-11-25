@@ -37,8 +37,8 @@ public class Player {
         );
     }
 
-    public Lobby createNewPublicLobbyForGame(GameId gameId) {
-        return new Lobby(false, gameId, this);
+    public Lobby createNewPublicLobbyForGame(Game game) {
+        return new Lobby(false, game, this);
     }
 
     public boolean isFriendsWithPlayer(Player player) {

@@ -35,7 +35,7 @@ public class LobbyDatabasedAdapter implements FindLobbyPort, PersistLobbyPort {
     public Lobby save(Lobby lobby) {
         LobbyJpaEntity lobbyJpaEntity = LobbyJpaEntity.of(lobby);
         PlayerJpaEntity ownerJpaEntity = playerJpaRepository.getReferenceById(lobby.getLobbyOwner().getPlayerId().uuid());
-        GameJpaEntity gameJpaEntity = gameJpaRepository.getReferenceById(lobby.getPlayingGameId().uuid());
+        GameJpaEntity gameJpaEntity = gameJpaRepository.getReferenceById(lobby.getPlayingGame().getGameId().uuid());
         List<PlayerJpaEntity> playersJpaEntities = playerJpaRepository.findAllById(
                 lobby.getPlayers()
                         .stream()
@@ -46,6 +46,6 @@ public class LobbyDatabasedAdapter implements FindLobbyPort, PersistLobbyPort {
         lobbyJpaEntity.setLobbyOwner(ownerJpaEntity);
         lobbyJpaEntity.setGame(gameJpaEntity);
         lobbyJpaEntity.setPlayers(playersJpaEntities);
-        return lobbyJpaRepository.save(lobbyJpaEntity).toDomain();
+        return lobbyJpaRepository.save(lobbyJpaEntity).toDomain(gameJpaEntity.toDomain());
     }
 }
