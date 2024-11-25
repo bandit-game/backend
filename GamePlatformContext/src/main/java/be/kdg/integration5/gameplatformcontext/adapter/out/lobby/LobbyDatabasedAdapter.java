@@ -4,6 +4,7 @@ import be.kdg.integration5.gameplatformcontext.adapter.out.game.GameJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.game.GameJpaRepository;
 import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaRepository;
+import be.kdg.integration5.gameplatformcontext.domain.Game;
 import be.kdg.integration5.gameplatformcontext.domain.GameId;
 import be.kdg.integration5.gameplatformcontext.domain.Lobby;
 import be.kdg.integration5.gameplatformcontext.domain.Player;
@@ -12,6 +13,7 @@ import be.kdg.integration5.gameplatformcontext.port.out.PersistLobbyPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class LobbyDatabasedAdapter implements FindLobbyPort, PersistLobbyPort {
@@ -28,7 +30,10 @@ public class LobbyDatabasedAdapter implements FindLobbyPort, PersistLobbyPort {
 
     @Override
     public List<Lobby> findAllNotFilledNonPrivateLobbiesByGameId(GameId gameId) {
-        return List.of();
+        Game game = gameJpaRepository.getReferenceById(gameId.uuid()).toDomain();
+        List<LobbyJpaEntity> lobbyJpaEntities = lobbyJpaRepository
+                .findAllNotFilledNonPrivateLobbiesByGameIdCustom(gameId.uuid(), true);
+        return lobbyJpaEntities.stream().map(l -> l.toDomain(game)).collect(Collectors.toList());
     }
 
     @Override

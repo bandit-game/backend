@@ -31,15 +31,14 @@ public class LobbyJpaEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private GameJpaEntity game;
 
-    @Column(nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private PlayerJpaEntity lobbyOwner;
 
     @ManyToMany
     @JoinTable(
             name = "players",
-            joinColumns = @JoinColumn(name = "lobby_id"),
-            inverseJoinColumns = @JoinColumn(name = "player_id")
+            joinColumns = @JoinColumn(name = "lobbyId"),
+            inverseJoinColumns = @JoinColumn(name = "playerId")
     )
     private List<PlayerJpaEntity> players;
 

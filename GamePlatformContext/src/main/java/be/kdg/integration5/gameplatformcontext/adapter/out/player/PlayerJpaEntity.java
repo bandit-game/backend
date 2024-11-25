@@ -51,6 +51,13 @@ public class PlayerJpaEntity {
     @ManyToMany
     private List<PlayerJpaEntity> friends;
 
+    public PlayerJpaEntity(UUID playerId, int age, Player.Gender gender, String username) {
+        this.playerId = playerId;
+        this.age = age;
+        this.gender = gender;
+        this.username = username;
+    }
+
     private Player toSimpleDomain() {
         return new Player(
                 new PlayerId(this.playerId),
@@ -70,6 +77,15 @@ public class PlayerJpaEntity {
                 new ArrayList<>(),
                 new ArrayList<>(this.earnedAchievements.stream().map(AchievementJpaEntity::toDomain).toList()),
                 new ArrayList<>(this.friends.stream().map(PlayerJpaEntity::toSimpleDomain).toList())
+        );
+    }
+
+    public static PlayerJpaEntity of(Player player) {
+        return new PlayerJpaEntity(
+                player.getPlayerId().uuid(),
+                player.getAge(),
+                player.getGender(),
+                player.getUsername()
         );
     }
 }

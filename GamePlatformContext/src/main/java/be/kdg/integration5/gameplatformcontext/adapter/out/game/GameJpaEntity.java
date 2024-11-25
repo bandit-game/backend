@@ -44,6 +44,15 @@ public class GameJpaEntity {
     @OneToMany(mappedBy = "game")
     private List<AchievementJpaEntity> achievements;
 
+    public GameJpaEntity(UUID gameId, int maxLobbyPlayerAmount, String currencyCode, double priceAmount, String title, String description) {
+        this.gameId = gameId;
+        this.maxLobbyPlayerAmount = maxLobbyPlayerAmount;
+        this.currencyCode = currencyCode;
+        this.priceAmount = priceAmount;
+        this.title = title;
+        this.description = description;
+    }
+
     public Game toDomain() {
         return new Game(
                 new GameId(this.gameId),
@@ -52,6 +61,17 @@ public class GameJpaEntity {
                 new Price(this.priceAmount, Currency.getInstance(this.currencyCode)),
                 this.maxLobbyPlayerAmount,
                 new ArrayList<>(this.achievements.stream().map(AchievementJpaEntity::toDomain).toList())
+        );
+    }
+
+    public static GameJpaEntity of(Game game) {
+        return new GameJpaEntity(
+                game.getGameId().uuid(),
+                game.getMaxLobbyPlayersAmount(),
+                game.getPrice().currency().getCurrencyCode(),
+                game.getPrice().amount(),
+                game.getTitle(),
+                game.getDescription()
         );
     }
 }
