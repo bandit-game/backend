@@ -1,0 +1,71 @@
+package be.kdg.integration5.gameplatformcontext.adapter.out.lobby;
+
+import be.kdg.integration5.gameplatformcontext.adapter.out.game.GameJpaEntity;
+import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaEntity;
+import be.kdg.integration5.gameplatformcontext.domain.GameId;
+import be.kdg.integration5.gameplatformcontext.domain.Lobby;
+import be.kdg.integration5.gameplatformcontext.domain.LobbyId;
+import be.kdg.integration5.gameplatformcontext.domain.Player;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Entity
+@Table(name = "lobbies")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class LobbyJpaEntity {
+
+    @Id
+    @Column(nullable = false, unique = true, updatable = false)
+    private UUID lobbyId;
+
+    @Column(nullable = false)
+    private boolean isPrivate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private GameJpaEntity game;
+
+    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private PlayerJpaEntity lobbyOwner;
+
+    @ManyToMany
+    @JoinTable(
+            name = "players",
+            joinColumns = @JoinColumn(name = "lobby_id"),
+            inverseJoinColumns = @JoinColumn(name = "player_id")
+    )
+    private List<PlayerJpaEntity> players;
+
+
+
+
+
+    public Lobby toDomain() {
+        return new Lobby(
+                new LobbyId(lobbyId),
+                isPrivate,
+                new GameId(game.getGameId()),
+                lobbyOwner.toDomain(),
+                new ArrayList<>(players.stream().map(PlayerJpaEntity::toDomain).toList())
+        );
+    }
+
+    public static LobbyJpaEntity of(Lobby lobby) {
+        return new LobbyJpaEntity(
+                lobby.getLobbyId().uuid(),
+                lobby.isPrivate(),
+
+
+        );
+    }
+}
