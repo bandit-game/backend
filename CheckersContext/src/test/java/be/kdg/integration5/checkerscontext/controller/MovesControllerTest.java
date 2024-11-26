@@ -1,17 +1,15 @@
 package be.kdg.integration5.checkerscontext.controller;
 
-import be.kdg.integration5.checkerscontext.domain.Board;
-import be.kdg.integration5.checkerscontext.repository.BoardRepository;
+import be.kdg.integration5.checkerscontext.adapter.in.MovesController;
+import be.kdg.integration5.checkerscontext.adapter.out.BoardJpaEntity;
+import be.kdg.integration5.checkerscontext.port.out.BoardRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class MovesControllerTest {
@@ -28,8 +26,8 @@ class MovesControllerTest {
         createdBoardId = UUID.randomUUID();
         //TODO
         // Implement domain model
-        Board board = new Board();
-//        boardRepository.save(board);
+        BoardJpaEntity board = new BoardJpaEntity();
+        boardRepository.save(board);
     }
 
     @Test
