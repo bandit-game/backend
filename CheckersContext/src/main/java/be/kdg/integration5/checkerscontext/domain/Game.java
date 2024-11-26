@@ -8,6 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @ToString
 public class Game {
     private GameId playedMatchId;
@@ -24,7 +25,12 @@ public class Game {
 
     public void start() {
         this.startedTime = LocalDateTime.now();
-        this.board = new Board(players.getFirst());
+        this.board = new Board(getFirstPlayer());
+    }
 
+    private Player getFirstPlayer() {
+        return players.stream().filter(Player::isFirst).findFirst().orElseThrow(
+                () -> new IllegalStateException("Player not found")
+        );
     }
 }

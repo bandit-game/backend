@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface BoardRepository extends JpaRepository<BoardJpaEntity, UUID> {
+public interface BoardJpaRepository extends JpaRepository<BoardJpaEntity, UUID> {
 }

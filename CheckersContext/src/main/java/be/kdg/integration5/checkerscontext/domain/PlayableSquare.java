@@ -4,8 +4,13 @@ import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class PlayableSquare extends Square {
+    private Position position;
     private Piece placedPiece;
+
+    public PlayableSquare(Position position) {
+        this.position = position;
+    }
 }

@@ -1,7 +1,7 @@
 package be.kdg.integration5.checkerscontext.adapter.out;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
+import be.kdg.integration5.checkerscontext.domain.Piece;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,4 +15,19 @@ import lombok.Setter;
 public class PieceJpaEntity {
     @EmbeddedId
     private PieceJpaEntityId pieceId;
+
+    @Column(nullable = false)
+    private boolean isKing;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Piece.PieceColor pieceColor;
+
+    public static PieceJpaEntity of(Piece piece) {
+        return new PieceJpaEntity(
+                new PieceJpaEntityId(, piece.get)
+                piece.isKing(),
+                piece.getColor()
+        );
+    }
 }
