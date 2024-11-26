@@ -9,6 +9,7 @@ import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaEntit
 import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaRepository;
 import be.kdg.integration5.gameplatformcontext.domain.*;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +39,21 @@ public class LobbyAdapterTest {
     private Game game;
 
     private Player player;
+    @Autowired
+    private LobbyJpaRepository lobbyJpaRepository;
 
 
     @BeforeEach
     void setUp() {
         game = new Game(
                 "Title",
-                "Description",
+                "http://localhost:8080/image",
+                "http://localhost:8080/backend",
+                "http://localhost:8080/frontend",
+                new ArrayList<>(),
                 new Price(100.0, Currency.getInstance("USD")),
-                new ArrayList<>()
+                2,
+                "Description"
 
         );
         GameJpaEntity gameJpa = GameJpaEntity.of(game);
@@ -59,6 +66,13 @@ public class LobbyAdapterTest {
         );
         playerJpaRepository.save(PlayerJpaEntity.of(player));
         gameJpaRepository.save(gameJpa);
+    }
+
+    @AfterEach
+    void tearDown() {
+        lobbyJpaRepository.deleteAll();
+        playerJpaRepository.deleteById(player.getPlayerId().uuid());
+        gameJpaRepository.deleteById(game.getGameId().uuid());
     }
 
     @Test
