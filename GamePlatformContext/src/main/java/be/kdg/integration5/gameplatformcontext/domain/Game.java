@@ -19,17 +19,24 @@ public class Game {
     private Price price;
     private int maxLobbyPlayersAmount;
     private List<Achievement> achievements;
+    private String frontendUrl;
+    private String backendUrl;
+    private String gameImageUrl;
 
-    public Game(String title, String description, Price price, List<Achievement> achievements) {
+
+    public Game(String title, String gameImageUrl, String backendUrl, String frontendUrl, List<Achievement> achievements, Price price, int maxLobbyPlayersAmount, String description) {
         this.gameId = new GameId(UUID.randomUUID());
         this.title = title;
-        this.description = description;
-        this.price = price;
+        this.gameImageUrl = gameImageUrl;
+        this.backendUrl = backendUrl;
+        this.frontendUrl = frontendUrl;
         this.achievements = achievements;
-        this.maxLobbyPlayersAmount = MAX_PLAYERS;
+        this.price = price;
+        this.maxLobbyPlayersAmount = maxLobbyPlayersAmount;
+        this.description = description;
     }
 
     public int getMaxPlayers() {
-        return MAX_PLAYERS;
+        return maxLobbyPlayersAmount;
     }
 }

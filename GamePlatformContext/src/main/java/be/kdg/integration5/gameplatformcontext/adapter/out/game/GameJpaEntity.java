@@ -41,37 +41,56 @@ public class GameJpaEntity {
     @Column(nullable = false)
     private int maxLobbyPlayerAmount;
 
+    @Column(nullable = false)
+    private String frontendUrl;
+
+    @Column(nullable = false)
+    private String backendUrl;
+
+    @Column(nullable = false)
+    private String gameImageUrl;
+
     @OneToMany(mappedBy = "game")
     private List<AchievementJpaEntity> achievements;
 
-    public GameJpaEntity(UUID gameId, int maxLobbyPlayerAmount, String currencyCode, double priceAmount, String title, String description) {
+    public GameJpaEntity(UUID gameId, String title, String description, double priceAmount, String currencyCode, int maxLobbyPlayerAmount, String frontendUrl, String backendUrl, String gameImageUrl) {
         this.gameId = gameId;
-        this.maxLobbyPlayerAmount = maxLobbyPlayerAmount;
-        this.currencyCode = currencyCode;
-        this.priceAmount = priceAmount;
         this.title = title;
         this.description = description;
+        this.priceAmount = priceAmount;
+        this.currencyCode = currencyCode;
+        this.maxLobbyPlayerAmount = maxLobbyPlayerAmount;
+        this.frontendUrl = frontendUrl;
+        this.backendUrl = backendUrl;
+        this.gameImageUrl = gameImageUrl;
     }
 
     public Game toDomain() {
         return new Game(
                 new GameId(this.gameId),
-                this.description,
                 this.title,
+                this.description,
                 new Price(this.priceAmount, Currency.getInstance(this.currencyCode)),
                 this.maxLobbyPlayerAmount,
-                this.achievements != null ? new ArrayList<>(this.achievements.stream().map(AchievementJpaEntity::toDomain).toList()) : new ArrayList<>()
+                this.achievements != null ? new ArrayList<>(this.achievements.stream().map(AchievementJpaEntity::toDomain).toList()) : new ArrayList<>(),
+                this.frontendUrl,
+                this.backendUrl,
+                this.gameImageUrl
+
         );
     }
 
     public static GameJpaEntity of(Game game) {
         return new GameJpaEntity(
                 game.getGameId().uuid(),
-                game.getMaxLobbyPlayersAmount(),
-                game.getPrice().currency().getCurrencyCode(),
-                game.getPrice().amount(),
                 game.getTitle(),
-                game.getDescription()
+                game.getDescription(),
+                game.getPrice().amount(),
+                game.getPrice().currency().getCurrencyCode(),
+                game.getMaxLobbyPlayersAmount(),
+                game.getFrontendUrl(),
+                game.getBackendUrl(),
+                game.getGameImageUrl()
         );
     }
 }
