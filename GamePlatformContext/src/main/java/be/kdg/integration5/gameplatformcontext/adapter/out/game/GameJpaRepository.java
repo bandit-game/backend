@@ -1,4 +1,4 @@
-package be.kdg.integration5.gameplatformcontext.adapter.out;
+package be.kdg.integration5.gameplatformcontext.adapter.out.game;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
