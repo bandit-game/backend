@@ -10,6 +10,7 @@ import be.kdg.integration5.gameplatformcontext.domain.Lobby;
 import be.kdg.integration5.gameplatformcontext.domain.Player;
 import be.kdg.integration5.gameplatformcontext.port.out.FindLobbyPort;
 import be.kdg.integration5.gameplatformcontext.port.out.PersistLobbyPort;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,14 +30,15 @@ public class LobbyDatabasedAdapter implements FindLobbyPort, PersistLobbyPort {
     }
 
     @Override
-    public List<Lobby> findAllNotFilledNonPrivateLobbiesByGameId(GameId gameId) {
+    public List<Lobby> findAllNotFilledNonPrivateLobbiesByGameId(GameId gameId, boolean isPrivate) {
         Game game = gameJpaRepository.getReferenceById(gameId.uuid()).toDomain();
         List<LobbyJpaEntity> lobbyJpaEntities = lobbyJpaRepository
-                .findAllNotFilledNonPrivateLobbiesByGameIdCustom(gameId.uuid(), true);
+                .findAllNotFilledNonPrivateLobbiesByGameIdCustom(gameId.uuid(), isPrivate);
         return lobbyJpaEntities.stream().map(l -> l.toDomain(game)).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public Lobby save(Lobby lobby) {
         LobbyJpaEntity lobbyJpaEntity = LobbyJpaEntity.of(lobby);
         PlayerJpaEntity ownerJpaEntity = playerJpaRepository.getReferenceById(lobby.getLobbyOwner().getPlayerId().uuid());

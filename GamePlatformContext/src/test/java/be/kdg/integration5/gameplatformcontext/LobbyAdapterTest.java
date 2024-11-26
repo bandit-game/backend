@@ -4,9 +4,11 @@ package be.kdg.integration5.gameplatformcontext;
 import be.kdg.integration5.gameplatformcontext.adapter.out.game.GameJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.game.GameJpaRepository;
 import be.kdg.integration5.gameplatformcontext.adapter.out.lobby.LobbyDatabasedAdapter;
+import be.kdg.integration5.gameplatformcontext.adapter.out.lobby.LobbyJpaRepository;
 import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaRepository;
 import be.kdg.integration5.gameplatformcontext.domain.*;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class LobbyAdapterTest {
 
     private Game game;
 
+    private Player player;
+
+
     @BeforeEach
     void setUp() {
         game = new Game(
@@ -45,7 +50,7 @@ public class LobbyAdapterTest {
 
         );
         GameJpaEntity gameJpa = GameJpaEntity.of(game);
-        Player player = new Player(
+        player = new Player(
                 new PlayerId(UUID.randomUUID()),
                 "user",
                 18,
@@ -57,13 +62,27 @@ public class LobbyAdapterTest {
     }
 
     @Test
+    @Transactional
     void findAllNotFilledNonPrivateLobbiesByGameIdShouldReturnNoLobbies() {
         // Arrange
         // Act
-        List<Lobby> lobbies = lobbyDatabasedAdapter.findAllNotFilledNonPrivateLobbiesByGameId(game.getGameId());
+        List<Lobby> lobbies = lobbyDatabasedAdapter.findAllNotFilledNonPrivateLobbiesByGameId(game.getGameId(), false);
 
         // Assert
-        assertEquals(lobbies.size(), 0);
+        assertEquals(0, lobbies.size());
+    }
+
+    @Test
+    @Transactional
+    void findAllNotFilledNonPrivateLobbiesByGameIdShouldReturnLobbies() {
+        // Arrange
+        Lobby lobby = new Lobby(false, game, player);
+        lobbyDatabasedAdapter.save(lobby);
+        // Act
+        List<Lobby> lobbies = lobbyDatabasedAdapter.findAllNotFilledNonPrivateLobbiesByGameId(game.getGameId(), false);
+        // Assert
+        assertEquals(1, lobbies.size());
+        assertEquals(lobbies.getFirst().getLobbyOwner().getPlayerId(), player.getPlayerId());
     }
 
     @Test

@@ -36,7 +36,7 @@ public class FindQuickMatchUseCaseImpl implements FindQuickMatchUseCase {
 
         GameId gameId = findQuickMatchCommand.gameId();
         Game game = findGamePort.findGameById(gameId);
-        List<Lobby> lobbyList = findLobbyPort.findAllNotFilledNonPrivateLobbiesByGameId(gameId);
+        List<Lobby> lobbyList = findLobbyPort.findAllNotFilledNonPrivateLobbiesByGameId(gameId, false);
 
         Lobby selectedLobby = findLobbyForPlayer(lobbyList, player, game);
         selectedLobby.addPlayer(player);

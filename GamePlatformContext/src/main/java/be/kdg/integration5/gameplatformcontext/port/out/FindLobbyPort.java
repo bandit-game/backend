@@ -7,5 +7,5 @@ import be.kdg.integration5.gameplatformcontext.domain.Player;
 import java.util.List;
 
 public interface FindLobbyPort {
-    List<Lobby> findAllNotFilledNonPrivateLobbiesByGameId(GameId gameId);
+    List<Lobby> findAllNotFilledNonPrivateLobbiesByGameId(GameId gameId, boolean isPrivate);
 }

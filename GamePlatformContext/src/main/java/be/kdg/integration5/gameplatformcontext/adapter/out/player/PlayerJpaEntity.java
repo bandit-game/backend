@@ -75,8 +75,8 @@ public class PlayerJpaEntity {
                 this.gender,
                 //TODO Add list of roles
                 new ArrayList<>(),
-                new ArrayList<>(this.earnedAchievements.stream().map(AchievementJpaEntity::toDomain).toList()),
-                new ArrayList<>(this.friends.stream().map(PlayerJpaEntity::toSimpleDomain).toList())
+                this.earnedAchievements != null ? new ArrayList<>(this.earnedAchievements.stream().map(AchievementJpaEntity::toDomain).toList()) : new ArrayList<>(),
+                this.friends != null ? new ArrayList<>(this.friends.stream().map(PlayerJpaEntity::toSimpleDomain).toList()) : new ArrayList<>()
         );
     }
 

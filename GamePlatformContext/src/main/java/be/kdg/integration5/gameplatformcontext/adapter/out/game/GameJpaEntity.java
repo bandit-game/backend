@@ -60,7 +60,7 @@ public class GameJpaEntity {
                 this.title,
                 new Price(this.priceAmount, Currency.getInstance(this.currencyCode)),
                 this.maxLobbyPlayerAmount,
-                new ArrayList<>(this.achievements.stream().map(AchievementJpaEntity::toDomain).toList())
+                this.achievements != null ? new ArrayList<>(this.achievements.stream().map(AchievementJpaEntity::toDomain).toList()) : new ArrayList<>()
         );
     }
 

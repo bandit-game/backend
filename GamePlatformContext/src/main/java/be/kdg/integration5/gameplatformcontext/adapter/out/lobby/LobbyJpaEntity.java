@@ -36,7 +36,7 @@ public class LobbyJpaEntity {
 
     @ManyToMany
     @JoinTable(
-            name = "players",
+            name = "lobby_players",
             joinColumns = @JoinColumn(name = "lobbyId"),
             inverseJoinColumns = @JoinColumn(name = "playerId")
     )
