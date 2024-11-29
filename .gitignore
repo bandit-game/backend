@@ -95,6 +95,6 @@ out/
 ### VS Code ###
 .vscode/
 
-idp_postgres_data
-postgres
-rabbitmq
+./idp_postgres_data/
+./postgres/
+./rabbitmq/

@@ -30,7 +30,7 @@
     idp_postgres:
       image: postgres:15.4
       volumes:
-        - ./idp_postgres_data:/var/lib/postgresql/data
+        - ./postgres/data:/var/lib/postgresql/data
       environment:
         POSTGRES_DB: keycloak
         POSTGRES_USER: keycloak
@@ -64,9 +64,8 @@
 
   networks:
     kc:
-      name: kc-network
       driver: bridge
     backend:
-      name: back-network
       driver: bridge
+
 
