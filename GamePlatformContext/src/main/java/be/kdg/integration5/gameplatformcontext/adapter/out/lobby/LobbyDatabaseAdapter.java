@@ -7,7 +7,6 @@ import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaRepos
 import be.kdg.integration5.gameplatformcontext.domain.Game;
 import be.kdg.integration5.gameplatformcontext.domain.GameId;
 import be.kdg.integration5.gameplatformcontext.domain.Lobby;
-import be.kdg.integration5.gameplatformcontext.domain.Player;
 import be.kdg.integration5.gameplatformcontext.port.out.FindLobbyPort;
 import be.kdg.integration5.gameplatformcontext.port.out.PersistLobbyPort;
 import jakarta.transaction.Transactional;
@@ -17,13 +16,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class LobbyDatabasedAdapter implements FindLobbyPort, PersistLobbyPort {
+public class LobbyDatabaseAdapter implements FindLobbyPort, PersistLobbyPort {
 
     private final LobbyJpaRepository lobbyJpaRepository;
     private final GameJpaRepository gameJpaRepository;
     private final PlayerJpaRepository playerJpaRepository;
 
-    public LobbyDatabasedAdapter(LobbyJpaRepository lobbyJpaRepository, GameJpaRepository gameJpaRepository, PlayerJpaRepository playerJpaRepository) {
+    public LobbyDatabaseAdapter(LobbyJpaRepository lobbyJpaRepository, GameJpaRepository gameJpaRepository, PlayerJpaRepository playerJpaRepository) {
         this.lobbyJpaRepository = lobbyJpaRepository;
         this.gameJpaRepository = gameJpaRepository;
         this.playerJpaRepository = playerJpaRepository;
