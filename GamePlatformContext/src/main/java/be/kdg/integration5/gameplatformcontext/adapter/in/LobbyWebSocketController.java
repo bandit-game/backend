@@ -16,16 +16,14 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class LobbyWebSocketController {
     private final FindQuickMatchUseCase findQuickMatchUseCase;
-    private final SimpMessagingTemplate messagingTemplate;
 
-    public LobbyWebSocketController(FindQuickMatchUseCase findQuickMatchUseCase, SimpMessagingTemplate messagingTemplate) {
+    public LobbyWebSocketController(FindQuickMatchUseCase findQuickMatchUseCase) {
         this.findQuickMatchUseCase = findQuickMatchUseCase;
-        this.messagingTemplate = messagingTemplate;
     }
 
 
     @MessageMapping("/join-lobby")
-    public void joinLobby(@Payload JoinLobbyRequestDTO joinLobbyRequestDTO, @Header("simpSessionId") String sessionId) {
+    public void joinLobby(@Payload JoinLobbyRequestDTO joinLobbyRequestDTO) {
 
         FindQuickMatchCommand command = new FindQuickMatchCommand(
                 new PlayerId(joinLobbyRequestDTO.playerId()),
@@ -35,6 +33,5 @@ public class LobbyWebSocketController {
         findQuickMatchUseCase.findQuickMatch(command);
 
     }
-
 
 }

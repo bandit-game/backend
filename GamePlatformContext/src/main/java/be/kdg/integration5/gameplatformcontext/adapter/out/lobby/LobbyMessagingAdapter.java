@@ -1,21 +1,19 @@
 package be.kdg.integration5.gameplatformcontext.adapter.out.lobby;
 
-import be.kdg.integration5.gameplatformcontext.adapter.config.websocket.WebSocketSessionRegistry;
 import be.kdg.integration5.gameplatformcontext.adapter.in.dto.LobbyDTO;
 import be.kdg.integration5.gameplatformcontext.domain.Lobby;
 import be.kdg.integration5.gameplatformcontext.domain.PlayerId;
 import be.kdg.integration5.gameplatformcontext.port.out.NotifyLobbyUpdatePort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketSession;
 
 
 @Component
-public class LobbyWebSocketAdapter implements NotifyLobbyUpdatePort {
+public class LobbyMessagingAdapter implements NotifyLobbyUpdatePort {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    public LobbyWebSocketAdapter(SimpMessagingTemplate messagingTemplate) {
+    public LobbyMessagingAdapter(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 
