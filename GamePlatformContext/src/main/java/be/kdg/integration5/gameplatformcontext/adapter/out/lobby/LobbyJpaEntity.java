@@ -28,6 +28,9 @@ public class LobbyJpaEntity {
     @Column(nullable = false)
     private boolean isPrivate;
 
+    @Column(nullable = false)
+    private boolean isReady;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private GameJpaEntity game;
 
@@ -43,9 +46,10 @@ public class LobbyJpaEntity {
     private List<PlayerJpaEntity> players;
 
 
-    public LobbyJpaEntity(UUID lobbyId, boolean isPrivate) {
+    public LobbyJpaEntity(UUID lobbyId, boolean isPrivate, boolean isReady) {
         this.lobbyId = lobbyId;
         this.isPrivate = isPrivate;
+        this.isReady = isReady;
     }
 
     public Lobby toDomain(Game game) {
@@ -54,14 +58,16 @@ public class LobbyJpaEntity {
                 isPrivate,
                 game,
                 lobbyOwner.toDomain(),
-                new ArrayList<>(players.stream().map(PlayerJpaEntity::toDomain).toList())
+                new ArrayList<>(players.stream().map(PlayerJpaEntity::toDomain).toList()),
+                isReady
         );
     }
 
     public static LobbyJpaEntity of(Lobby lobby) {
         return new LobbyJpaEntity(
                 lobby.getLobbyId().uuid(),
-                lobby.isPrivate()
+                lobby.isPrivate(),
+                lobby.isReady()
         );
     }
 }
