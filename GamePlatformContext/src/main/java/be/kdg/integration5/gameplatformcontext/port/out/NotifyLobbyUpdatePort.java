@@ -5,6 +5,7 @@ import be.kdg.integration5.gameplatformcontext.domain.LobbyId;
 import be.kdg.integration5.gameplatformcontext.domain.PlayerId;
 
 public interface NotifyLobbyUpdatePort {
-    void notifyPlayerJoinedLobby(LobbyId lobbyId, PlayerId playerId);
+    void notifyPlayerJoinedLobby(Lobby lobby, PlayerId playerId);
     void notifyLobbyIsFull(Lobby lobby);
+    void notifyAllPlayersInLobby(Lobby lobby);
 }

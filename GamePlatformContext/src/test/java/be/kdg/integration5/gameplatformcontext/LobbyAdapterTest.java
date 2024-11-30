@@ -3,7 +3,7 @@ package be.kdg.integration5.gameplatformcontext;
 
 import be.kdg.integration5.gameplatformcontext.adapter.out.game.GameJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.game.GameJpaRepository;
-import be.kdg.integration5.gameplatformcontext.adapter.out.lobby.LobbyDatabasedAdapter;
+import be.kdg.integration5.gameplatformcontext.adapter.out.lobby.LobbyDatabaseAdapter;
 import be.kdg.integration5.gameplatformcontext.adapter.out.lobby.LobbyJpaRepository;
 import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaRepository;
@@ -34,7 +34,7 @@ public class LobbyAdapterTest {
     private PlayerJpaRepository playerJpaRepository;
 
     @Autowired
-    private LobbyDatabasedAdapter lobbyDatabasedAdapter;
+    private LobbyDatabaseAdapter lobbyDatabaseAdapter;
 
     private Game game;
 
@@ -80,7 +80,7 @@ public class LobbyAdapterTest {
     void findAllNotFilledNonPrivateLobbiesByGameIdShouldReturnNoLobbies() {
         // Arrange
         // Act
-        List<Lobby> lobbies = lobbyDatabasedAdapter.findAllNotFilledNonPrivateLobbiesByGameId(game.getGameId(), false);
+        List<Lobby> lobbies = lobbyDatabaseAdapter.findAllNotFilledNonPrivateLobbiesByGameId(game.getGameId(), false);
 
         // Assert
         assertEquals(0, lobbies.size());
@@ -91,9 +91,9 @@ public class LobbyAdapterTest {
     void findAllNotFilledNonPrivateLobbiesByGameIdShouldReturnLobbies() {
         // Arrange
         Lobby lobby = new Lobby(false, game, player);
-        lobbyDatabasedAdapter.save(lobby);
+        lobbyDatabaseAdapter.save(lobby);
         // Act
-        List<Lobby> lobbies = lobbyDatabasedAdapter.findAllNotFilledNonPrivateLobbiesByGameId(game.getGameId(), false);
+        List<Lobby> lobbies = lobbyDatabaseAdapter.findAllNotFilledNonPrivateLobbiesByGameId(game.getGameId(), false);
         // Assert
         assertEquals(1, lobbies.size());
         assertEquals(lobbies.getFirst().getLobbyOwner().getPlayerId(), player.getPlayerId());

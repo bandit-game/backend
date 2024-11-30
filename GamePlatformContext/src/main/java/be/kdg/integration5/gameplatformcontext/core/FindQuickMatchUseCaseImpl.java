@@ -43,7 +43,7 @@ public class FindQuickMatchUseCaseImpl implements FindQuickMatchUseCase {
 
         Lobby savedLobby = persistLobbyPort.save(selectedLobby);
 
-        sendLobbyNotifications(savedLobby, playerId);
+        notifyLobbyUpdatePort.notifyAllPlayersInLobby(savedLobby);
 
         return savedLobby;
     }
@@ -59,11 +59,4 @@ public class FindQuickMatchUseCaseImpl implements FindQuickMatchUseCase {
         return selectedLobby;
     }
 
-    private void sendLobbyNotifications(Lobby lobby, PlayerId playerId) {
-        LobbyId lobbyId = lobby.getLobbyId();
-        notifyLobbyUpdatePort.notifyPlayerJoinedLobby(lobbyId, playerId);
-
-        if (lobby.isFull())
-            notifyLobbyUpdatePort.notifyLobbyIsFull(lobby);
-    }
 }

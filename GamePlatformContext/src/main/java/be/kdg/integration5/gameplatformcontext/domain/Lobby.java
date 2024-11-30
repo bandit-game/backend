@@ -14,9 +14,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 public class Lobby {
-    //TODO Move to properties file
-
-
     private LobbyId lobbyId;
     private boolean isPrivate;
     private Game playingGame;
