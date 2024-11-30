@@ -114,6 +114,8 @@ public class LobbyDatabaseAdapter implements FindLobbyPort, PersistLobbyPort, De
 
     @Override
     public void deleteLobby(Lobby lobby) {
+        List<LobbyPlayerJpaEntity> existingPlayers = lobbyPlayerJpaRepository.findByLobbyIdFetched(lobby.getLobbyId().uuid());
+        lobbyPlayerJpaRepository.deleteAll(existingPlayers);
         lobbyJpaRepository.deleteById(lobby.getLobbyId().uuid());
     }
 }
