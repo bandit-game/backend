@@ -2,6 +2,7 @@ package be.kdg.integration5.gameplatformcontext.adapter.out.player;
 
 import be.kdg.integration5.gameplatformcontext.adapter.out.achievement.AchievementJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.lobby.LobbyJpaEntity;
+import be.kdg.integration5.gameplatformcontext.adapter.out.lobby_player.LobbyPlayerJpaEntity;
 import be.kdg.integration5.gameplatformcontext.domain.Achievement;
 import be.kdg.integration5.gameplatformcontext.domain.Player;
 import be.kdg.integration5.gameplatformcontext.domain.PlayerId;
@@ -42,8 +43,8 @@ public class PlayerJpaEntity {
     @OneToMany(mappedBy = "lobbyOwner")
     private List<LobbyJpaEntity> ownsLobbies;
 
-    @ManyToMany(mappedBy = "players")
-    private List<LobbyJpaEntity> lobbies;
+    @OneToMany(mappedBy = "player")
+    private List<LobbyPlayerJpaEntity> lobbyPlayers;
 
     @ManyToMany
     private List<AchievementJpaEntity> earnedAchievements;

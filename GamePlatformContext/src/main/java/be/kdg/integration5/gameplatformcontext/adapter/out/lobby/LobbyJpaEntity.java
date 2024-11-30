@@ -1,6 +1,7 @@
 package be.kdg.integration5.gameplatformcontext.adapter.out.lobby;
 
 import be.kdg.integration5.gameplatformcontext.adapter.out.game.GameJpaEntity;
+import be.kdg.integration5.gameplatformcontext.adapter.out.lobby_player.LobbyPlayerJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.gameplatformcontext.domain.*;
 import jakarta.persistence.*;
@@ -37,13 +38,9 @@ public class LobbyJpaEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private PlayerJpaEntity lobbyOwner;
 
-    @ManyToMany
-    @JoinTable(
-            name = "lobby_players",
-            joinColumns = @JoinColumn(name = "lobbyId"),
-            inverseJoinColumns = @JoinColumn(name = "playerId")
-    )
-    private List<PlayerJpaEntity> players;
+    @OneToMany(mappedBy = "lobby")
+    private List<LobbyPlayerJpaEntity> lobbyPlayers; // This represents the players in the lobby
+
 
 
     public LobbyJpaEntity(UUID lobbyId, boolean isPrivate, boolean isReady) {
@@ -52,13 +49,13 @@ public class LobbyJpaEntity {
         this.isReady = isReady;
     }
 
-    public Lobby toDomain(Game game) {
+    public Lobby toDomain(Game game, List<Player> players) {
         return new Lobby(
                 new LobbyId(lobbyId),
                 isPrivate,
                 game,
                 lobbyOwner.toDomain(),
-                new ArrayList<>(players.stream().map(PlayerJpaEntity::toDomain).toList()),
+                players,
                 isReady
         );
     }

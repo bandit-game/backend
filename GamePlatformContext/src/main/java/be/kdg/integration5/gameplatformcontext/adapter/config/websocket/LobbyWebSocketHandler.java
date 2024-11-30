@@ -14,12 +14,10 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 @Deprecated
 public class LobbyWebSocketHandler extends TextWebSocketHandler {
 
-    private final WebSocketSessionRegistry webSocketSessionRegistry;
     private final Logger logger = LoggerFactory.getLogger(LobbyWebSocketHandler.class);
     private final JwtDecoder jwtDecoder;
 
-    public LobbyWebSocketHandler(WebSocketSessionRegistry webSocketSessionRegistry, JwtDecoder jwtDecoder) {
-        this.webSocketSessionRegistry = webSocketSessionRegistry;
+    public LobbyWebSocketHandler(JwtDecoder jwtDecoder) {
         this.jwtDecoder = jwtDecoder;
     }
 
@@ -35,7 +33,7 @@ public class LobbyWebSocketHandler extends TextWebSocketHandler {
             Jwt decodedJwt = jwtDecoder.decode(token);
 
             String userId = decodedJwt.getSubject();  // Get the user ID from the decoded JWT token
-            webSocketSessionRegistry.registerSession(userId, session);
+            //webSocketSessionRegistry.registerSession(userId, session);
             session.getAttributes().put("user_id", userId);
             logger.info("Registered session for user {}", userId);
         } else {
@@ -56,7 +54,7 @@ public class LobbyWebSocketHandler extends TextWebSocketHandler {
 
         if (userId != null) {
             // Remove the session from the registry using the user ID
-            webSocketSessionRegistry.removeSession(userId);
+            //webSocketSessionRegistry.removeSession(userId);
             logger.info("Removed session for user {}", userId);
         }
         else {
