@@ -16,12 +16,10 @@ import org.springframework.web.socket.WebSocketSession;
 
 @Deprecated
 public class CustomStompInterceptor implements ChannelInterceptor {
-    private final WebSocketSessionRegistry webSocketSessionRegistry;
     private final JwtDecoder jwtDecoder;
     private final Logger logger = LoggerFactory.getLogger(CustomStompInterceptor.class);
 
-    public CustomStompInterceptor(WebSocketSessionRegistry webSocketSessionRegistry, JwtDecoder jwtDecoder) {
-        this.webSocketSessionRegistry = webSocketSessionRegistry;
+    public CustomStompInterceptor(JwtDecoder jwtDecoder) {
         this.jwtDecoder = jwtDecoder;
     }
 
@@ -40,7 +38,7 @@ public class CustomStompInterceptor implements ChannelInterceptor {
                 String userId = decodedJwt.getSubject();
                 Object sessionObject = message.getHeaders().get("simpSessionAttributes");
                 if (sessionObject instanceof WebSocketSession session) {
-                    webSocketSessionRegistry.registerSession(userId, session);
+                    //webSocketSessionRegistry.registerSession(userId, session);
                     session.getAttributes().put("user_id", userId);
                     logger.info("Registered session for user {}", userId);
                 } else {
