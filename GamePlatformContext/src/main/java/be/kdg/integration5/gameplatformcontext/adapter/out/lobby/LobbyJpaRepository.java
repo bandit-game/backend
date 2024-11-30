@@ -38,4 +38,12 @@ public interface LobbyJpaRepository extends JpaRepository<LobbyJpaEntity, UUID> 
     Optional<LobbyJpaEntity> findByPlayerIdAndIsReadyCustom(UUID playerId, boolean isReady);
 
 
+    @Query("select l from LobbyJpaEntity l " +
+    "left join fetch l.game g " +
+    "left join fetch l.lobbyPlayers lp " +
+    "left join fetch lp.player p " +
+    "where l.lobbyId = :lobbyId")
+    Optional <LobbyJpaEntity> findByLobbyIdFetched(UUID lobbyId);
+
+
 }
