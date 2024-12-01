@@ -21,12 +21,10 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class LobbyWebSocketController {
     private final FindQuickMatchUseCase findQuickMatchUseCase;
-    private final LeaveTheLobbyUseCase leaveTheLobbyUseCase;
     private final LobbyPlayersReadinessUseCase lobbyPlayersReadinessUseCase;
 
-    public LobbyWebSocketController(FindQuickMatchUseCase findQuickMatchUseCase, LeaveTheLobbyUseCase leaveTheLobbyUseCase, LobbyPlayersReadinessUseCase lobbyPlayersReadinessUseCase) {
+    public LobbyWebSocketController(FindQuickMatchUseCase findQuickMatchUseCase, LobbyPlayersReadinessUseCase lobbyPlayersReadinessUseCase) {
         this.findQuickMatchUseCase = findQuickMatchUseCase;
-        this.leaveTheLobbyUseCase = leaveTheLobbyUseCase;
         this.lobbyPlayersReadinessUseCase = lobbyPlayersReadinessUseCase;
     }
 
@@ -42,10 +40,6 @@ public class LobbyWebSocketController {
 
     }
 
-    @MessageMapping("/leave-lobby")
-    public void leaveLobby(@Payload LeaveLobbyRequestDTO leaveLobbyRequestDTO) {
-        leaveTheLobbyUseCase.removePlayerFromLobby(new PlayerId(leaveLobbyRequestDTO.playerId()));
-    }
 
     @MessageMapping("/ready-to-play")
     public void setLobbyReadiness(@Payload LobbyReadinessDTO lobbyReadiness) {
