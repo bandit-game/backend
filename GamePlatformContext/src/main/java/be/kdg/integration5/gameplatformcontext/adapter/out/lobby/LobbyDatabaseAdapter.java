@@ -9,10 +9,7 @@ import be.kdg.integration5.gameplatformcontext.adapter.out.lobby_player.LobbyPla
 import be.kdg.integration5.gameplatformcontext.adapter.out.lobby_player.LobbyPlayerJpaRepository;
 import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaRepository;
-import be.kdg.integration5.gameplatformcontext.domain.Game;
-import be.kdg.integration5.gameplatformcontext.domain.GameId;
-import be.kdg.integration5.gameplatformcontext.domain.Lobby;
-import be.kdg.integration5.gameplatformcontext.domain.Player;
+import be.kdg.integration5.gameplatformcontext.domain.*;
 import be.kdg.integration5.gameplatformcontext.port.out.DeleteLobbyPort;
 import be.kdg.integration5.gameplatformcontext.port.out.FindLobbyPort;
 import be.kdg.integration5.gameplatformcontext.port.out.PersistLobbyPort;
@@ -110,6 +107,17 @@ public class LobbyDatabaseAdapter implements FindLobbyPort, PersistLobbyPort, De
                                 isReady)));
         List<Player> players = lobbyJpaEntity.getLobbyPlayers().stream().map(lp -> lp.getPlayer().toDomain()).collect(Collectors.toList());
         return lobbyJpaEntity.toDomain(lobbyJpaEntity.getGame().toDomain(), players);
+    }
+
+    @Override
+    public Lobby findLobbyById(LobbyId lobbyId) {
+        LobbyJpaEntity lobbyJpaEntity = lobbyJpaRepository.findByLobbyIdFetched(lobbyId.uuid())
+                .orElseThrow(() -> new LobbyNotFoundException("Lobby [%s] not found.".formatted(lobbyId.uuid())));
+        Game game = lobbyJpaEntity.getGame().toDomain();
+        List<Player> players = lobbyJpaEntity.getLobbyPlayers().stream()
+                .map(lp -> lp.getPlayer().toDomain())
+                .collect(Collectors.toList());
+        return lobbyJpaEntity.toDomain(game, players);
     }
 
     @Override

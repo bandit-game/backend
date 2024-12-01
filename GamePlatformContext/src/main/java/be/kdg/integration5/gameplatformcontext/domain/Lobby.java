@@ -1,15 +1,12 @@
 package be.kdg.integration5.gameplatformcontext.domain;
 
-import be.kdg.integration5.gameplatformcontext.domain.exception.LobbyIsFullException;
-import be.kdg.integration5.gameplatformcontext.domain.exception.NotAllowedInLobbyException;
-import be.kdg.integration5.gameplatformcontext.domain.exception.PlayerNotInLobbyException;
+import be.kdg.integration5.gameplatformcontext.domain.exception.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
@@ -66,7 +63,13 @@ public class Lobby {
         return players.isEmpty() && this.lobbyOwner == null;
     }
 
-    public void allPlayersReady() {
+    public void readyForGame() {
+        if (!isFull())
+            throw new LobbyIsNotFullException("Unable to start game for lobby [%s] because it is not full".formatted(this.lobbyId.uuid()));
+
+        if (isReady)
+            throw new LobbyGameAlreadyStartedException("Lobby [%s] has already started a game.".formatted(this.lobbyId.uuid()));
+
         this.isReady = true;
     }
 
