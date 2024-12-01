@@ -23,7 +23,7 @@ public class GameDatabaseAdapter implements PersistGamePort, DeleteGamePort {
 
     @Override
     public Game save(Game game) {
-        boardJpaRepository.save(BoardJpaEntity.of(game.getBoard(), game.getPlayedMatchId()));
+        boardJpaRepository.save(BoardJpaEntity.of(game.getBoard()));
         playerJparepository.saveAll(game.getPlayers().stream().map(PlayerJpaEntity::of).toList());
         return gameJpaRepository.save(GameJpaEntity.of(game)).toDomain();
     }

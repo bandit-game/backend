@@ -10,5 +10,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public abstract class Square {
-
+    private Board board;
+    private int squareNumber;
 }

@@ -1,8 +1,10 @@
 package be.kdg.integration5.checkerscontext.adapter.out;
 
+import be.kdg.integration5.checkerscontext.adapter.out.game.GameJpaEntity;
 import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.checkerscontext.adapter.out.square.SquareJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.Board;
+import be.kdg.integration5.checkerscontext.domain.Game;
 import be.kdg.integration5.checkerscontext.domain.GameId;
 import be.kdg.integration5.checkerscontext.domain.Square;
 import jakarta.persistence.*;
@@ -23,7 +25,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class BoardJpaEntity {
     @Id
-    private UUID boardId;
+    @OneToOne
+    @JoinColumn(name = "game_id")
+    private GameJpaEntity game;
 
     @ManyToOne
     private PlayerJpaEntity currentPlayer;
@@ -31,7 +35,7 @@ public class BoardJpaEntity {
     @OneToMany
     private List<SquareJpaEntity> squares;
 
-    public static BoardJpaEntity of(Board board, GameId gameId) {
+    public static BoardJpaEntity of(Board board) {
         List<SquareJpaEntity> squareJpaEntities = new ArrayList<>();
 
         Arrays.stream(board.getSquares()).forEach(
@@ -41,7 +45,7 @@ public class BoardJpaEntity {
         );
 
         return new BoardJpaEntity(
-                gameId.uuid(),
+                GameJpaEntity.of(board.getGame()),
                 PlayerJpaEntity.of(board.getCurrentPlayer()),
                 squareJpaEntities
         );
@@ -55,6 +59,7 @@ public class BoardJpaEntity {
                 squaresArray[i][j] = this.squares.get(i * 10 + j).toDomain();
 
         return new Board(
+                game.toDomain(),
                 squaresArray,
                 this.currentPlayer.toDomain()
         );

@@ -25,7 +25,7 @@ public class Game {
 
     public void start() {
         this.startedTime = LocalDateTime.now();
-        this.board = new Board(getFirstPlayer());
+        this.board = new Board(this, getFirstPlayer());
     }
 
     private Player getFirstPlayer() {

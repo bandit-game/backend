@@ -40,7 +40,7 @@ public class GameJpaEntity {
                 game.getPlayedMatchId().uuid(),
                 game.getStartedTime(),
                 game.getFinishedTime(),
-                BoardJpaEntity.of(game.getBoard(), game.getPlayedMatchId()),
+                BoardJpaEntity.of(game.getBoard()),
                 new ArrayList<>(game.getPlayers().stream().map(PlayerJpaEntity::of).toList())
         );
     }
@@ -50,7 +50,8 @@ public class GameJpaEntity {
                 new GameId(this.gameId),
                 this.startedTime,
                 this.finishedTime,
-                this.board.toDomain()
+                this.board.toDomain(),
+                new ArrayList<>(this.players.stream().map(PlayerJpaEntity::toDomain).toList())
         );
     }
 }

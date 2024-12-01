@@ -10,6 +10,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class Move {
-    private Position initialPosition;
-    private Position futurePosition;
+    private PlayedPosition initialPosition;
+    private PlayedPosition futurePosition;
 }

@@ -13,10 +13,13 @@ public class Board {
     public static final int BOARD_SIZE = 10;
     private static final int PIECES_PER_PLAYER = 20;
 
+    private Game game;
+
     private Square[][] squares;
     private Player currentPlayer;
 
-    public Board(Player currentPlayer) {
+    public Board(Game game, Player currentPlayer) {
+        this.game = game;
         this.currentPlayer = currentPlayer;
         this.squares = new Square[BOARD_SIZE][BOARD_SIZE];
     }
@@ -27,11 +30,11 @@ public class Board {
     }
 
     private void placePieces() {
-        for (int i = 0; i < PIECES_PER_PLAYER*2; i+=2) {
+        for (int i = 0, j = 0; i < PIECES_PER_PLAYER*2; i+=2, j++) {
             if(squares[i%10][i+1] instanceof PlayableSquare playableSquare)
-                playableSquare.setPlacedPiece(new Piece(Piece.PieceColor.BLACK));
+                playableSquare.setPlacedPiece(new Piece(j, this, Piece.PieceColor.BLACK));
             if(squares[(BOARD_SIZE - 1) - i%10][(BOARD_SIZE - 1) - i] instanceof PlayableSquare playableSquare)
-                playableSquare.setPlacedPiece(new Piece(Piece.PieceColor.WHITE));
+                playableSquare.setPlacedPiece(new Piece(j, this, Piece.PieceColor.WHITE));
         }
     }
 
@@ -39,9 +42,9 @@ public class Board {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0))
-                    squares[i][j] = new PlayableSquare(new Position(i * 10 + j));
+                    squares[i][j] = new PlayableSquare(this, i * 10 + j, new PlayedPosition((i * 10 + j) / 2));
                 else
-                    squares[i][j] = new VoidSquare();
+                    squares[i][j] = new VoidSquare(this, i * 10 + j);
             }
         }
     }
