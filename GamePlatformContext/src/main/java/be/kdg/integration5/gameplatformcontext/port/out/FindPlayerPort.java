@@ -5,4 +5,5 @@ import be.kdg.integration5.gameplatformcontext.domain.PlayerId;
 
 public interface FindPlayerPort {
     Player findPlayerById(PlayerId playerId);
+    boolean playerExists(PlayerId playerId);
 }
