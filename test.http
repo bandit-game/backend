@@ -1,10 +1,10 @@
 POST http://localhost:8180/realms/Bandit%20Games/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id = platform-client &
-client_secret = Ys7xMsr2uYI70wCHcNiXGAlelwjUpSOr &
+client_id =  &
+client_secret =  &
 username = sofiia &
-password = sofiia &
+password =  &
 grant_type = password &
 scope = openid
 
