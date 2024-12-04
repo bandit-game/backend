@@ -13,4 +13,23 @@ public class PlayableSquare extends Square {
         super(board, squareNumber);
         this.playedPosition = playedPosition;
     }
+
+    public boolean isEmpty() {
+        return placedPiece == null;
+    }
+
+    public Piece getPiece() {
+        return placedPiece;
+    }
+
+    public void setPiece(Piece piece) {
+        if (!isEmpty()) {
+            throw new IllegalStateException("Square is already occupied by another piece.");
+        }
+        this.placedPiece = piece;
+    }
+
+    public void removePiece() {
+        this.placedPiece = null;
+    }
 }

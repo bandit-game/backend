@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 public class Board {
     public static final int BOARD_SIZE = 10;
-    private static final int PIECES_PER_PLAYER = 20;
+    public static final int PIECES_PER_PLAYER = 20;
 
     private Game game;
 
@@ -32,9 +32,9 @@ public class Board {
     private void placePieces() {
         for (int i = 0, j = 0; i < PIECES_PER_PLAYER*2; i+=2, j++) {
             if(squares[i%10][i+1] instanceof PlayableSquare playableSquare)
-                playableSquare.setPlacedPiece(new Piece(j, this, Piece.PieceColor.BLACK));
+                playableSquare.setPlacedPiece(new Piece(j, playableSquare, Piece.PieceColor.BLACK));
             if(squares[(BOARD_SIZE - 1) - i%10][(BOARD_SIZE - 1) - i] instanceof PlayableSquare playableSquare)
-                playableSquare.setPlacedPiece(new Piece(j, this, Piece.PieceColor.WHITE));
+                playableSquare.setPlacedPiece(new Piece(j, playableSquare, Piece.PieceColor.WHITE));
         }
     }
 
