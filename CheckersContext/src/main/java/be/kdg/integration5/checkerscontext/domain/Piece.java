@@ -95,15 +95,14 @@ public class Piece {
 
             if (isOutOfBounds(newX, newY)) continue;
 
-            Square targetSquare = squares[newX][newY];
-            if (!(targetSquare instanceof PlayableSquare playableSquare)) continue;
+            if (!(squares[newY][newX] instanceof PlayableSquare targetPlayableSquare)) continue;
 
             if (canAttack(newX, newY, direction.xShift, direction.yShift, squares)) {
                 attackMoves.add(createAttackMove(currentX, currentY, newX, newY, squares));
-            } else if (playableSquare.isEmpty()) {
+            } else if (targetPlayableSquare.isEmpty()) {
                 goMoves.add(new Move(
                         thisPlayableSquare.getPlayedPosition(),
-                        playableSquare.getPlayedPosition(),
+                        targetPlayableSquare.getPlayedPosition(),
                         Move.MoveType.GO
                 ));
             }
