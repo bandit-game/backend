@@ -34,7 +34,8 @@ public abstract class SquareJpaEntity {
                             playableSquare.getSquareNumber()
                     ),
                     BoardJpaEntity.of(playableSquare.getBoard()),
-                    playableSquare.getPlayedPosition().playedSquareNumber(),
+                    playableSquare.getPlayedPosition().x(),
+                    playableSquare.getPlayedPosition().y(),
                     PieceJpaEntity.of(playableSquare.getPlacedPiece())
             );
         else if (square instanceof VoidSquare voidSquare)
@@ -54,7 +55,7 @@ public abstract class SquareJpaEntity {
             return new PlayableSquare(
                     playedSquareJpaEntity.getBoard().toDomain(),
                     playedSquareJpaEntity.getSquareId().getSquareNumber(),
-                    new PlayedPosition(playedSquareJpaEntity.getPositionNumber())
+                    new PlayedPosition(playedSquareJpaEntity.getPlayedX(), playedSquareJpaEntity.getPlayedY())
             );
 
         else if (this instanceof VoidSquareJpaEntity voidSquareJpaEntity)

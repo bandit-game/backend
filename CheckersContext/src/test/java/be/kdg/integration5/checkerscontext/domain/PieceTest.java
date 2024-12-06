@@ -2,160 +2,133 @@ package be.kdg.integration5.checkerscontext.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class PieceTest {
-    private Board mockBoard;
-    private Square[][] mockSquares;
-    private PlayableSquare mockSquare;
+    private Game game;
+    private Board board;
     private Piece whitePiece;
     private Piece blackPiece;
 
     @BeforeEach
     void setUp() {
-        // Create a mock board and initialize squares
-        mockBoard = mock(Board.class);
-        mockSquares = new Square[Board.BOARD_SIZE][Board.BOARD_SIZE];
-        for (int i = 0; i < Board.BOARD_SIZE; i++) {
-            for (int j = 0; j < Board.BOARD_SIZE; j++) {
-                if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0))
-                    mockSquares[i][j] = mock(PlayableSquare.class);
-                else
-                    mockSquares[i][j] = mock(VoidSquare.class);
-            }
+        game = new Game(new GameId(UUID.randomUUID()), List.of(new Player("test1", true), new Player("test2", false)));
+        game.start();
+
+        board = game.getBoard();
+
+        // Place white piece at (5, 5)
+        PlayableSquare whiteSquare = (PlayableSquare) board.getSquares()[5][5];
+        whitePiece = new Piece(1, whiteSquare, Piece.PieceColor.WHITE);
+
+        // Place black piece at (3, 3)
+        PlayableSquare blackSquare = (PlayableSquare) board.getSquares()[3][3];
+        blackPiece = new Piece(2, blackSquare, Piece.PieceColor.BLACK);
+    }
+
+    @Test
+    void testGetPossibleMoves_GoMove() {
+        // Ensure squares (6,4) and (6,6) are empty
+        PlayableSquare goSquare1 = (PlayableSquare) board.getSquares()[6][4];
+        PlayableSquare goSquare2 = (PlayableSquare) board.getSquares()[6][6];
+        goSquare1.setPlacedPiece(null);
+        goSquare2.setPlacedPiece(null);
+
+        // Get possible moves for the white piece
+        List<Move> moves = whitePiece.getPossibleMoves();
+
+        // Verify GO moves
+        assertEquals(2, moves.size(), "White piece should have two GO moves (down-left and down-right)");
+        for (Move move : moves) {
+            assertEquals(Move.MoveType.GO, move.getType());
         }
-        when(mockBoard.getSquares()).thenReturn(mockSquares);
-
-//        for (int i = 0, j = 0; i < Board.PIECES_PER_PLAYER*2; i+=2, j++) {
-//            if(mockSquares[i%10][i+1] instanceof PlayableSquare playableSquare) {
-//                playableSquare.setPlacedPiece(new Piece(j, playableSquare, Piece.PieceColor.BLACK));
-//
-//            }
-//            if(mockSquares[(Board.BOARD_SIZE - 1) - i%10][(Board.BOARD_SIZE - 1) - i] instanceof PlayableSquare playableSquare) {
-//                playableSquare.setPlacedPiece(new Piece(j, playableSquare, Piece.PieceColor.WHITE));
-//            }
-//        }
-
-        // Create a mock playable square and set it as the initial position
-        mockSquare = mock(PlayableSquare.class);
-        when(mockSquare.getBoard()).thenReturn(mockBoard);
-        when(mockSquare.getSquareNumber()).thenReturn(18);
-        when(mockSquare.isEmpty()).thenReturn(true);
-
-        // Create a white and a black piece
-        whitePiece = new Piece(1, mockSquare, Piece.PieceColor.WHITE);
-        blackPiece = new Piece(2, mockSquare, Piece.PieceColor.BLACK);
     }
 
     @Test
-    void testNoMovesWhenSurroundedByOccupiedSquares() {
-        // Set up all adjacent squares as occupied
-        for (int i = 0; i < Board.BOARD_SIZE; i++) {
-            for (int j = 0; j < Board.BOARD_SIZE; j++) {
-                if (mockSquares[i][j] instanceof PlayableSquare playableSquare) {
-                    when(playableSquare.isEmpty()).thenReturn(false);
-                }
-            }
-        }
+    void testGetPossibleMoves_AttackMove() {
+        // Place a black piece diagonally adjacent to the white piece
+        PlayableSquare enemySquare = (PlayableSquare) board.getSquares()[4][4];
+        blackPiece.setSquare(enemySquare);
 
+        // Ensure landing square (3,3) is empty
+        PlayableSquare landingSquare = (PlayableSquare) board.getSquares()[3][3];
+        landingSquare.setPlacedPiece(null);
+
+        // Get possible moves for the white piece
         List<Move> moves = whitePiece.getPossibleMoves();
-        assertTrue(moves.isEmpty(), "Piece surrounded by occupied squares should have no moves");
+
+        // Verify ATTACK move
+        assertEquals(1, moves.size(), "White piece should have one ATTACK move");
+        Move attackMove = moves.get(0);
+        assertEquals(Move.MoveType.ATTACK, attackMove.getType());
+        assertEquals(new PlayedPosition(5, 5), attackMove.getInitialPosition());
+        assertEquals(new PlayedPosition(3, 3), attackMove.getFuturePosition());
     }
 
     @Test
-    void testSingleForwardMoveForNonKing() {
-        // Set up an empty playable square in a forward direction
-        PlayableSquare forwardSquare = mock(PlayableSquare.class);
-        when(forwardSquare.isEmpty()).thenReturn(true);
-        when(forwardSquare.getPlayedPosition()).thenReturn(new PlayedPosition(1));
+    void testGetPossibleMoves_AttackOverridesGo() {
+        // Place a black piece diagonally adjacent to the white piece
+        PlayableSquare enemySquare = (PlayableSquare) board.getSquares()[4][4];
+        blackPiece.setSquare(enemySquare);
 
-        when(mockSquares[3][3]).thenReturn(forwardSquare);
-        when(mockSquares[3][3] instanceof PlayableSquare).thenReturn(true);
+        // Ensure landing square (3,3) is empty
+        PlayableSquare landingSquare = (PlayableSquare) board.getSquares()[3][3];
+        landingSquare.setPlacedPiece(null);
 
+        // Ensure squares for GO moves are also empty
+        PlayableSquare goSquare1 = (PlayableSquare) board.getSquares()[6][4];
+        PlayableSquare goSquare2 = (PlayableSquare) board.getSquares()[6][6];
+        goSquare1.setPlacedPiece(null);
+        goSquare2.setPlacedPiece(null);
+
+        // Get possible moves for the white piece
         List<Move> moves = whitePiece.getPossibleMoves();
-        assertEquals(1, moves.size(), "Non-king should have one possible forward move");
-        assertEquals(Move.MoveType.GO, moves.get(0).getMoveType(), "Move should be a GO move");
+
+        // Verify only ATTACK moves are returned
+        assertEquals(1, moves.size(), "White piece should have one ATTACK move, overriding GO moves");
+        assertEquals(Move.MoveType.ATTACK, moves.get(0).getType());
     }
 
     @Test
-    void testAttackMoveOverEnemyPiece() {
-        // Set up an enemy piece diagonally and a landing square after it
-        PlayableSquare enemySquare = mock(PlayableSquare.class);
-        PlayableSquare landingSquare = mock(PlayableSquare.class);
+    void testGetPossibleMoves_NoMoves() {
+        // Surround the white piece with other white pieces
+        PlayableSquare surroundingSquare1 = (PlayableSquare) board.getSquares()[4][4];
+        surroundingSquare1.setPlacedPiece(new Piece(3, surroundingSquare1, Piece.PieceColor.WHITE));
 
-        Piece enemyPiece = new Piece(3, enemySquare, Piece.PieceColor.BLACK);
+        PlayableSquare surroundingSquare2 = (PlayableSquare) board.getSquares()[4][6];
+        surroundingSquare2.setPlacedPiece(new Piece(4, surroundingSquare2, Piece.PieceColor.WHITE));
 
-        when(enemySquare.isEmpty()).thenReturn(false);
-        when(enemySquare.getPiece()).thenReturn(enemyPiece);
-
-        when(landingSquare.isEmpty()).thenReturn(true);
-        when(landingSquare.getPlayedPosition()).thenReturn(new PlayedPosition(2, 2));
-
-        // Place the squares on the board
-        when(mockSquares[3][3]).thenReturn(enemySquare);
-        when(mockSquares[4][4]).thenReturn(landingSquare);
-
-        // Ensure these squares are playable
-        when(mockSquares[3][3] instanceof PlayableSquare).thenReturn(true);
-        when(mockSquares[4][4] instanceof PlayableSquare).thenReturn(true);
-
+        // Get possible moves
         List<Move> moves = whitePiece.getPossibleMoves();
-        assertEquals(1, moves.size(), "Piece should have one attack move");
-        assertEquals(Move.MoveType.ATTACK, moves.get(0).getMoveType(), "Move should be an ATTACK move");
+
+        // Verify no moves are available
+        assertTrue(moves.isEmpty(), "White piece should have no valid moves");
     }
 
     @Test
-    void testKingMovesInAllDiagonalDirections() {
-        // Set the piece as a king
+    void testGetPossibleMoves_KingMoves() {
+        // Make the white piece a King
         whitePiece.setKing(true);
 
-        // Set up empty squares in diagonal directions
-        for (int i = 1; i < 4; i++) {
-            PlayableSquare diagonalSquare = mock(PlayableSquare.class);
-            when(diagonalSquare.isEmpty()).thenReturn(true);
-            when(diagonalSquare.getPlayedPosition()).thenReturn(new PlayedPosition(i, i));
-            mockSquares[i][i] = diagonalSquare;
-        }
+        // Place the King in an open area
+        PlayableSquare kingSquare = (PlayableSquare) board.getSquares()[4][4];
+        kingSquare.setPlacedPiece(whitePiece);
+        whitePiece.setSquare(kingSquare);
 
+        // Ensure squares (3,3), (3,5), (5,3), and (5,5) are empty
+        ((PlayableSquare) board.getSquares()[3][3]).setPlacedPiece(null);
+        ((PlayableSquare) board.getSquares()[3][5]).setPlacedPiece(null);
+        ((PlayableSquare) board.getSquares()[5][3]).setPlacedPiece(null);
+        ((PlayableSquare) board.getSquares()[5][5]).setPlacedPiece(null);
+
+        // Get possible moves for the King
         List<Move> moves = whitePiece.getPossibleMoves();
-        assertEquals(3, moves.size(), "King should have three possible diagonal moves");
-    }
 
-    @Test
-    void testNonKingCannotMoveBackward() {
-        // Set up a backward square as playable
-        PlayableSquare backwardSquare = mock(PlayableSquare.class);
-        when(backwardSquare.isEmpty()).thenReturn(true);
-        when(backwardSquare.getPlayedPosition()).thenReturn(new PlayedPosition(-1, -1));
-
-        when(mockSquares[2][2]).thenReturn(backwardSquare);
-        when(mockSquares[2][2] instanceof PlayableSquare).thenReturn(true);
-
-        List<Move> moves = whitePiece.getPossibleMoves();
-        assertTrue(moves.isEmpty(), "Non-king should not be able to move backward");
-    }
-
-    @Test
-    void testCannotAttackSameColorPiece() {
-        // Set up a friendly piece diagonally
-        PlayableSquare friendlySquare = mock(PlayableSquare.class);
-
-        Piece friendlyPiece = new Piece(4, friendlySquare, Piece.PieceColor.WHITE);
-
-        when(friendlySquare.isEmpty()).thenReturn(false);
-        when(friendlySquare.getPiece()).thenReturn(friendlyPiece);
-
-        // Place the square on the board
-        when(mockSquares[3][3]).thenReturn(friendlySquare);
-        when(mockSquares[3][3] instanceof PlayableSquare).thenReturn(true);
-
-        List<Move> moves = whitePiece.getPossibleMoves();
-        assertTrue(moves.isEmpty(), "Piece should not be able to attack a piece of the same color");
+        // Verify all diagonal moves are available
+        assertEquals(4, moves.size(), "King piece should have four GO moves in all diagonal directions");
     }
 }

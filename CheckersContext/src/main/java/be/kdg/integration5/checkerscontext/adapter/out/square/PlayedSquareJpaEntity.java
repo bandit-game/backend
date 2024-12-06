@@ -18,14 +18,18 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PlayedSquareJpaEntity extends SquareJpaEntity {
     @Column(nullable = false)
-    private int positionNumber;
+    private int playedX;
+
+    @Column(nullable = false)
+    private int playedY;
 
     @OneToOne(optional = true)
     private PieceJpaEntity placedPiece;
 
-    public PlayedSquareJpaEntity(SquareJpaEntityId squareId, BoardJpaEntity board, int positionNumber, PieceJpaEntity placedPiece) {
+    public PlayedSquareJpaEntity(SquareJpaEntityId squareId, BoardJpaEntity board, int playedX, int playedY, PieceJpaEntity placedPiece) {
         super(squareId, board);
-        this.positionNumber = positionNumber;
+        this.playedX = playedX;
+        this.playedY = playedY;
         this.placedPiece = placedPiece;
     }
 }

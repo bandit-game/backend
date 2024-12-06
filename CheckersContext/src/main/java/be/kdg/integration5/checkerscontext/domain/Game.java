@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@ToString
+//@ToString
 public class Game {
     private GameId playedMatchId;
     private LocalDateTime startedTime;

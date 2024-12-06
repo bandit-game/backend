@@ -26,7 +26,7 @@ public class PieceJpaEntity {
     public static PieceJpaEntity of(Piece piece) {
         return new PieceJpaEntity(
                 new PieceJpaEntityId(
-                        piece.getBoard().getGame().getPlayedMatchId().uuid(),
+                        piece.getSquare().getBoard().getGame().getPlayedMatchId().uuid(),
                         piece.getPieceNumber()
                 ),
                 piece.isKing(),

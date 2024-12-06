@@ -75,118 +75,88 @@ public class Piece {
         return null;
     }*/
 
-
-
     public List<Move> getPossibleMoves() {
         List<Move> attackMoves = new ArrayList<>();
-        List<Move> regularMoves = new ArrayList<>();
+        List<Move> goMoves = new ArrayList<>();
 
-        if (!(square instanceof PlayableSquare playableSquare))
-            throw new PiecePlacedNotOnPlayableSquareException("Piece is placed not on a PlayableSquare.");
+        if (!(this.getSquare() instanceof PlayableSquare thisPlayableSquare))
+            throw new PiecePlacedNotOnPlayableSquareException("Piece Placed Not On Playable Square");
 
-        PlayedPosition initialPlayedPosition = playableSquare.getPlayedPosition();
-        int squareNumber = square.getSquareNumber();
-        int x = squareNumber / Board.BOARD_SIZE;
-        int y = squareNumber % Board.BOARD_SIZE;
+        int currentX = thisPlayableSquare.getPlayedPosition().x();
+        int currentY = thisPlayableSquare.getPlayedPosition().y();
+        Square[][] squares = thisPlayableSquare.getBoard().getSquares();
 
-        int[][] directions = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+        for (MoveDirection direction : MoveDirection.values()) {
+            int newX = currentX + direction.xShift;
+            int newY = currentY + direction.yShift;
 
-        for (int[] direction : directions)
-            addAttackMovesInDirection(attackMoves, initialPlayedPosition, x, y, direction[0], direction[1]);
+            // Skip invalid forward moves for non-King pieces
+            if (!isKing() && !isMovingForward(direction.yShift)) continue;
 
-        if (!attackMoves.isEmpty()) {
-            attackMoves.addAll(getPossibleMoves().stream().filter(move -> move.getType() == Move.MoveType.ATTACK).toList());
-            return attackMoves;
-        }
+            if (isOutOfBounds(newX, newY)) continue;
 
+            Square targetSquare = squares[newX][newY];
+            if (!(targetSquare instanceof PlayableSquare playableSquare)) continue;
 
-        for (int[] direction : directions)
-            addRegularMovesInDirection(regularMoves, initialPlayedPosition, x, y, direction[0], direction[1]);
-
-        return regularMoves;
-    }
-
-    private void addAttackMovesInDirection(List<Move> moves, PlayedPosition initialPlayedPosition, int x, int y, int xChange, int yChange) {
-        Square[][] squares = square.getBoard().getSquares();
-        int futureX = x + xChange;
-        int futureY = y + yChange;
-
-        if (isOutOfBounds(futureX, futureY)) return;
-
-        if (canAttack(futureX, futureY, xChange, yChange, squares)) {
-            int attackX = futureX + xChange;
-            int attackY = futureY + yChange;
-            moves.add(new Move(initialPlayedPosition, ((PlayableSquare) squares[attackY][attackX]).getPlayedPosition(), Move.MoveType.ATTACK));
-
-            // For kings, continue searching for additional attacks in the same direction
-            if (isKing) {
-                addKingMoves(moves, initialPlayedPosition, attackX, attackY, xChange, yChange);
+            if (canAttack(newX, newY, direction.xShift, direction.yShift, squares)) {
+                attackMoves.add(createAttackMove(currentX, currentY, newX, newY, squares));
+            } else if (playableSquare.isEmpty()) {
+                goMoves.add(new Move(
+                        thisPlayableSquare.getPlayedPosition(),
+                        playableSquare.getPlayedPosition(),
+                        Move.MoveType.GO
+                ));
             }
         }
+
+        // Prioritize ATTACK moves
+        return !attackMoves.isEmpty() ? attackMoves : goMoves;
     }
 
-    private void addRegularMovesInDirection(List<Move> moves, PlayedPosition initialPlayedPosition, int x, int y, int xChange, int yChange) {
-        Square[][] squares = square.getBoard().getSquares();
-        int futureX = x + xChange;
-        int futureY = y + yChange;
+    // Helper Method: Check if an attack is possible
+    private boolean canAttack(int newX, int newY, int xShift, int yShift, Square[][] squares) {
+        int landingX = newX + xShift;
+        int landingY = newY + yShift;
 
-        if (isOutOfBounds(futureX, futureY)) return;
+        if (isOutOfBounds(landingX, landingY)) return false;
 
-        Square targetSquare = squares[futureY][futureX];
-        if (!(targetSquare instanceof PlayableSquare nextPlayableSquare)) return;
+        Square potentialEnemySquare = squares[newY][newX];
+        Square potentialLandingSquare = squares[landingY][landingX];
 
-        // Forward movement restriction for default pieces
-        if (!this.isKing && !isMovingForward(yChange)) {
-            return;
-        }
-
-        if (nextPlayableSquare.isEmpty()) {
-            moves.add(new Move(initialPlayedPosition, nextPlayableSquare.getPlayedPosition(), Move.MoveType.GO));
-
-            // For kings, add further moves in the same direction
-            if (this.isKing) {
-                addKingMoves(moves, initialPlayedPosition, futureX, futureY, xChange, yChange);
-            }
-        }
-    }
-
-    private void addKingMoves(List<Move> moves, PlayedPosition initialPlayedPosition, int startX, int startY, int xChange, int yChange) {
-        Square[][] squares = this.square.getBoard().getSquares();
-        int currentX = startX + xChange;
-        int currentY = startY + yChange;
-
-        while (!isOutOfBounds(currentX, currentY)) {
-            Square nextSquare = squares[currentY][currentX];
-            if (nextSquare instanceof PlayableSquare playableSquare && playableSquare.isEmpty()) {
-                moves.add(new Move(initialPlayedPosition, playableSquare.getPlayedPosition(), Move.MoveType.GO));
-                currentX += xChange;
-                currentY += yChange;
-            } else {
-                break;
-            }
-        }
-    }
-
-    private boolean canAttack(int futureX, int futureY, int xChange, int yChange, Square[][] squares) {
-        int attackX = futureX + xChange;
-        int attackY = futureY + yChange;
-
-        if (isOutOfBounds(attackX, attackY))
-            return false;
-
-        Square potentialEnemySquare = squares[futureY][futureX];
-        Square potentialLandingSquare = squares[attackY][attackX];
-
-        // Check if the target square contains an enemy piece and the landing square is empty
         return potentialEnemySquare instanceof PlayableSquare enemySquare &&
                 !enemySquare.isEmpty() &&
-                enemySquare.getPlacedPiece().getColor() != this.color && // Ensure the piece is of a different color
+                enemySquare.getPlacedPiece().getColor() != this.color &&
                 potentialLandingSquare instanceof PlayableSquare landingSquare &&
                 landingSquare.isEmpty();
     }
 
+    // Helper Method: Create an ATTACK move
+    private Move createAttackMove(int currentX, int currentY, int enemyX, int enemyY, Square[][] squares) {
+        int xShift = enemyX - currentX;
+        int yShift = enemyY - currentY;
+
+        int landingX = enemyX + xShift;
+        int landingY = enemyY + yShift;
+
+        if(!(squares[landingY][landingX] instanceof PlayableSquare landingSquare))
+            throw new PiecePlacedNotOnPlayableSquareException("Landing Square is not a type of PlayableSquare.");
+
+//        if(!(squares[enemyX][enemyY] instanceof PlayableSquare enemySquare))
+//            throw new PiecePlacedNotOnPlayableSquareException("Enemy Square is not a type of PlayableSquare.");
+
+
+        Move attackMove = new Move(
+                new PlayedPosition(currentX, currentY),
+                landingSquare.getPlayedPosition(),
+                Move.MoveType.ATTACK
+        );
+//        attackMove.addIntermediateAttackPosition(enemySquare.getPlayedPosition());
+        return attackMove;
+    }
+
+
     private boolean isMovingForward(int yChange) {
-        return (this.color == PieceColor.WHITE && yChange > 0) || (this.color == PieceColor.BLACK && yChange < 0);
+        return (this.color == PieceColor.WHITE && yChange < 0) || (this.color == PieceColor.BLACK && yChange > 0);
     }
 
     private boolean isOutOfBounds(int x, int y) {
@@ -214,10 +184,10 @@ public class Piece {
     }
 
     private enum MoveDirection {
-        UP_RIGHT(1, 1),
-        UP_LEFT(1, -1),
-        DOWN_RIGHT(-1, 1),
-        DOWN_LEFT(-1, -1),;
+        UP_RIGHT(1, -1),
+        UP_LEFT(-1, -1),
+        DOWN_RIGHT(1, 1),
+        DOWN_LEFT(-1, 1),;
 
         int xShift;
         int yShift;

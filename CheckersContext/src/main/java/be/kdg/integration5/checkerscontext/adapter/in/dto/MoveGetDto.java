@@ -4,16 +4,20 @@ import be.kdg.integration5.checkerscontext.domain.Move;
 
 import java.util.Objects;
 
-public record MoveGetDto(Integer initialPosition, Integer futurePosition) {
+public record MoveGetDto(Integer currentX, Integer currentY, Integer futureX, Integer futureY) {
     public MoveGetDto {
-        Objects.requireNonNull(initialPosition);
-        Objects.requireNonNull(futurePosition);
+        Objects.requireNonNull(currentX);
+        Objects.requireNonNull(currentY);
+        Objects.requireNonNull(futureX);
+        Objects.requireNonNull(futureY);
     }
 
     public static MoveGetDto of(Move move) {
         return new MoveGetDto(
-                move.getInitialPosition().playedSquareNumber(),
-                move.getFuturePosition().playedSquareNumber()
+                move.getInitialPosition().x(),
+                move.getInitialPosition().y(),
+                move.getFuturePosition().x(),
+                move.getFuturePosition().y()
         );
     }
 }

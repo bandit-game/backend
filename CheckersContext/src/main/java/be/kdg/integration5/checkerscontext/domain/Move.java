@@ -10,13 +10,18 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @ToString
 public class Move {
     private PlayedPosition initialPosition;
     private List<PlayedPosition> intermediateAttackPositions;
     private PlayedPosition futurePosition;
     private MoveType type;
+
+    public Move(PlayedPosition initialPosition, PlayedPosition futurePosition, MoveType type) {
+        this.initialPosition = initialPosition;
+        this.futurePosition = futurePosition;
+        this.type = type;
+    }
 
     public void addIntermediateAttackPosition(PlayedPosition position) {
         if (intermediateAttackPositions == null)

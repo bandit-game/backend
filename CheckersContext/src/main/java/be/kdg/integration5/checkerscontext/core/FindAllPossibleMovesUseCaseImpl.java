@@ -27,8 +27,7 @@ public class FindAllPossibleMovesUseCaseImpl implements FindAllPossibleMovesUseC
         GameId gameId = findAllPossibleMovesCommand.gameId();
         int playedSquareNumber = findAllPossibleMovesCommand.playedSquareNumber();
         Piece piece = findPiecePort.findPieceByGameIdAndPlayedSquareNumber(gameId, playedSquareNumber);
-        piece.getPossibleMoves();
-        return ;
+        return piece.getPossibleMoves();
 
     }
 }
