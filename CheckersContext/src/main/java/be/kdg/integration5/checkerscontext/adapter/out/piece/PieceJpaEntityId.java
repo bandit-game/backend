@@ -1,4 +1,4 @@
-package be.kdg.integration5.checkerscontext.adapter.out;
+package be.kdg.integration5.checkerscontext.adapter.out.piece;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;

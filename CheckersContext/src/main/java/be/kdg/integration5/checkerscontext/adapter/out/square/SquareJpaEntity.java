@@ -1,11 +1,9 @@
 package be.kdg.integration5.checkerscontext.adapter.out.square;
 
 import be.kdg.integration5.checkerscontext.adapter.out.BoardJpaEntity;
-import be.kdg.integration5.checkerscontext.adapter.out.PieceJpaEntity;
-import be.kdg.integration5.checkerscontext.domain.PlayableSquare;
+import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.PlayedPosition;
 import be.kdg.integration5.checkerscontext.domain.Square;
-import be.kdg.integration5.checkerscontext.domain.VoidSquare;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,56 +12,45 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "squares")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class SquareJpaEntity {
+public class SquareJpaEntity {
     @EmbeddedId
     private SquareJpaEntityId squareId;
 
     @ManyToOne
     private BoardJpaEntity board;
 
+    @Column(nullable = false)
+    private int x;
+
+    @Column(nullable = false)
+    private int y;
+
+    @OneToOne(optional = true)
+    private PieceJpaEntity placedPiece;
+
     public static SquareJpaEntity of(Square square) {
-        if (square instanceof PlayableSquare playableSquare)
-            return new PlayedSquareJpaEntity(
-                    new SquareJpaEntityId(
-                            square.getBoard().getGame().getPlayedMatchId().uuid(),
-                            playableSquare.getSquareNumber()
-                    ),
-                    BoardJpaEntity.of(playableSquare.getBoard()),
-                    playableSquare.getPlayedPosition().x(),
-                    playableSquare.getPlayedPosition().y(),
-                    PieceJpaEntity.of(playableSquare.getPlacedPiece())
-            );
-        else if (square instanceof VoidSquare voidSquare)
-            return new VoidSquareJpaEntity(
-                    BoardJpaEntity.of(voidSquare.getBoard()),
-                    new SquareJpaEntityId(
-                            square.getBoard().getGame().getPlayedMatchId().uuid(),
-                            voidSquare.getSquareNumber()
-                    )
-            );
-        else
-            return null;
+        return new SquareJpaEntity(
+                new SquareJpaEntityId(
+                        square.getBoard().getGame().getPlayedMatchId().uuid(),
+                        square.getSquareNumber()
+                ),
+                BoardJpaEntity.of(square.getBoard()),
+                square.getPlayedPosition().x(),
+                square.getPlayedPosition().y(),
+                PieceJpaEntity.of(square.getPlacedPiece())
+        );
     }
 
     public Square toDomain() {
-        if (this instanceof PlayedSquareJpaEntity playedSquareJpaEntity)
-            return new PlayableSquare(
-                    playedSquareJpaEntity.getBoard().toDomain(),
-                    playedSquareJpaEntity.getSquareId().getSquareNumber(),
-                    new PlayedPosition(playedSquareJpaEntity.getPlayedX(), playedSquareJpaEntity.getPlayedY())
-            );
-
-        else if (this instanceof VoidSquareJpaEntity voidSquareJpaEntity)
-            return new VoidSquare(
-                    voidSquareJpaEntity.getBoard().toDomain(),
-                    voidSquareJpaEntity.getSquareId().getSquareNumber()
-            );
-        else
-            return null;
+        return new Square(
+                this.getBoard().toDomain(),
+                this.getSquareId().getSquareNumber(),
+                new PlayedPosition(this.getX(), this.getY()),
+                this.getPlacedPiece().toDomain()
+        );
     }
 }

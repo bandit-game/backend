@@ -8,13 +8,14 @@ import java.util.*;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 public class Piece {
     private int pieceNumber;
     private Square square;
     private boolean isKing;
     private PieceColor color;
 
-    public Piece(int pieceNumber, PlayableSquare square, PieceColor color) {
+    public Piece(int pieceNumber, Square square, PieceColor color) {
         this.pieceNumber = pieceNumber;
         setSquare(square);
         this.color = color;
@@ -79,12 +80,11 @@ public class Piece {
         List<Move> attackMoves = new ArrayList<>();
         List<Move> goMoves = new ArrayList<>();
 
-        if (!(this.getSquare() instanceof PlayableSquare thisPlayableSquare))
-            throw new PiecePlacedNotOnPlayableSquareException("Piece Placed Not On Playable Square");
+        Square currentSquare = this.getSquare();
 
-        int currentX = thisPlayableSquare.getPlayedPosition().x();
-        int currentY = thisPlayableSquare.getPlayedPosition().y();
-        Square[][] squares = thisPlayableSquare.getBoard().getSquares();
+        int currentX = currentSquare.getPlayedPosition().x();
+        int currentY = currentSquare.getPlayedPosition().y();
+        Square[][] squares = currentSquare.getBoard().getSquares();
 
         for (MoveDirection direction : MoveDirection.values()) {
             int newX = currentX + direction.xShift;
@@ -95,14 +95,14 @@ public class Piece {
 
             if (isOutOfBounds(newX, newY)) continue;
 
-            if (!(squares[newY][newX] instanceof PlayableSquare targetPlayableSquare)) continue;
+            Square targetSquare = squares[newY][newX];
 
             if (canAttack(newX, newY, direction.xShift, direction.yShift, squares)) {
                 attackMoves.add(createAttackMove(currentX, currentY, newX, newY, squares));
-            } else if (targetPlayableSquare.isEmpty()) {
+            } else if (targetSquare.isEmpty()) {
                 goMoves.add(new Move(
-                        thisPlayableSquare.getPlayedPosition(),
-                        targetPlayableSquare.getPlayedPosition(),
+                        currentSquare.getPlayedPosition(),
+                        targetSquare.getPlayedPosition(),
                         Move.MoveType.GO
                 ));
             }
@@ -119,13 +119,11 @@ public class Piece {
 
         if (isOutOfBounds(landingX, landingY)) return false;
 
-        Square potentialEnemySquare = squares[newY][newX];
-        Square potentialLandingSquare = squares[landingY][landingX];
+        Square enemySquare = squares[newY][newX];
+        Square landingSquare = squares[landingY][landingX];
 
-        return potentialEnemySquare instanceof PlayableSquare enemySquare &&
-                !enemySquare.isEmpty() &&
+        return !enemySquare.isEmpty() &&
                 enemySquare.getPlacedPiece().getColor() != this.color &&
-                potentialLandingSquare instanceof PlayableSquare landingSquare &&
                 landingSquare.isEmpty();
     }
 
@@ -137,12 +135,7 @@ public class Piece {
         int landingX = enemyX + xShift;
         int landingY = enemyY + yShift;
 
-        if(!(squares[landingY][landingX] instanceof PlayableSquare landingSquare))
-            throw new PiecePlacedNotOnPlayableSquareException("Landing Square is not a type of PlayableSquare.");
-
-//        if(!(squares[enemyX][enemyY] instanceof PlayableSquare enemySquare))
-//            throw new PiecePlacedNotOnPlayableSquareException("Enemy Square is not a type of PlayableSquare.");
-
+        Square landingSquare = squares[landingY][landingX];
 
         Move attackMove = new Move(
                 new PlayedPosition(currentX, currentY),
@@ -162,22 +155,21 @@ public class Piece {
         return x < 0 || x >= Board.BOARD_SIZE || y < 0 || y >= Board.BOARD_SIZE;
     }
 
-    public void setSquare(PlayableSquare square) {
+    public void setSquare(Square square) {
         if (!square.isEmpty()) {
             throw new IllegalStateException("Cannot place a piece on an occupied square.");
         }
         this.square = square;
-        square.setPiece(this);
+        square.setPlacedPiece(this);
     }
 
-    public void moveToSquare(PlayableSquare targetSquare) {
+    public void moveToSquare(Square targetSquare) {
         if (!targetSquare.isEmpty()) {
             throw new IllegalStateException("Target square is already occupied.");
         }
         // Remove from current square
-        if (this.square instanceof PlayableSquare currentSquare) {
-            currentSquare.removePiece();
-        }
+        square.removePiece();
+
         // Set to new square
         setSquare(targetSquare);
     }

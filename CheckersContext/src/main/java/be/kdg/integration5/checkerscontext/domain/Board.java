@@ -30,21 +30,25 @@ public class Board {
     }
 
     private void placePieces() {
-        for (int i = 0, j = 0; i < PIECES_PER_PLAYER*2; i+=2, j++) {
-            if(squares[i/10][i/10+1] instanceof PlayableSquare playableSquare)
-                playableSquare.setPlacedPiece(new Piece(j, playableSquare, Piece.PieceColor.BLACK));
-            if(squares[(BOARD_SIZE - 1) - i/10][(BOARD_SIZE - 1) - i%10] instanceof PlayableSquare playableSquare)
-                playableSquare.setPlacedPiece(new Piece(j, playableSquare, Piece.PieceColor.WHITE));
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if ((i + j) % 2 == 1) {
+                    if (i*10 + j < PIECES_PER_PLAYER*2)
+                        new Piece(j, squares[i / 10][i % 10 + 1], Piece.PieceColor.BLACK);
+                    else if (i*10 + j > BOARD_SIZE * BOARD_SIZE - PIECES_PER_PLAYER*2)
+                        new Piece(j, squares[(BOARD_SIZE - 1) - i / 10][(BOARD_SIZE - 1) - i % 10 - 1], Piece.PieceColor.WHITE);
+                }
+            }
         }
     }
 
     private void generateBoard() {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0))
-                    squares[i][j] = new PlayableSquare(this, i * 10 + j, new PlayedPosition(j, i));
+                if ((i + j) % 2 == 1)
+                    squares[i][j] = new Square(this, i * 10 + j, new PlayedPosition(j, i));
                 else
-                    squares[i][j] = new VoidSquare(this, i * 10 + j);
+                    squares[i][j] = new Square(this, i * 10 + j);
             }
         }
     }

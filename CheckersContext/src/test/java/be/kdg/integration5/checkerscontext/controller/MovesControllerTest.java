@@ -4,7 +4,6 @@ import be.kdg.integration5.checkerscontext.adapter.in.MovesController;
 import be.kdg.integration5.checkerscontext.domain.Game;
 import be.kdg.integration5.checkerscontext.domain.GameId;
 import be.kdg.integration5.checkerscontext.domain.Player;
-import be.kdg.integration5.checkerscontext.port.out.BoardJpaRepository;
 import be.kdg.integration5.checkerscontext.port.out.DeleteGamePort;
 import be.kdg.integration5.checkerscontext.port.out.PersistGamePort;
 import org.junit.jupiter.api.AfterEach;

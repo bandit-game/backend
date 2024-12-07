@@ -1,5 +1,6 @@
-package be.kdg.integration5.checkerscontext.adapter.out;
+package be.kdg.integration5.checkerscontext.adapter.out.piece;
 
+import be.kdg.integration5.checkerscontext.adapter.out.square.SquareJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.Piece;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,9 @@ public class PieceJpaEntity {
     @Column(nullable = false)
     private Piece.PieceColor pieceColor;
 
+    @OneToOne
+    private SquareJpaEntity square;
+
     public static PieceJpaEntity of(Piece piece) {
         return new PieceJpaEntity(
                 new PieceJpaEntityId(
@@ -30,7 +34,17 @@ public class PieceJpaEntity {
                         piece.getPieceNumber()
                 ),
                 piece.isKing(),
-                piece.getColor()
+                piece.getColor(),
+                SquareJpaEntity.of(piece.getSquare())
+        );
+    }
+
+    public Piece toDomain() {
+        return new Piece(
+                this.pieceId.getPieceNumber(),
+                this.square.toDomain(),
+                this.isKing,
+                this.pieceColor
         );
     }
 }

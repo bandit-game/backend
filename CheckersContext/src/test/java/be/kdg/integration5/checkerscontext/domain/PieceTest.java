@@ -22,21 +22,21 @@ class PieceTest {
         board = game.getBoard();
 
         // Place white piece at (5, 5)
-        PlayableSquare whiteSquare = (PlayableSquare) board.getSquares()[5][5];
+        Square whiteSquare = board.getSquares()[5][5];
         whitePiece = new Piece(1, whiteSquare, Piece.PieceColor.WHITE);
 
         // Place black piece at (3, 3)
-        PlayableSquare blackSquare = (PlayableSquare) board.getSquares()[3][3];
+        Square blackSquare = board.getSquares()[3][3];
         blackPiece = new Piece(2, blackSquare, Piece.PieceColor.BLACK);
     }
 
     @Test
     void testGetPossibleMoves_GoMove() {
         // Ensure squares (6,4) and (6,6) are empty
-        PlayableSquare goSquare1 = (PlayableSquare) board.getSquares()[6][4];
-        PlayableSquare goSquare2 = (PlayableSquare) board.getSquares()[6][6];
-        goSquare1.setPlacedPiece(null);
-        goSquare2.setPlacedPiece(null);
+        Square goSquare1 = board.getSquares()[6][4];
+        Square goSquare2 = board.getSquares()[6][6];
+        goSquare1.removePiece();
+        goSquare2.removePiece();
 
         // Get possible moves for the white piece
         List<Move> moves = whitePiece.getPossibleMoves();
@@ -51,11 +51,11 @@ class PieceTest {
     @Test
     void testGetPossibleMoves_AttackMove() {
         // Place a black piece diagonally adjacent to the white piece
-        PlayableSquare enemySquare = (PlayableSquare) board.getSquares()[4][4];
+        Square enemySquare = board.getSquares()[4][4];
         blackPiece.setSquare(enemySquare);
 
         // Ensure landing square (3,3) is empty
-        PlayableSquare landingSquare = (PlayableSquare) board.getSquares()[3][3];
+        Square landingSquare = board.getSquares()[3][3];
         landingSquare.setPlacedPiece(null);
 
         // Get possible moves for the white piece
@@ -72,18 +72,18 @@ class PieceTest {
     @Test
     void testGetPossibleMoves_AttackOverridesGo() {
         // Place a black piece diagonally adjacent to the white piece
-        PlayableSquare enemySquare = (PlayableSquare) board.getSquares()[4][4];
+        Square enemySquare = board.getSquares()[4][4];
         blackPiece.setSquare(enemySquare);
 
         // Ensure landing square (3,3) is empty
-        PlayableSquare landingSquare = (PlayableSquare) board.getSquares()[3][3];
-        landingSquare.setPlacedPiece(null);
+        Square landingSquare = board.getSquares()[3][3];
+        landingSquare.removePiece();
 
         // Ensure squares for GO moves are also empty
-        PlayableSquare goSquare1 = (PlayableSquare) board.getSquares()[6][4];
-        PlayableSquare goSquare2 = (PlayableSquare) board.getSquares()[6][6];
-        goSquare1.setPlacedPiece(null);
-        goSquare2.setPlacedPiece(null);
+        Square goSquare1 = board.getSquares()[6][4];
+        Square goSquare2 = board.getSquares()[6][6];
+        goSquare1.removePiece();
+        goSquare2.removePiece();
 
         // Get possible moves for the white piece
         List<Move> moves = whitePiece.getPossibleMoves();
@@ -96,10 +96,10 @@ class PieceTest {
     @Test
     void testGetPossibleMoves_NoMoves() {
         // Surround the white piece with other white pieces
-        PlayableSquare surroundingSquare1 = (PlayableSquare) whitePiece.getSquare().getBoard().getSquares()[4][4];
+        Square surroundingSquare1 = whitePiece.getSquare().getBoard().getSquares()[4][4];
         surroundingSquare1.setPlacedPiece(new Piece(3, surroundingSquare1, Piece.PieceColor.WHITE));
 
-        PlayableSquare surroundingSquare2 = (PlayableSquare) whitePiece.getSquare().getBoard().getSquares()[4][6];
+        Square surroundingSquare2 = whitePiece.getSquare().getBoard().getSquares()[4][6];
         surroundingSquare2.setPlacedPiece(new Piece(4, surroundingSquare2, Piece.PieceColor.WHITE));
 
         // Get possible moves
@@ -115,14 +115,14 @@ class PieceTest {
         whitePiece.setKing(true);
 
         // Place the King in an open area
-        PlayableSquare kingSquare = (PlayableSquare) board.getSquares()[4][4];
+        Square kingSquare = board.getSquares()[4][4];
         whitePiece.setSquare(kingSquare);
 
         // Ensure squares (3,3), (3,5), (5,3), and (5,5) are empty
-        ((PlayableSquare) board.getSquares()[3][3]).removePiece();
-        ((PlayableSquare) board.getSquares()[3][5]).removePiece();
-        ((PlayableSquare) board.getSquares()[5][3]).removePiece();
-        ((PlayableSquare) board.getSquares()[5][5]).removePiece();
+        board.getSquares()[3][3].removePiece();
+        board.getSquares()[3][5].removePiece();
+        board.getSquares()[5][3].removePiece();
+        board.getSquares()[5][5].removePiece();
 
         // Get possible moves for the King
         List<Move> moves = whitePiece.getPossibleMoves();

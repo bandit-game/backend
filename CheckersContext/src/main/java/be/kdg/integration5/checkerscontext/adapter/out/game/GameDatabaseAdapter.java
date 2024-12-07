@@ -4,7 +4,7 @@ import be.kdg.integration5.checkerscontext.adapter.out.BoardJpaEntity;
 import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.Game;
 import be.kdg.integration5.checkerscontext.domain.GameId;
-import be.kdg.integration5.checkerscontext.port.out.BoardJpaRepository;
+import be.kdg.integration5.checkerscontext.adapter.out.BoardJpaRepository;
 import be.kdg.integration5.checkerscontext.port.out.DeleteGamePort;
 import be.kdg.integration5.checkerscontext.port.out.PersistGamePort;
 import org.springframework.stereotype.Component;
