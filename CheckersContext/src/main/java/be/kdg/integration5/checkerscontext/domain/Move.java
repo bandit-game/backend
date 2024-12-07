@@ -1,6 +1,5 @@
 package be.kdg.integration5.checkerscontext.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,18 +11,18 @@ import java.util.List;
 @Setter
 @ToString
 public class Move {
-    private PlayedPosition initialPosition;
-    private List<PlayedPosition> intermediateAttackPositions;
-    private PlayedPosition futurePosition;
+    private MovePosition initialPosition;
+    private List<MovePosition> intermediateAttackPositions;
+    private MovePosition futurePosition;
     private MoveType type;
 
-    public Move(PlayedPosition initialPosition, PlayedPosition futurePosition, MoveType type) {
+    public Move(MovePosition initialPosition, MovePosition futurePosition, MoveType type) {
         this.initialPosition = initialPosition;
         this.futurePosition = futurePosition;
         this.type = type;
     }
 
-    public void addIntermediateAttackPosition(PlayedPosition position) {
+    public void addIntermediateAttackPosition(MovePosition position) {
         if (intermediateAttackPositions == null)
             intermediateAttackPositions = new ArrayList<>();
 

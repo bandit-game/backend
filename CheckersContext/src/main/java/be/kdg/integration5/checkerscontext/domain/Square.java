@@ -11,35 +11,23 @@ import lombok.ToString;
 @ToString
 public class Square {
     private Board board;
-    private int squareNumber;
-    private PlayedPosition playedPosition;
+    private int x;
+    private int y;
     private Piece placedPiece;
 
-    public Square(Board board, int squareNumber) {
+    public Square(Board board, int x, int y) {
         this.board = board;
-        this.squareNumber = squareNumber;
-    }
-
-    public Square(Board board, int squareNumber, PlayedPosition playedPosition) {
-        this.board = board;
-        this.squareNumber = squareNumber;
-        this.playedPosition = playedPosition;
+        this.x = x;
+        this.y = y;
     }
 
     public boolean isEmpty() {
         return placedPiece == null;
     }
 
-    public Piece getPiece() {
-        return placedPiece;
-    }
-
     public void setPlacedPiece(Piece piece) {
-        if (this.playedPosition == null)
-            throw new IllegalStateException("Played position is null [square number: %s]".formatted(squareNumber));
-
-        if ((this.playedPosition.x() + this.playedPosition.y()) % 2 != 1)
-            throw new IllegalArgumentException("Is not a playable square (x: %s, y: %s)".formatted(this.playedPosition.x(), this.playedPosition.y()));
+        if ((this.x + this.y) % 2 != 1)
+            throw new IllegalArgumentException("Is not a playable square (x: %s, y: %s)".formatted(this.x, this.y));
 
         if (!isEmpty())
             throw new IllegalStateException("Square is already occupied by another piece.");

@@ -1,14 +1,13 @@
 package be.kdg.integration5.checkerscontext.domain;
 
-import be.kdg.integration5.checkerscontext.domain.exception.PiecePlacedNotOnPlayableSquareException;
 import lombok.*;
 
 import java.util.*;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
+@ToString(exclude = {"square"})
 public class Piece {
     private int pieceNumber;
     private Square square;
@@ -21,98 +20,40 @@ public class Piece {
         this.color = color;
     }
 
-    /*public List<Move> getPossibleMoves() {
-        List<Move> moves = new ArrayList<>();
-
-        moves.addAll(findAllAttackMoves());
-        if (!moves.isEmpty())
-            return moves;
-
-        moves.addAll(findAllGoMoves());
-        return moves;
-    }
-
-    private List<Move> findAllAttackMovesForSquare(int x, int y) {
-        return findAllAttackMovesForSquare(x, y, null);
-    }
-
-    private List<Move> findAllAttackMovesForSquare(int x, int y, MoveDirection fromDirection) {
-        List<Move> attackMoves = new ArrayList<>();
-
-        List<MoveDirection> directions = new ArrayList<>();
-        for (MoveDirection direction : MoveDirection.values())
-            if (direction != fromDirection)
-                directions.add(direction);
-
-
-        for (MoveDirection direction : directions) {
-            List<Move> diagonalAttackMoves = findDiagonalAttackMoves(...);
-            for (Move attackMove : diagonalAttackMoves) {
-                int attackedX = attackMove.getFuturePosition().x();
-                int attackedY = attackMove.getFuturePosition().y();
-                List<Move> attackMovesForNextSquare = findAllAttackMovesForSquare(attackedX, attackedY, direction);
-                if (!attackMovesForNextSquare.isEmpty()) {
-                    for (Move nextAttackMove : attackMovesForNextSquare) {
-                        List<Move> movesToJoin = diagonalAttackMoves.stream().filter(diagonalAttackMove -> diagonalAttackMove.getFuturePosition().equals(nextAttackMove.getInitialPosition())).toList();
-                        for (Move moveToJoin : movesToJoin) {
-                            moveToJoin.join(nextAttackMove);
-                        }
-                    }
-                }
-            }
-
-
-            attackMoves.addAll(diagonalAttackMoves);
-        }
-
-        return ;
-    }
-
-    private List<Move> findDiagonalAttackMoves() {
-        return null;
-    }
-
-    private List<Move> findAllGoMoves() {
-        return null;
-    }*/
-
     public List<Move> getPossibleMoves() {
         List<Move> attackMoves = new ArrayList<>();
         List<Move> goMoves = new ArrayList<>();
 
         Square currentSquare = this.getSquare();
 
-        int currentX = currentSquare.getPlayedPosition().x();
-        int currentY = currentSquare.getPlayedPosition().y();
+        int currentX = currentSquare.getX();
+        int currentY = currentSquare.getY();
         Square[][] squares = currentSquare.getBoard().getSquares();
 
         for (MoveDirection direction : MoveDirection.values()) {
-            int newX = currentX + direction.xShift;
-            int newY = currentY + direction.yShift;
+            int targetX = currentX + direction.xShift;
+            int targetY = currentY + direction.yShift;
 
-            // Skip invalid forward moves for non-King pieces
             if (!isKing() && !isMovingForward(direction.yShift)) continue;
 
-            if (isOutOfBounds(newX, newY)) continue;
+            if (isOutOfBounds(targetX, targetY)) continue;
 
-            Square targetSquare = squares[newY][newX];
+            Square targetSquare = squares[targetY][targetX];
 
-            if (canAttack(newX, newY, direction.xShift, direction.yShift, squares)) {
-                attackMoves.add(createAttackMove(currentX, currentY, newX, newY, squares));
+            if (canAttack(targetX, targetY, direction.xShift, direction.yShift, squares)) {
+                attackMoves.add(createAttackMove(currentX, currentY, targetX, targetY, squares));
             } else if (targetSquare.isEmpty()) {
                 goMoves.add(new Move(
-                        currentSquare.getPlayedPosition(),
-                        targetSquare.getPlayedPosition(),
+                        new MovePosition(currentX, currentY),
+                        new MovePosition(targetX, targetY),
                         Move.MoveType.GO
                 ));
             }
         }
 
-        // Prioritize ATTACK moves
         return !attackMoves.isEmpty() ? attackMoves : goMoves;
     }
 
-    // Helper Method: Check if an attack is possible
     private boolean canAttack(int newX, int newY, int xShift, int yShift, Square[][] squares) {
         int landingX = newX + xShift;
         int landingY = newY + yShift;
@@ -127,7 +68,6 @@ public class Piece {
                 landingSquare.isEmpty();
     }
 
-    // Helper Method: Create an ATTACK move
     private Move createAttackMove(int currentX, int currentY, int enemyX, int enemyY, Square[][] squares) {
         int xShift = enemyX - currentX;
         int yShift = enemyY - currentY;
@@ -135,11 +75,9 @@ public class Piece {
         int landingX = enemyX + xShift;
         int landingY = enemyY + yShift;
 
-        Square landingSquare = squares[landingY][landingX];
-
         Move attackMove = new Move(
-                new PlayedPosition(currentX, currentY),
-                landingSquare.getPlayedPosition(),
+                new MovePosition(currentX, currentY),
+                new MovePosition(landingX, landingY),
                 Move.MoveType.ATTACK
         );
 //        attackMove.addIntermediateAttackPosition(enemySquare.getPlayedPosition());
@@ -156,21 +94,19 @@ public class Piece {
     }
 
     public void setSquare(Square square) {
-        if (!square.isEmpty()) {
-            throw new IllegalStateException("Cannot place a piece on an occupied square.");
-        }
+        if (!square.isEmpty())
+            throw new IllegalStateException("Cannot place a piece on an occupied square. (x: %s, y: %s)".formatted(square.getX(), square.getY()));
+
         this.square = square;
         square.setPlacedPiece(this);
     }
 
     public void moveToSquare(Square targetSquare) {
-        if (!targetSquare.isEmpty()) {
+        if (!targetSquare.isEmpty())
             throw new IllegalStateException("Target square is already occupied.");
-        }
-        // Remove from current square
+
         square.removePiece();
 
-        // Set to new square
         setSquare(targetSquare);
     }
 

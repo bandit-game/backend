@@ -2,7 +2,6 @@ package be.kdg.integration5.checkerscontext.adapter.out.square;
 
 import be.kdg.integration5.checkerscontext.adapter.out.BoardJpaEntity;
 import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntity;
-import be.kdg.integration5.checkerscontext.domain.PlayedPosition;
 import be.kdg.integration5.checkerscontext.domain.Square;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,12 +22,6 @@ public class SquareJpaEntity {
     @ManyToOne
     private BoardJpaEntity board;
 
-    @Column(nullable = false)
-    private int x;
-
-    @Column(nullable = false)
-    private int y;
-
     @OneToOne(optional = true)
     private PieceJpaEntity placedPiece;
 
@@ -36,11 +29,10 @@ public class SquareJpaEntity {
         return new SquareJpaEntity(
                 new SquareJpaEntityId(
                         square.getBoard().getGame().getPlayedMatchId().uuid(),
-                        square.getSquareNumber()
+                        square.getX(),
+                        square.getY()
                 ),
                 BoardJpaEntity.of(square.getBoard()),
-                square.getPlayedPosition().x(),
-                square.getPlayedPosition().y(),
                 PieceJpaEntity.of(square.getPlacedPiece())
         );
     }
@@ -48,8 +40,8 @@ public class SquareJpaEntity {
     public Square toDomain() {
         return new Square(
                 this.getBoard().toDomain(),
-                this.getSquareId().getSquareNumber(),
-                new PlayedPosition(this.getX(), this.getY()),
+                this.getSquareId().getX(),
+                this.getSquareId().getY(),
                 this.getPlacedPiece().toDomain()
         );
     }

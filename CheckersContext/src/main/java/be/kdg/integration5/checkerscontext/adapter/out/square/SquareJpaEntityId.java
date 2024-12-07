@@ -14,5 +14,6 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class SquareJpaEntityId implements Serializable {
     private UUID boardId;
-    private int squareNumber;
+    private int x;
+    private int y;
 }
