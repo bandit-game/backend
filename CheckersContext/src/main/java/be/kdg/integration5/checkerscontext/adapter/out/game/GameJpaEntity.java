@@ -23,7 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class GameJpaEntity {
     @Id
-    @Column(nullable = false, unique = true, updatable = false)
+    @Column(name = "game_id", nullable = false, unique = true, updatable = false)
     private UUID gameId;
 
     @Column(nullable = false)
@@ -34,7 +34,12 @@ public class GameJpaEntity {
     @PrimaryKeyJoinColumn
     private BoardJpaEntity board;
 
-    @OneToMany
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "games_players",
+            joinColumns = @JoinColumn(name = "game_id", referencedColumnName = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "player_id", referencedColumnName = "player_id")
+    )
     private List<PlayerJpaEntity> players;
 
     public static GameJpaEntity of(Game game) {

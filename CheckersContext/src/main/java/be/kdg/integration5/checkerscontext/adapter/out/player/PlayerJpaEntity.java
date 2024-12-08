@@ -21,7 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PlayerJpaEntity {
     @Id
-    @Column(nullable = false, unique = true, updatable = false)
+    @Column(name = "player_id", nullable = false, unique = true, updatable = false)
     private UUID playerId;
 
     @Column(nullable = false)

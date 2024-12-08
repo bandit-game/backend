@@ -6,8 +6,10 @@ import be.kdg.integration5.checkerscontext.port.in.GetStateOfGameUseCase;
 import be.kdg.integration5.checkerscontext.port.out.FindGamePort;
 import be.kdg.integration5.checkerscontext.port.out.NotifyPlayerPort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class GetStateOfGameUseCaseImpl implements GetStateOfGameUseCase {
 
     private final NotifyPlayerPort notifyPlayerPort;
