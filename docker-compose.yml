@@ -13,6 +13,20 @@
       volumes:
         - ./postgres/data:/var/lib/postgres
 
+    postgres_checkers_db:
+      image: 'postgres:16.1-alpine'
+      restart: always
+      environment:
+        - 'POSTGRES_DB=checkers'
+        - 'POSTGRES_USER=game_admin'
+        - 'POSTGRES_PASSWORD=game_admin_password'
+      ports:
+        - '5441:5432'
+      networks:
+        - backend
+      volumes:
+        - ./postgres/data:/var/lib/postgres
+
     app_rabbitmq:
       image: rabbitmq:3.13.7-management-alpine
       environment:
