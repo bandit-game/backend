@@ -1,6 +1,6 @@
 package be.kdg.integration5.checkerscontext.adapter.out.square;
 
-import be.kdg.integration5.checkerscontext.adapter.out.BoardJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.board.BoardJpaEntity;
 import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.Square;
 import jakarta.persistence.*;

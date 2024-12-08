@@ -1,11 +1,9 @@
-package be.kdg.integration5.checkerscontext.adapter.out;
+package be.kdg.integration5.checkerscontext.adapter.out.board;
 
 import be.kdg.integration5.checkerscontext.adapter.out.game.GameJpaEntity;
 import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.checkerscontext.adapter.out.square.SquareJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.Board;
-import be.kdg.integration5.checkerscontext.domain.Game;
-import be.kdg.integration5.checkerscontext.domain.GameId;
 import be.kdg.integration5.checkerscontext.domain.Square;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

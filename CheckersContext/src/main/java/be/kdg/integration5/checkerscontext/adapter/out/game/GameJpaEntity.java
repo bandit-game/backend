@@ -1,6 +1,6 @@
 package be.kdg.integration5.checkerscontext.adapter.out.game;
 
-import be.kdg.integration5.checkerscontext.adapter.out.BoardJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.board.BoardJpaEntity;
 import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.Game;
 import be.kdg.integration5.checkerscontext.domain.GameId;
