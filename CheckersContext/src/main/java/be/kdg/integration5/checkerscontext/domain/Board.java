@@ -20,9 +20,6 @@ public class Board {
     public Board(Game game, Player currentPlayer) {
         this.game = game;
         this.currentPlayer = currentPlayer;
-    }
-
-    {
         this.squares = new Square[BOARD_SIZE][BOARD_SIZE];
         generateBoard();
         placePieces();
