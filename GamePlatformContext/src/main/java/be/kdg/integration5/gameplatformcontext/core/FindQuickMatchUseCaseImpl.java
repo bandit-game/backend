@@ -1,17 +1,62 @@
 package be.kdg.integration5.gameplatformcontext.core;
 
-import be.kdg.integration5.gameplatformcontext.domain.Lobby;
+import be.kdg.integration5.gameplatformcontext.domain.*;
 import be.kdg.integration5.gameplatformcontext.port.in.FindQuickMatchCommand;
 import be.kdg.integration5.gameplatformcontext.port.in.FindQuickMatchUseCase;
+import be.kdg.integration5.gameplatformcontext.port.out.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.List;
+
 @Service
 public class FindQuickMatchUseCaseImpl implements FindQuickMatchUseCase {
-    @Override
-    @Transactional(readOnly = true)
-    public Lobby findQuickMatch(FindQuickMatchCommand findQuickMatchCommand) {
-        //TODO Implement
-        return null;
+    private final FindLobbyPort findLobbyPort;
+    private final PersistLobbyPort persistLobbyPort;
+    private final FindPlayerPort findPlayerPort;
+    private final NotifyLobbyUpdatePort notifyLobbyUpdatePort;
+    private final FindGamePort findGamePort;
+
+    @Autowired
+    public FindQuickMatchUseCaseImpl(FindLobbyPort findLobbyPort, PersistLobbyPort persistLobbyPort, FindPlayerPort findPlayerPort, NotifyLobbyUpdatePort notifyLobbyUpdatePort, FindGamePort findGamePort) {
+        this.findLobbyPort = findLobbyPort;
+        this.persistLobbyPort = persistLobbyPort;
+        this.findPlayerPort = findPlayerPort;
+        this.notifyLobbyUpdatePort = notifyLobbyUpdatePort;
+        this.findGamePort = findGamePort;
     }
+
+    @Override
+    @Transactional
+    public Lobby findQuickMatch(FindQuickMatchCommand findQuickMatchCommand) {
+        PlayerId playerId = findQuickMatchCommand.playerId();
+        Player player = findPlayerPort.findPlayerById(playerId);
+
+        GameId gameId = findQuickMatchCommand.gameId();
+        Game game = findGamePort.findGameById(gameId);
+        List<Lobby> lobbyList = findLobbyPort.findAllNotFilledNonPrivateLobbiesByGameId(gameId, false);
+
+        Lobby selectedLobby = findLobbyForPlayer(lobbyList, player, game);
+        selectedLobby.addPlayer(player);
+
+        Lobby savedLobby = persistLobbyPort.save(selectedLobby);
+
+        notifyLobbyUpdatePort.notifyAllPlayersInLobby(savedLobby);
+
+        return savedLobby;
+    }
+
+    private Lobby findLobbyForPlayer(Collection<Lobby> lobbies, Player player, Game game) {
+        Lobby selectedLobby;
+
+        if (lobbies.isEmpty())
+            selectedLobby = player.createNewPublicLobbyForGame(game);
+        else
+            selectedLobby = player.findBestLobbyMatch(lobbies);
+
+        return selectedLobby;
+    }
+
 }

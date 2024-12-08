@@ -1,5 +1,6 @@
-package be.kdg.integration5.gameplatformcontext.adapter.out;
+package be.kdg.integration5.gameplatformcontext.adapter.out.achievement;
 
+import be.kdg.integration5.gameplatformcontext.adapter.out.game.GameJpaEntity;
 import be.kdg.integration5.gameplatformcontext.domain.Achievement;
 import be.kdg.integration5.gameplatformcontext.domain.AchievementId;
 import be.kdg.integration5.gameplatformcontext.domain.Image;
