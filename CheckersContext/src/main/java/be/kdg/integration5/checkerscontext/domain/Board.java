@@ -29,7 +29,9 @@ public class Board {
         int pieceCounter = 0;
         for (int y = 0; y < BOARD_SIZE; y++) {
             for (int x = 0; x < BOARD_SIZE; x++) {
+                // Identify the correct position to place a piece
                 if ((y + x) % 2 == 1) {
+                    // Identify the color of piece and place it on respected square
                     if (y * 10 + x < PIECES_PER_PLAYER * 2)
                         //TODO Might need to assign it later (it works)
                         new Piece(++pieceCounter, squares[y][x], Piece.PieceColor.BLACK);
