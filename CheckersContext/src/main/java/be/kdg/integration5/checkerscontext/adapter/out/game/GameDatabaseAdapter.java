@@ -1,6 +1,7 @@
 package be.kdg.integration5.checkerscontext.adapter.out.game;
 
 import be.kdg.integration5.checkerscontext.adapter.out.board.BoardJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.exception.BoardNotFoundException;
 import be.kdg.integration5.checkerscontext.adapter.out.exception.GameNotFoundException;
 import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaRepository;
@@ -8,10 +9,13 @@ import be.kdg.integration5.checkerscontext.domain.Board;
 import be.kdg.integration5.checkerscontext.domain.Game;
 import be.kdg.integration5.checkerscontext.domain.GameId;
 import be.kdg.integration5.checkerscontext.adapter.out.board.BoardJpaRepository;
+import be.kdg.integration5.checkerscontext.domain.PlayerId;
 import be.kdg.integration5.checkerscontext.port.out.DeleteGamePort;
 import be.kdg.integration5.checkerscontext.port.out.FindGamePort;
 import be.kdg.integration5.checkerscontext.port.out.PersistGamePort;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 public class GameDatabaseAdapter implements PersistGamePort, DeleteGamePort, FindGamePort {
@@ -43,8 +47,22 @@ public class GameDatabaseAdapter implements PersistGamePort, DeleteGamePort, Fin
                 .orElseThrow(() -> new GameNotFoundException("Game with Id [%s] not found.".formatted(gameId.uuid())));
         Board board = foundGame.getBoard().toDomain();
         Game game = foundGame.toDomain();
-
         game.setBoard(board);
         return game;
     }
+
+    @Override
+    public Game findGameByPlayerAndGameEndNull(PlayerId playerId) {
+        GameJpaEntity foundGame = gameJpaRepository.findByPlayerIdAndEndDateNullFetched(playerId.uuid())
+                .orElseThrow(() -> new GameNotFoundException("Game for player [%s] not found.]".formatted(playerId.uuid())));
+
+        BoardJpaEntity foundBoard = boardJpaRepository.findByGameIdFetched(foundGame.getGameId())
+                .orElseThrow(() -> new BoardNotFoundException("Board for game [%s] not found".formatted(foundGame.getGameId())));
+
+        Game game = foundGame.toDomain();
+        game.setBoard(foundBoard.toDomain());
+        return game;
+    }
+
+
 }
