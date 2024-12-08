@@ -66,7 +66,7 @@ public class FindAllPossibleMovesUseCaseIntegrationTest {
         });
 
         // Send a request to the "get-moves" mapping
-        GetMovesRequestDTO requestDTO = new GetMovesRequestDTO(gameId, 3, 5);
+        GetMovesRequestDTO requestDTO = new GetMovesRequestDTO(gameId, 6, 3);
         stompSession.send(SEND_DESTINATION, requestDTO);
 
         // Wait and verify the response
