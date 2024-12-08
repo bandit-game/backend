@@ -8,7 +8,7 @@ INSERT INTO games (game_id, started_time, finished_time)
 VALUES ('33333333-3333-3333-3333-333333333333', '2024-12-01 10:00:00', NULL);
 
 -- Sample data for games_players table
-INSERT INTO games_players (game_jpa_entity_game_id, players_player_id)
+INSERT INTO games_players (game_id,player_id)
 VALUES ('33333333-3333-3333-3333-333333333333', '11111111-1111-1111-1111-111111111111'),
        ('33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222');
 
