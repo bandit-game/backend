@@ -44,7 +44,10 @@ public class FindAllPossibleMovesUseCaseIntegrationTest {
     }
 
     @Test
-    public void testFindAllPossibleMovesUseCase() throws Exception {
+    void testPieceMustHaveNoMovesAvailable() throws Exception {
+        int x = 1;
+        int y = 0;
+
         // Connect to WebSocket
         StompSession stompSession = stompClient
                 .connect(WS_URI, new StompSessionHandlerAdapter() {})
@@ -66,13 +69,49 @@ public class FindAllPossibleMovesUseCaseIntegrationTest {
         });
 
         // Send a request to the "get-moves" mapping
-        GetMovesRequestDTO requestDTO = new GetMovesRequestDTO(gameId, 6, 3);
+        GetMovesRequestDTO requestDTO = new GetMovesRequestDTO(gameId, x, y);
         stompSession.send(SEND_DESTINATION, requestDTO);
 
         // Wait and verify the response
         PossibleMovesForPlayerDTO response = receivedMessages.poll(5, TimeUnit.SECONDS);
         assertThat(response).isNotNull();
         assertThat(response.playerId()).isEqualTo(playerId);
-        assertThat(response.moves().size()).isNotEqualTo(0);
+        assertThat(response.moves().size()).isEqualTo(0);
+    }
+
+    @Test
+    void testPieceShouldHaveMovesAvailable() throws Exception {
+        int x = 1;
+        int y = 6;
+
+        // Connect to WebSocket
+        StompSession stompSession = stompClient
+                .connect(WS_URI, new StompSessionHandlerAdapter() {})
+                .get(1, TimeUnit.SECONDS);
+
+        UUID gameId = UUID.fromString("33333333-3333-3333-3333-333333333333");
+        UUID playerId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        // Subscribe to the player's queue
+        stompSession.subscribe(SUBSCRIBE_DESTINATION + playerId, new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return PossibleMovesForPlayerDTO.class;
+            }
+
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                receivedMessages.add((PossibleMovesForPlayerDTO) payload);
+            }
+        });
+
+        // Send a request to the "get-moves" mapping
+        GetMovesRequestDTO requestDTO = new GetMovesRequestDTO(gameId, x, y);
+        stompSession.send(SEND_DESTINATION, requestDTO);
+
+        // Wait and verify the response
+        PossibleMovesForPlayerDTO response = receivedMessages.poll(5, TimeUnit.SECONDS);
+        assertThat(response).isNotNull();
+        assertThat(response.playerId()).isEqualTo(playerId);
+        assertThat(response.moves().size()).isEqualTo(2);
     }
 }
