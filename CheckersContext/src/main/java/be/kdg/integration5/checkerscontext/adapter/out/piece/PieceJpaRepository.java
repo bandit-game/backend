@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface PieceJpaRepository extends JpaRepository<PieceJpaEntity, PieceJpaEntityId> {
 
-    @Query("select p from PieceJpaEntity p join fetch p.")
-    Optional<PieceJpaEntity> findByIdWithRelatedEntitiesFetched(PieceJpaEntityId id);
+//    @Query("select p from PieceJpaEntity p join fetch p.")
+//    Optional<PieceJpaEntity> findByIdWithRelatedEntitiesFetched(PieceJpaEntityId id);
 }

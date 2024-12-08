@@ -19,20 +19,25 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Table(name = "boards")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardJpaEntity {
     @Id
+    @Column(name = "game_id")
+    private UUID gameId;
+
     @OneToOne
+    @MapsId
     @JoinColumn(name = "game_id")
     private GameJpaEntity game;
 
     @ManyToOne
     private PlayerJpaEntity currentPlayer;
 
-    @OneToMany
+    @OneToMany(mappedBy = "board")
     private List<SquareJpaEntity> squares;
 
     public static BoardJpaEntity of(Board board) {
@@ -45,6 +50,7 @@ public class BoardJpaEntity {
         );
 
         return new BoardJpaEntity(
+                board.getGame().getPlayedMatchId().uuid(),
                 GameJpaEntity.of(board.getGame()),
                 PlayerJpaEntity.of(board.getCurrentPlayer()),
                 squareJpaEntities
@@ -54,13 +60,13 @@ public class BoardJpaEntity {
     public Board toDomain() {
         Square[][] squaresArray = new Square[Board.BOARD_SIZE][Board.BOARD_SIZE];
 
-        for (int i = 0; i < Board.BOARD_SIZE; i++)
-            for (int j = 0; j < Board.BOARD_SIZE; j++)
-                squaresArray[i][j] = this.squares.get(i * 10 + j).toDomain();
+//        for (int i = 0; i < Board.BOARD_SIZE; i++)
+//            for (int j = 0; j < Board.BOARD_SIZE; j++)
+//                squaresArray[i][j] = this.squares.get(i * 10 + j).toDomain();
 
         return new Board(
                 game.toDomain(),
-                squaresArray,
+//                squaresArray,
                 this.currentPlayer.toDomain()
         );
     }

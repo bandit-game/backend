@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "pieces")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,7 +25,7 @@ public class PieceJpaEntity {
     @Column(nullable = false)
     private Piece.PieceColor pieceColor;
 
-    @OneToOne
+    @OneToOne(mappedBy = "placedPiece")
     private SquareJpaEntity square;
 
     public static PieceJpaEntity of(Piece piece) {
@@ -42,7 +43,7 @@ public class PieceJpaEntity {
     public Piece toDomain() {
         return new Piece(
                 this.pieceId.getPieceNumber(),
-                this.square.toDomain(),
+//                this.square.toDomain(),
                 this.isKing,
                 this.pieceColor
         );

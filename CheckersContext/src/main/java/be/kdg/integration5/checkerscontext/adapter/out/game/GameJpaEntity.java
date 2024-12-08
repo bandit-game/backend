@@ -26,10 +26,12 @@ public class GameJpaEntity {
     @Column(nullable = false, unique = true, updatable = false)
     private UUID gameId;
 
+    @Column(nullable = false)
     private LocalDateTime startedTime;
     private LocalDateTime finishedTime;
 
-    @OneToOne
+    @OneToOne(mappedBy = "game")
+    @PrimaryKeyJoinColumn
     private BoardJpaEntity board;
 
     @OneToMany
@@ -50,7 +52,7 @@ public class GameJpaEntity {
                 new GameId(this.gameId),
                 this.startedTime,
                 this.finishedTime,
-                this.board.toDomain(),
+//                this.board.toDomain(),
                 new ArrayList<>(this.players.stream().map(PlayerJpaEntity::toDomain).toList())
         );
     }

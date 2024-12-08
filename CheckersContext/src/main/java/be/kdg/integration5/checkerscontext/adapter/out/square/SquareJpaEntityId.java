@@ -12,6 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class SquareJpaEntityId implements Serializable {
     private UUID boardId;
     private int x;

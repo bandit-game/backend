@@ -5,7 +5,10 @@ import be.kdg.integration5.checkerscontext.domain.Piece;
 import be.kdg.integration5.checkerscontext.port.out.FindPiecePort;
 import org.springframework.stereotype.Component;
 
-@Component
+
+// TODO
+//  Might need it later
+//@Component
 public class PieceDatabaseAdapter implements FindPiecePort {
     private final PieceJpaRepository pieceJpaRepository;
 
@@ -14,7 +17,7 @@ public class PieceDatabaseAdapter implements FindPiecePort {
     }
 
     @Override
-    public Piece findPieceByGameIdAndPlayedSquareNumber(GameId gameId, int playedSquareNumber) {
+    public Piece findPieceByGameIdAndPlayedSquareNumber(GameId gameId, int x, int y) {
         return null;
     }
 }

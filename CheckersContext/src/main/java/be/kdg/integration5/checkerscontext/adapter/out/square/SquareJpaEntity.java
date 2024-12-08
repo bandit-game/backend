@@ -41,8 +41,8 @@ public class SquareJpaEntity {
         return new Square(
                 this.getBoard().toDomain(),
                 this.getSquareId().getX(),
-                this.getSquareId().getY(),
-                this.getPlacedPiece().toDomain()
+                this.getSquareId().getY()
+//                this.getPlacedPiece().toDomain()
         );
     }
 }

@@ -23,6 +23,13 @@ public class Game {
         this.players = players;
     }
 
+    public Game(GameId playedMatchId, LocalDateTime startedTime, LocalDateTime finishedTime, List<Player> players) {
+        this.playedMatchId = playedMatchId;
+        this.startedTime = startedTime;
+        this.finishedTime = finishedTime;
+        this.players = players;
+    }
+
     public void start() {
         this.startedTime = LocalDateTime.now();
         this.board = new Board(this, getFirstPlayer());

@@ -20,6 +20,12 @@ public class Piece {
         this.color = color;
     }
 
+    public Piece(int pieceNumber, boolean isKing, PieceColor color) {
+        this.pieceNumber = pieceNumber;
+        this.isKing = isKing;
+        this.color = color;
+    }
+
     public List<Move> getPossibleMoves() {
         List<Move> attackMoves = new ArrayList<>();
         List<Move> goMoves = new ArrayList<>();

@@ -23,8 +23,8 @@ public class MovesController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MoveGetDto>> getAllPossibleMoves(@PathVariable("gameId") UUID gameId, @RequestParam Integer position) {
-        List<Move> allPossibleMoves = findAllPossibleMovesUseCase.findAllPossibleMoves(new FindAllPossibleMovesCommand(new GameId(gameId), position));
+    public ResponseEntity<List<MoveGetDto>> getAllPossibleMoves(@PathVariable("gameId") UUID gameId, @RequestParam Integer x, @RequestParam Integer y) {
+        List<Move> allPossibleMoves = findAllPossibleMovesUseCase.findAllPossibleMoves(new FindAllPossibleMovesCommand(new GameId(gameId), x, y));
         if (allPossibleMoves.isEmpty())
             return ResponseEntity.noContent().build();
 
