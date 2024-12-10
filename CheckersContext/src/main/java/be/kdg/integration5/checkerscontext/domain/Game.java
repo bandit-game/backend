@@ -1,5 +1,6 @@
 package be.kdg.integration5.checkerscontext.domain;
 
+import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -9,35 +10,40 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-//@ToString
+@ToString
 public class Game {
     private GameId playedMatchId;
-    private LocalDateTime startedTime;
-    private LocalDateTime finishedTime;
+    private boolean isFinished;
 
     private Board board;
     private List<Player> players;
+    private Player currentPlayer;
 
     public Game(GameId playedMatchId, List<Player> players) {
         this.playedMatchId = playedMatchId;
         this.players = players;
     }
 
-    public Game(GameId playedMatchId, LocalDateTime startedTime, LocalDateTime finishedTime, List<Player> players) {
+    public Game(GameId playedMatchId, Board board, List<Player> players) {
         this.playedMatchId = playedMatchId;
-        this.startedTime = startedTime;
-        this.finishedTime = finishedTime;
+        this.board = board;
         this.players = players;
     }
 
+    {
+        this.currentPlayer = getFirstPlayer();
+    }
+
     public void start() {
-        this.startedTime = LocalDateTime.now();
-        this.board = new Board(this, getFirstPlayer());
+        this.board = new Board();
+        board.setUpNewBoard(getFirstPlayer(), getSecondPlayer());
     }
 
     private Player getFirstPlayer() {
-        return players.stream().filter(Player::isFirst).findFirst().orElseThrow(
-                () -> new IllegalStateException("Player not found")
-        );
+        return players.getFirst();
+    }
+
+    private Player getSecondPlayer() {
+        return players.getLast();
     }
 }

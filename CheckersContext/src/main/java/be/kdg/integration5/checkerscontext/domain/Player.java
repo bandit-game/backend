@@ -10,10 +10,8 @@ import lombok.Setter;
 public class Player {
     private PlayerId playerId;
     private String name;
-    private boolean isFirst;
 
-    public Player(String name, boolean isFirst) {
+    public Player(String name) {
         this.name = name;
-        this.isFirst = isFirst;
     }
 }

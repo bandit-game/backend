@@ -27,22 +27,17 @@ public class PlayerJpaEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private boolean isFirst;
-
     public static PlayerJpaEntity of(Player player) {
         return new PlayerJpaEntity(
                 player.getPlayerId().uuid(),
-                player.getName(),
-                player.isFirst()
+                player.getName()
         );
     }
 
     public Player toDomain() {
         return new Player(
                 new PlayerId(playerId),
-                this.name,
-                this.isFirst
+                this.name
         );
     }
 }

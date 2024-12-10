@@ -28,7 +28,7 @@ public class CreateGameUseCaseImpl implements CreateGameUseCase {
     @Override
     public void initiate(CreateGameCommand command) {
         List<Player> players = command.playersJoined().stream().map(
-                pj -> new Player(new PlayerId(pj.playerId()), pj.playerName(), pj.isFirst())
+                pj -> new Player(new PlayerId(pj.playerId()), pj.playerName())
         ).toList();
         players = persistPlayerPort.saveAll(players);
         Game game = new Game(new GameId(command.lobbyId()), players);
