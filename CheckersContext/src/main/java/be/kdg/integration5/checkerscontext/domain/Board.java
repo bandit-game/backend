@@ -1,5 +1,6 @@
 package be.kdg.integration5.checkerscontext.domain;
 
+import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.exception.DirectionSearchException;
 import lombok.Getter;
 import lombok.Setter;
@@ -138,27 +139,42 @@ public class Board {
     }
 
     public void movePiece(PlayerId moverId, int currentX, int currentY, int targetX, int targetY) {
-        if (isOutOfBounds(targetX, targetY) || isOutOfBounds(currentX, currentY)) return;
-
-        Piece piece = squares[currentY][currentX].getPlacedPiece();
-        if (piece == null) return;
-
-        PlayerId ownerId = piece.getOwner().getPlayerId();
-        if (!moverId.equals(ownerId))
-            return;
-
-        Square targetSquare = squares[targetY][targetX];
-        if (!targetSquare.isEmpty()) return;
-
-        int distance = calculateDistance(currentX, currentY, targetX, targetY);
-        if (distance != 1 && !piece.isKing()) return;
-
 
     }
 
+    private boolean validateMove(PlayerId moverId, int currentX, int currentY, int targetX, int targetY) {
+        if (currentX == targetX && currentY == targetY) return false;
+        if (isOutOfBounds(targetX, targetY) || isOutOfBounds(currentX, currentY)) return false;
+
+        Piece piece = squares[currentY][currentX].getPlacedPiece();
+        if (piece == null) return false;
+
+        PlayerId ownerId = piece.getOwner().getPlayerId();
+        if (!moverId.equals(ownerId))
+            return false;
+
+        Square targetSquare = squares[targetY][targetX];
+        if (!targetSquare.isEmpty()) return false;
+
+        int distance = calculateDistance(currentX, currentY, targetX, targetY);
+        if (distance != 1 && !piece.isKing()) return false;
+
+        if (calculateLongestDiagonalPiecesSequenceInBetween(currentX, currentY, targetX, targetY) > 1) return false;
+
+        return true;
+    }
+
     private int calculateLongestDiagonalPiecesSequenceInBetween(int currentX, int currentY, int targetX, int targetY) {
-        //TODO
-        return 0;
+        MoveDirection direction = findMoveDirection(currentX, currentY, targetX, targetY);
+        int piecesSequenceCounter = 0;
+        for (int x = currentX, y = currentY; x != targetX && y != targetY; x += direction.xShift, y += direction.yShift) {
+            Square targetSquare = squares[y][x];
+            if (!targetSquare.isEmpty())
+                piecesSequenceCounter++;
+            else
+                piecesSequenceCounter = 0;
+        }
+        return piecesSequenceCounter;
     }
 
     private MoveDirection findMoveDirection(int currentX, int currentY, int targetX, int targetY) {
