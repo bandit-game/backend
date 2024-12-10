@@ -139,7 +139,8 @@ public class Board {
     }
 
     public void movePiece(PlayerId moverId, int currentX, int currentY, int targetX, int targetY) {
-
+        if (validateMove(moverId, currentX, currentY, targetX, targetY))
+            return;
     }
 
     private boolean validateMove(PlayerId moverId, int currentX, int currentY, int targetX, int targetY) {
