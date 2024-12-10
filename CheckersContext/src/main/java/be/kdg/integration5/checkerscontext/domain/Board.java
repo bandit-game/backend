@@ -1,5 +1,6 @@
 package be.kdg.integration5.checkerscontext.domain;
 
+import be.kdg.integration5.checkerscontext.domain.exception.DirectionSearchException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -79,8 +80,8 @@ public class Board {
 
             Square targetSquare = squares[targetY][targetX];
 
-            if (canAttack(targetX, targetY, direction.xShift, direction.yShift, pieceColor, squares)) {
-                attackMoves.add(createAttackMove(currentX, currentY, targetX, targetY, squares));
+            if (canAttack(targetX, targetY, direction, pieceColor)) {
+                attackMoves.add(createAttackMove(currentX, currentY, targetX, targetY));
             } else if (targetSquare.isEmpty()) {
                 goMoves.add(new Move(
                         new MovePosition(currentX, currentY),
@@ -93,9 +94,9 @@ public class Board {
         return !attackMoves.isEmpty() ? attackMoves : goMoves;
     }
 
-    private boolean canAttack(int newX, int newY, int xShift, int yShift, Piece.PieceColor pieceColor, Square[][] squares) {
-        int landingX = newX + xShift;
-        int landingY = newY + yShift;
+    private boolean canAttack(int newX, int newY, MoveDirection direction, Piece.PieceColor pieceColor) {
+        int landingX = newX + direction.xShift;
+        int landingY = newY + direction.yShift;
 
         if (isOutOfBounds(landingX, landingY)) return false;
 
@@ -107,7 +108,7 @@ public class Board {
                 landingSquare.isEmpty();
     }
 
-    private Move createAttackMove(int currentX, int currentY, int enemyX, int enemyY, Square[][] squares) {
+    private Move createAttackMove(int currentX, int currentY, int enemyX, int enemyY) {
         int xShift = enemyX - currentX;
         int yShift = enemyY - currentY;
 
@@ -132,15 +133,57 @@ public class Board {
         return x < 0 || x >= Board.BOARD_SIZE || y < 0 || y >= Board.BOARD_SIZE;
     }
 
+    private int calculateDistance(int x, int y, int targetX, int targetY) {
+        return Math.max(Math.abs(targetX - x), Math.abs(targetY - y));
+    }
+
+    public void movePiece(PlayerId moverId, int currentX, int currentY, int targetX, int targetY) {
+        if (isOutOfBounds(targetX, targetY) || isOutOfBounds(currentX, currentY)) return;
+
+        Piece piece = squares[currentY][currentX].getPlacedPiece();
+        if (piece == null) return;
+
+        PlayerId ownerId = piece.getOwner().getPlayerId();
+        if (!moverId.equals(ownerId))
+            return;
+
+        Square targetSquare = squares[targetY][targetX];
+        if (!targetSquare.isEmpty()) return;
+
+        int distance = calculateDistance(currentX, currentY, targetX, targetY);
+        if (distance != 1 && !piece.isKing()) return;
+
+
+    }
+
+    private int calculateLongestDiagonalPiecesSequenceInBetween(int currentX, int currentY, int targetX, int targetY) {
+        //TODO
+        return 0;
+    }
+
+    private MoveDirection findMoveDirection(int currentX, int currentY, int targetX, int targetY) {
+        int deltaX = targetX - currentX;
+        int deltaY = targetY - currentY;
+
+        if (deltaY != deltaX)
+            throw new IllegalArgumentException("deltaY does not match deltaX, move is not diagonal.");
+
+        for (MoveDirection direction : MoveDirection.values())
+            if (deltaX * direction.xShift > 0 && deltaY * direction.yShift > 0)
+                return direction;
+
+        throw new DirectionSearchException("Couldn't find corresponding move direction.");
+    }
+
 
     private enum MoveDirection {
         UP_RIGHT(1, -1),
         UP_LEFT(-1, -1),
         DOWN_RIGHT(1, 1),
-        DOWN_LEFT(-1, 1),;
+        DOWN_LEFT(-1, 1);
 
-        int xShift;
-        int yShift;
+        final int xShift;
+        final int yShift;
 
         MoveDirection(int xShift, int yShift) {
             this.xShift = xShift;
