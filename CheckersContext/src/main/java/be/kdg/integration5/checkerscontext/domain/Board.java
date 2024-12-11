@@ -1,6 +1,5 @@
 package be.kdg.integration5.checkerscontext.domain;
 
-import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.exception.DirectionSearchException;
 import be.kdg.integration5.checkerscontext.domain.exception.MoveNotValidException;
 import lombok.Getter;
@@ -29,7 +28,7 @@ public class Board {
     public void setUpNewBoard(Player firstPlayer, Player secondPlayer) {
         setCurrentPlayer(firstPlayer);
         createPieces(firstPlayer, secondPlayer);
-        updatePieces();
+        placePieces();
     }
 
     private void createPieces(Player firstPlayer, Player secondPlayer) {
@@ -47,10 +46,21 @@ public class Board {
 
     public void setPieces(List<Piece> pieces) {
         this.pieces = pieces;
-        updatePieces();
+        updateBoard();
     }
 
-    private void updatePieces() {
+    private void updateBoard() {
+        removeAllPieces();
+        placePieces();
+    }
+
+    private void removeAllPieces() {
+        for (Square[] row : squares)
+            for (Square square : row)
+                square.removePiece();
+    }
+
+    private void placePieces() {
         for (Piece piece : pieces) {
             int x = piece.getCurrentX();
             int y = piece.getCurrentY();
@@ -86,8 +96,8 @@ public class Board {
                 attackMoves.add(createAttackMove(currentX, currentY, targetX, targetY));
             } else if (targetSquare.isEmpty()) {
                 goMoves.add(new Move(
-                        new MovePosition(currentX, currentY),
-                        new MovePosition(targetX, targetY),
+                        new PiecePosition(currentX, currentY),
+                        new PiecePosition(targetX, targetY),
                         Move.MoveType.GO
                 ));
             }
@@ -118,8 +128,8 @@ public class Board {
         int landingY = enemyY + yShift;
 
         Move attackMove = new Move(
-                new MovePosition(currentX, currentY),
-                new MovePosition(landingX, landingY),
+                new PiecePosition(currentX, currentY),
+                new PiecePosition(landingX, landingY),
                 Move.MoveType.ATTACK
         );
 //        attackMove.addIntermediateAttackPosition(enemySquare.getPlayedPosition());
@@ -139,17 +149,52 @@ public class Board {
         return Math.max(Math.abs(targetX - x), Math.abs(targetY - y));
     }
 
-    public void movePiece(PlayerId moverId, int currentX, int currentY, int targetX, int targetY) {
-        if (validateMove(moverId, currentX, currentY, targetX, targetY))
-            changePieceLocation(currentX, currentY, targetX, targetY);
-        throw new MoveNotValidException("Move is not valid.");
+    public void movePiece(PlayerId moverId, Move move) {
+
+        if (!validateMove(moverId, move))
+            throw new MoveNotValidException("Move is not valid.", moverId);
+
+        changePieceLocation(move);
+        if (move.getType() == Move.MoveType.ATTACK)
+            removeCapturedPieces(move);
+        updateBoard();
     }
 
-    private void changePieceLocation(int oldX, int oldY, int newX, int newY) {
 
+    private void changePieceLocation(Move move) {
+        PiecePosition oldPosition = move.getInitialPosition();
+        PiecePosition newPosition = move.getFuturePosition();
+        Square oldSquare = squares[oldPosition.y()][oldPosition.x()];
+        Square newSquare = squares[newPosition.y()][newPosition.x()];
+
+        newSquare.setPlacedPiece(oldSquare.getPlacedPiece());
+        oldSquare.removePiece();
     }
 
-    private boolean validateMove(PlayerId moverId, int currentX, int currentY, int targetX, int targetY) {
+    private void removeCapturedPieces(Move move) {
+        PiecePosition previousPosition = move.getInitialPosition();
+        for (PiecePosition intermediateAttackPosition : move.getAllAttackSteps()) {
+            removeAllPiecesInBetween(previousPosition, intermediateAttackPosition);
+            previousPosition = intermediateAttackPosition;
+        }
+    }
+
+    private void removeAllPiecesInBetween(PiecePosition startPosition, PiecePosition endPosition) {
+        MoveDirection direction = findMoveDirection(startPosition, endPosition);
+        for (int x = startPosition.x(), y = startPosition.y(); x != endPosition.x() && y != endPosition.y(); x += direction.xShift, y += direction.yShift) {
+            Square targetSquare = squares[y][x];
+            if (!targetSquare.isEmpty())
+                targetSquare.removePiece();
+        }
+    }
+
+    private boolean validateMove(PlayerId moverId, Move move) {
+        int currentX = move.getInitialPosition().x();
+        int currentY = move.getInitialPosition().y();
+        int targetX = move.getFuturePosition().x();
+        int targetY = move.getFuturePosition().y();
+
+
         if (currentX == targetX && currentY == targetY) return false;
         if (isOutOfBounds(targetX, targetY) || isOutOfBounds(currentX, currentY)) return false;
 
@@ -163,16 +208,32 @@ public class Board {
         Square targetSquare = squares[targetY][targetX];
         if (!targetSquare.isEmpty()) return false;
 
-        int distance = calculateDistance(currentX, currentY, targetX, targetY);
-        if (distance != 1 && !piece.isKing()) return false;
+        Move.MoveType moveType = move.getType();
+        if (moveType == Move.MoveType.GO) {
+            int distance = calculateDistance(currentX, currentY, targetX, targetY);
+            if (distance != 1 && !piece.isKing()) return false;
+            return calculateLongestDiagonalPiecesSequenceInBetween(move.getInitialPosition(), move.getFuturePosition()) == 0;
+        } else if (moveType == Move.MoveType.ATTACK) {
+            List<PiecePosition> attackPositions = move.getAllAttackSteps();
+            PiecePosition previousPosition = move.getInitialPosition();
+            for (PiecePosition intermediateAttackPosition : attackPositions) {
+                int distance = calculateDistance(previousPosition.x(), previousPosition.y(), intermediateAttackPosition.x(), intermediateAttackPosition.y());
+                if (distance != 1 && !piece.isKing())
+                    return false;
+                if (calculateLongestDiagonalPiecesSequenceInBetween(previousPosition, intermediateAttackPosition) > 1)
+                    return false;
+                previousPosition = intermediateAttackPosition;
+            }
+            return true;
+        }
 
-        return calculateLongestDiagonalPiecesSequenceInBetween(currentX, currentY, targetX, targetY) <= 1;
+        return false;
     }
 
-    private int calculateLongestDiagonalPiecesSequenceInBetween(int currentX, int currentY, int targetX, int targetY) {
-        MoveDirection direction = findMoveDirection(currentX, currentY, targetX, targetY);
+    private int calculateLongestDiagonalPiecesSequenceInBetween(PiecePosition startPosition, PiecePosition endPosition) {
+        MoveDirection direction = findMoveDirection(startPosition, endPosition);
         int piecesSequenceCounter = 0;
-        for (int x = currentX, y = currentY; x != targetX && y != targetY; x += direction.xShift, y += direction.yShift) {
+        for (int x = startPosition.x(), y = startPosition.y(); x != endPosition.x() && y != endPosition.y(); x += direction.xShift, y += direction.yShift) {
             Square targetSquare = squares[y][x];
             if (!targetSquare.isEmpty())
                 piecesSequenceCounter++;
@@ -182,9 +243,9 @@ public class Board {
         return piecesSequenceCounter;
     }
 
-    private MoveDirection findMoveDirection(int currentX, int currentY, int targetX, int targetY) {
-        int deltaX = targetX - currentX;
-        int deltaY = targetY - currentY;
+    private MoveDirection findMoveDirection(PiecePosition currentPosition, PiecePosition targetPosition) {
+        int deltaX = targetPosition.x() - currentPosition.x();
+        int deltaY = targetPosition.y() - currentPosition.y();
 
         if (deltaY != deltaX)
             throw new IllegalArgumentException("deltaY does not match deltaX, move is not diagonal.");

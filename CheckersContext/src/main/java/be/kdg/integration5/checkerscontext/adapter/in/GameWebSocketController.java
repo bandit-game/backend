@@ -6,19 +6,24 @@ import be.kdg.integration5.checkerscontext.adapter.in.dto.GetMovesRequestDto;
 import be.kdg.integration5.checkerscontext.adapter.in.dto.PieceMovementRequestDto;
 import be.kdg.integration5.checkerscontext.domain.GameId;
 import be.kdg.integration5.checkerscontext.domain.PlayerId;
+import be.kdg.integration5.checkerscontext.domain.exception.MoveNotValidException;
 import be.kdg.integration5.checkerscontext.port.in.*;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
 public class GameWebSocketController {
+    private final SimpMessagingTemplate messagingTemplate;
 
     private final FindAllPossibleMovesUseCase findAllPossibleMovesUseCase;
     private final GetGameStateUseCase getGameStateUseCase;
     private final MovePieceUseCase movePieceUseCase;
 
-    public GameWebSocketController(FindAllPossibleMovesUseCase findAllPossibleMovesUseCase, GetGameStateUseCase getGameStateUseCase, MovePieceUseCase movePieceUseCase) {
+    public GameWebSocketController(SimpMessagingTemplate messagingTemplate, FindAllPossibleMovesUseCase findAllPossibleMovesUseCase, GetGameStateUseCase getGameStateUseCase, MovePieceUseCase movePieceUseCase) {
+        this.messagingTemplate = messagingTemplate;
         this.findAllPossibleMovesUseCase = findAllPossibleMovesUseCase;
         this.getGameStateUseCase = getGameStateUseCase;
         this.movePieceUseCase = movePieceUseCase;
@@ -56,5 +61,13 @@ public class GameWebSocketController {
                 pieceMovementRequestDto.targetY()
         );
         movePieceUseCase.movePiece(movePieceCommand);
+    }
+
+    @MessageExceptionHandler
+    public void handleMoveNotValidException(MoveNotValidException moveNotValidException) {
+        messagingTemplate.convertAndSend(
+                "/queue/user/" + moveNotValidException.getPlayerId().uuid().toString(),
+                moveNotValidException.getMessage()
+        );
     }
 }
