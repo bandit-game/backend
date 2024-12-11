@@ -5,6 +5,7 @@ import be.kdg.integration5.checkerscontext.adapter.in.dto.GetGameStateRequestDto
 import be.kdg.integration5.checkerscontext.adapter.in.dto.GetMovesRequestDto;
 import be.kdg.integration5.checkerscontext.adapter.in.dto.PieceMovementRequestDto;
 import be.kdg.integration5.checkerscontext.domain.GameId;
+import be.kdg.integration5.checkerscontext.domain.Move;
 import be.kdg.integration5.checkerscontext.domain.PlayerId;
 import be.kdg.integration5.checkerscontext.domain.exception.MoveNotValidException;
 import be.kdg.integration5.checkerscontext.port.in.*;
@@ -52,14 +53,9 @@ public class GameWebSocketController {
     public void movePiece(@Payload PieceMovementRequestDto pieceMovementRequestDto) {
         GameId gameId = new GameId(pieceMovementRequestDto.gameId());
         PlayerId playerId = new PlayerId(pieceMovementRequestDto.playerId());
-        MovePieceCommand movePieceCommand = new MovePieceCommand(
-                gameId,
-                playerId,
-                pieceMovementRequestDto.currentX(),
-                pieceMovementRequestDto.currentY(),
-                pieceMovementRequestDto.targetX(),
-                pieceMovementRequestDto.targetY()
-        );
+        Move move = pieceMovementRequestDto.move().toDomain();
+
+        MovePieceCommand movePieceCommand = new MovePieceCommand(gameId, playerId, move);
         movePieceUseCase.movePiece(movePieceCommand);
     }
 
