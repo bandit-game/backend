@@ -160,9 +160,7 @@ public class Board {
         int distance = calculateDistance(currentX, currentY, targetX, targetY);
         if (distance != 1 && !piece.isKing()) return false;
 
-        if (calculateLongestDiagonalPiecesSequenceInBetween(currentX, currentY, targetX, targetY) > 1) return false;
-
-        return true;
+        return calculateLongestDiagonalPiecesSequenceInBetween(currentX, currentY, targetX, targetY) <= 1;
     }
 
     private int calculateLongestDiagonalPiecesSequenceInBetween(int currentX, int currentY, int targetX, int targetY) {
