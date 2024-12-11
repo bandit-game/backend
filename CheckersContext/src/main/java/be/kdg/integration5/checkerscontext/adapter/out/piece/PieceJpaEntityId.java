@@ -14,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class PieceJpaEntityId implements Serializable {
-    private UUID boardId;
-    private int pieceNumber;
+    private UUID gameId;
+    private int currentX;
+    private int currentY;
 }

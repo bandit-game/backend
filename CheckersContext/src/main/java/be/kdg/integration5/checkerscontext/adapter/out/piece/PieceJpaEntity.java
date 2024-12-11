@@ -1,12 +1,15 @@
 package be.kdg.integration5.checkerscontext.adapter.out.piece;
 
-import be.kdg.integration5.checkerscontext.adapter.out.square.SquareJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.game.GameJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.Piece;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.UUID;
 
 @Entity
 @Table(name = "pieces")
@@ -18,6 +21,11 @@ public class PieceJpaEntity {
     @EmbeddedId
     private PieceJpaEntityId pieceId;
 
+    @ManyToOne
+    @JoinColumn(name = "game_id", referencedColumnName = "game_id")
+    @MapsId("gameId")
+    private GameJpaEntity game;
+
     @Column(nullable = false)
     private boolean isKing;
 
@@ -25,27 +33,9 @@ public class PieceJpaEntity {
     @Column(nullable = false)
     private Piece.PieceColor pieceColor;
 
-    @OneToOne(mappedBy = "placedPiece")
-    private SquareJpaEntity square;
 
-    public static PieceJpaEntity of(Piece piece) {
-        return new PieceJpaEntity(
-                new PieceJpaEntityId(
-                        piece.getSquare().getBoard().getGame().getPlayedMatchId().uuid(),
-                        piece.getPieceNumber()
-                ),
-                piece.isKing(),
-                piece.getColor(),
-                SquareJpaEntity.of(piece.getSquare())
-        );
-    }
+    @ManyToOne
+    @JoinColumn(name = "owner_id", referencedColumnName = "player_id")
+    private PlayerJpaEntity owner;
 
-    public Piece toDomain() {
-        return new Piece(
-                this.pieceId.getPieceNumber(),
-//                this.square.toDomain(),
-                this.isKing,
-                this.pieceColor
-        );
-    }
 }

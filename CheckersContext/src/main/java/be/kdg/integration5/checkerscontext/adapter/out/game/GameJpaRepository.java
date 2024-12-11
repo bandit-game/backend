@@ -8,21 +8,22 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
 @Repository
 public interface GameJpaRepository extends JpaRepository<GameJpaEntity, UUID> {
 
 
     @Query("select g from GameJpaEntity g " +
-    "left join fetch g.players p " +
-    "left join fetch g.board b " +
-    "left join fetch b.currentPlayer c")
+            "left join fetch g.players " +
+            "left join fetch g.pieces " +
+            "left join fetch g.currentPlayer ")
     Optional<GameJpaEntity> findByIdFetched(UUID id);
 
 
     @Query("select g from GameJpaEntity g " +
-    "left join fetch g.players p " +
-    "where g.finishedTime is null " +
-    "and exists (" +
+            "left join fetch g.players p " +
+            "where g.isFinished = false " +
+            "and exists (" +
             " select pSub from g.players pSub where pSub.playerId = :playerId" +
             ")")
     Optional<GameJpaEntity> findByPlayerIdAndEndDateNullFetched(
