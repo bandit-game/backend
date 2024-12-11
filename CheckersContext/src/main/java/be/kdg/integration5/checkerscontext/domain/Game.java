@@ -1,9 +1,7 @@
 package be.kdg.integration5.checkerscontext.domain;
 
-import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntity;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -45,5 +43,9 @@ public class Game {
 
     private Player getSecondPlayer() {
         return players.getLast();
+    }
+
+    public boolean playerIsParticipant(PlayerId playerId) {
+        return players.stream().anyMatch(player -> player.getPlayerId().equals(playerId));
     }
 }

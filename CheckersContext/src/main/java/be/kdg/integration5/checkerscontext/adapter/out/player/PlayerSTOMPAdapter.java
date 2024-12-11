@@ -32,13 +32,13 @@ public class PlayerSTOMPAdapter implements NotifyPlayerPort {
     }
 
     @Override
-    public void notifyPlayerOfHisGame(PlayerId playerId, Game game) {
+    public void notifyPlayerOfGameState(PlayerId playerId, Game game) {
         GameStateResponseDto gameStateResponseDto = GameStateResponseDto.of(game);
         messagingTemplate.convertAndSend(getUserQueue(playerId), gameStateResponseDto);
     }
 
     @Override
-    public void notifyAllPlayersWithBoardState(Game game) {
+    public void notifyAllPlayersWithGameState(Game game) {
         GameStateResponseDto gameStateResponseDto = GameStateResponseDto.of(game);
         game.getPlayers().forEach(
                 player -> messagingTemplate.convertAndSend(getUserQueue(player.getPlayerId()), gameStateResponseDto));

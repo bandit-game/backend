@@ -2,6 +2,7 @@ package be.kdg.integration5.checkerscontext.domain;
 
 import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.exception.DirectionSearchException;
+import be.kdg.integration5.checkerscontext.domain.exception.MoveNotValidException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -140,7 +141,12 @@ public class Board {
 
     public void movePiece(PlayerId moverId, int currentX, int currentY, int targetX, int targetY) {
         if (validateMove(moverId, currentX, currentY, targetX, targetY))
-            return;
+            changePieceLocation(currentX, currentY, targetX, targetY);
+        throw new MoveNotValidException("Move is not valid.");
+    }
+
+    private void changePieceLocation(int oldX, int oldY, int newX, int newY) {
+
     }
 
     private boolean validateMove(PlayerId moverId, int currentX, int currentY, int targetX, int targetY) {

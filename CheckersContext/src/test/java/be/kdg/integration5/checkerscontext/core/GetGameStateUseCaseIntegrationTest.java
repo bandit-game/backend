@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class GetStateOfGameUseCaseIntegrationTest {
+public class GetGameStateUseCaseIntegrationTest {
 
     private WebSocketStompClient stompClient;
 
