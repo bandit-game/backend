@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -32,8 +33,14 @@ public class Move {
     }
 
     public List<PiecePosition> getAllAttackSteps() {
-        this.intermediateAttackPositions.add(futurePosition);
-        return intermediateAttackPositions;
+        List<PiecePosition> allAttackPositions = new ArrayList<>();
+
+        if (intermediateAttackPositions != null)
+            allAttackPositions.addAll(intermediateAttackPositions);
+
+        allAttackPositions.add(futurePosition);
+
+        return Collections.unmodifiableList(allAttackPositions);
     }
 
     public enum MoveType {

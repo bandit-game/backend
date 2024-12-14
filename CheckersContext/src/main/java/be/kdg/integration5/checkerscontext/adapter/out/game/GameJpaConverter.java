@@ -18,12 +18,12 @@ public class GameJpaConverter {
                 gameId,
                 game.isFinished(),
                 game.getPlayers().stream().map(PlayerJpaEntity::of).toList(),
-                PlayerJpaEntity.of(game.getCurrentPlayer())
+                PlayerJpaEntity.of(game.getBoard().getCurrentPlayer())
         );
 
         List<Piece> pieces = game.getBoard().getPieces();
         List<PieceJpaEntity> pieceJpaEntities = pieces.stream().map(piece -> new PieceJpaEntity(
-                new PieceJpaEntityId(gameId, piece.getCurrentX(), piece.getCurrentY()),
+                new PieceJpaEntityId(gameId, piece.getPiecePosition().x(), piece.getPiecePosition().y()),
                 gameJpaEntity,
                 piece.isKing(),
                 piece.getColor(),
@@ -47,8 +47,10 @@ public class GameJpaConverter {
         List<Piece> pieces = pieceJpaEntities.stream().map(pieceJpaEntity -> {
                     PieceJpaEntityId pieceId = pieceJpaEntity.getPieceId();
                     return new Piece(
-                            pieceId.getCurrentX(),
-                            pieceId.getCurrentY(),
+                            new PiecePosition(
+                                    pieceId.getCurrentX(),
+                                    pieceId.getCurrentY()
+                            ),
                             pieceJpaEntity.isKing(),
                             pieceJpaEntity.getPieceColor(),
                             pieceJpaEntity.getOwner().toDomain()
@@ -57,9 +59,8 @@ public class GameJpaConverter {
         ).toList();
 
         List<Player> players = playerJpaEntities.stream().map(PlayerJpaEntity::toDomain).toList();
-
-        Board board = new Board();
-        board.setPieces(pieces);
+        Player currentPlayer = gameJpaEntity.getCurrentPlayer().toDomain();
+        Board board = new Board(pieces, players, currentPlayer);
 
         UUID gameUUID = pieceJpaEntities.getFirst().getPieceId().getGameId();
         GameId gameId = new GameId(gameUUID);

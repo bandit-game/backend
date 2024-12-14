@@ -15,7 +15,6 @@ public class Game {
 
     private Board board;
     private List<Player> players;
-    private Player currentPlayer;
 
     public Game(GameId playedMatchId, List<Player> players) {
         this.playedMatchId = playedMatchId;
@@ -28,13 +27,10 @@ public class Game {
         this.players = players;
     }
 
-    {
-        this.currentPlayer = getFirstPlayer();
-    }
 
     public void start() {
-        this.board = new Board();
-        board.setUpNewBoard(getFirstPlayer(), getSecondPlayer());
+        this.board = new Board(getPlayers());
+        board.setUpNewBoard(getFirstPlayer());
     }
 
     private Player getFirstPlayer() {

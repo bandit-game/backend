@@ -1,6 +1,5 @@
 package be.kdg.integration5.checkerscontext.controller;
 
-import be.kdg.integration5.checkerscontext.adapter.in.MovesController;
 import be.kdg.integration5.checkerscontext.domain.Game;
 import be.kdg.integration5.checkerscontext.domain.GameId;
 import be.kdg.integration5.checkerscontext.domain.Player;
@@ -30,8 +29,6 @@ class MovesControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private MovesController movesController;
 
     @Autowired
     private PersistGamePort persistGamePort;
@@ -46,8 +43,8 @@ class MovesControllerTest {
         // Implement domain model
 
         List<Player> players = new ArrayList<>(List.of(
-                new Player("Player 1", false),
-                new Player("Player 2", true)
+                new Player("Player 1"),
+                new Player("Player 2")
         ));
         Game game = new Game(new GameId(createdGameId), players);
         persistGamePort.save(game);
