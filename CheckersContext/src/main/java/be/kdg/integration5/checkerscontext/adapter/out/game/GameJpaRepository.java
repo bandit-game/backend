@@ -16,7 +16,8 @@ public interface GameJpaRepository extends JpaRepository<GameJpaEntity, UUID> {
     @Query("select g from GameJpaEntity g " +
             "left join fetch g.players " +
             "left join fetch g.pieces " +
-            "left join fetch g.currentPlayer ")
+            "left join fetch g.currentPlayer " +
+            "where g.gameId = :id")
     Optional<GameJpaEntity> findByIdFetched(UUID id);
 
 

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -26,7 +27,7 @@ public class GameJpaEntity {
     private boolean isFinished;
 
     @OneToMany(mappedBy = "game")
-    private List<PieceJpaEntity> pieces;
+    private Set<PieceJpaEntity> pieces;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

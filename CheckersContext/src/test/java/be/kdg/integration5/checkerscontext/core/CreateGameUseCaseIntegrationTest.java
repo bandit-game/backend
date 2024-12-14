@@ -2,6 +2,7 @@ package be.kdg.integration5.checkerscontext.core;
 
 import be.kdg.integration5.checkerscontext.domain.Game;
 import be.kdg.integration5.checkerscontext.domain.GameId;
+import be.kdg.integration5.checkerscontext.port.in.CreateGameUseCase;
 import be.kdg.integration5.checkerscontext.port.out.FindGamePort;
 import be.kdg.integration5.common.events.LobbyCreatedEvent;
 import jakarta.transaction.Transactional;
