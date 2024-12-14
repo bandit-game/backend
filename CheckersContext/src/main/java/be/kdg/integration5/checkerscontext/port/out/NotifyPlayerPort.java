@@ -8,8 +8,7 @@ import be.kdg.integration5.checkerscontext.domain.PlayerId;
 import java.util.List;
 
 public interface NotifyPlayerPort {
-
     void notifyPossibleMovesForPlayer(List<Move> moves, Player player);
-    void notifyPlayerOfHisGame(PlayerId playerId, Game game);
-    void notifyAllPlayersWithBoardState(Game game);
+    void notifyPlayerOfGameState(PlayerId playerId, Game game);
+    void notifyAllPlayersWithGameState(Game game);
 }

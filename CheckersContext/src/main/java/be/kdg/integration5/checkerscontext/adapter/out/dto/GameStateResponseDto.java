@@ -1,5 +1,6 @@
-package be.kdg.integration5.checkerscontext.adapter.in.dto;
+package be.kdg.integration5.checkerscontext.adapter.out.dto;
 
+import be.kdg.integration5.checkerscontext.adapter.in.dto.PieceGetDto;
 import be.kdg.integration5.checkerscontext.domain.Game;
 
 import java.util.Arrays;

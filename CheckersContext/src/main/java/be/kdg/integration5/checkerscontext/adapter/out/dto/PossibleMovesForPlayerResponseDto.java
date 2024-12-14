@@ -1,4 +1,4 @@
-package be.kdg.integration5.checkerscontext.adapter.in.dto;
+package be.kdg.integration5.checkerscontext.adapter.out.dto;
 
 import java.util.List;
 import java.util.UUID;

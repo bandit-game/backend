@@ -1,6 +1,6 @@
 package be.kdg.integration5.checkerscontext.core;
 
-import be.kdg.integration5.checkerscontext.adapter.in.dto.GameStateResponseDto;
+import be.kdg.integration5.checkerscontext.adapter.out.dto.GameStateResponseDto;
 import be.kdg.integration5.checkerscontext.adapter.in.dto.GetGameStateRequestDto;
 import be.kdg.integration5.checkerscontext.domain.Board;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class GetStateOfGameUseCaseIntegrationTest {
+public class GetGameStateUseCaseIntegrationTest {
 
     private WebSocketStompClient stompClient;
 
@@ -47,6 +47,7 @@ public class GetStateOfGameUseCaseIntegrationTest {
                 .get(1, TimeUnit.SECONDS);
 
         UUID playerId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        UUID gameId = UUID.fromString("33333333-3333-3333-3333-333333333333");
 
         stompSession.subscribe(SUBSCRIBE_DESTINATION + playerId, new StompFrameHandler() {
             @Override
@@ -60,7 +61,7 @@ public class GetStateOfGameUseCaseIntegrationTest {
             }
         });
 
-        GetGameStateRequestDto getGameStateRequestDto = new GetGameStateRequestDto(playerId);
+        GetGameStateRequestDto getGameStateRequestDto = new GetGameStateRequestDto(gameId, playerId);
         stompSession.send(SEND_DESTINATION, getGameStateRequestDto);
 
         GameStateResponseDto response = receivedMessages.poll(5, TimeUnit.SECONDS);

@@ -9,17 +9,19 @@ import java.util.*;
 @AllArgsConstructor
 @ToString
 public class Piece {
-    private int currentX;
-    private int currentY;
+    private PiecePosition piecePosition;
     private boolean isKing;
     private PieceColor color;
     private Player owner;
 
-    public Piece(int currentX, int currentY, PieceColor color, Player owner) {
-        this.currentX = currentX;
-        this.currentY = currentY;
+    public Piece(PiecePosition piecePosition, PieceColor color, Player owner) {
+        this.piecePosition = piecePosition;
         this.color = color;
         this.owner = owner;
+    }
+
+    public void updateCoordinates(int x, int y) {
+        this.piecePosition = new PiecePosition(x,y);
     }
 
     /*public void setSquare(Square square) {

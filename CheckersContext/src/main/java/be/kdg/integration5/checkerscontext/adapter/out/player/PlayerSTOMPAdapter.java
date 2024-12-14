@@ -1,8 +1,8 @@
 package be.kdg.integration5.checkerscontext.adapter.out.player;
 
-import be.kdg.integration5.checkerscontext.adapter.in.dto.GameStateResponseDto;
-import be.kdg.integration5.checkerscontext.adapter.in.dto.MoveGetDto;
-import be.kdg.integration5.checkerscontext.adapter.in.dto.PossibleMovesForPlayerResponseDto;
+import be.kdg.integration5.checkerscontext.adapter.out.dto.GameStateResponseDto;
+import be.kdg.integration5.checkerscontext.adapter.out.dto.MoveGetDto;
+import be.kdg.integration5.checkerscontext.adapter.out.dto.PossibleMovesForPlayerResponseDto;
 import be.kdg.integration5.checkerscontext.domain.Game;
 import be.kdg.integration5.checkerscontext.domain.Move;
 import be.kdg.integration5.checkerscontext.domain.Player;
@@ -32,13 +32,13 @@ public class PlayerSTOMPAdapter implements NotifyPlayerPort {
     }
 
     @Override
-    public void notifyPlayerOfHisGame(PlayerId playerId, Game game) {
+    public void notifyPlayerOfGameState(PlayerId playerId, Game game) {
         GameStateResponseDto gameStateResponseDto = GameStateResponseDto.of(game);
         messagingTemplate.convertAndSend(getUserQueue(playerId), gameStateResponseDto);
     }
 
     @Override
-    public void notifyAllPlayersWithBoardState(Game game) {
+    public void notifyAllPlayersWithGameState(Game game) {
         GameStateResponseDto gameStateResponseDto = GameStateResponseDto.of(game);
         game.getPlayers().forEach(
                 player -> messagingTemplate.convertAndSend(getUserQueue(player.getPlayerId()), gameStateResponseDto));

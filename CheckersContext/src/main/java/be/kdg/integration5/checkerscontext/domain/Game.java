@@ -1,9 +1,7 @@
 package be.kdg.integration5.checkerscontext.domain;
 
-import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntity;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -17,7 +15,6 @@ public class Game {
 
     private Board board;
     private List<Player> players;
-    private Player currentPlayer;
 
     public Game(GameId playedMatchId, List<Player> players) {
         this.playedMatchId = playedMatchId;
@@ -30,13 +27,10 @@ public class Game {
         this.players = players;
     }
 
-    {
-        this.currentPlayer = getFirstPlayer();
-    }
 
     public void start() {
-        this.board = new Board();
-        board.setUpNewBoard(getFirstPlayer(), getSecondPlayer());
+        this.board = new Board(getPlayers());
+        board.setUpNewBoard(getFirstPlayer());
     }
 
     private Player getFirstPlayer() {
@@ -45,5 +39,9 @@ public class Game {
 
     private Player getSecondPlayer() {
         return players.getLast();
+    }
+
+    public boolean playerIsParticipant(PlayerId playerId) {
+        return players.stream().anyMatch(player -> player.getPlayerId().equals(playerId));
     }
 }
