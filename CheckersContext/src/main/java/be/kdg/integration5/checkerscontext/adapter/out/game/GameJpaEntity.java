@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -39,6 +38,13 @@ public class GameJpaEntity {
 
     @ManyToOne
     private PlayerJpaEntity currentPlayer;
+
+    public GameJpaEntity(UUID gameId, boolean isFinished, Set<PlayerJpaEntity> players, PlayerJpaEntity currentPlayer) {
+        this.gameId = gameId;
+        this.isFinished = isFinished;
+        this.players = players;
+        this.currentPlayer = currentPlayer;
+    }
 
     public GameJpaEntity(UUID gameId, boolean isFinished) {
         this.gameId = gameId;

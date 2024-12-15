@@ -14,10 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Component
 public class GameDatabaseAdapter implements PersistGamePort, DeleteGamePort, FindGamePort {
@@ -37,34 +33,10 @@ public class GameDatabaseAdapter implements PersistGamePort, DeleteGamePort, Fin
     @Override
     public Game save(Game game) {
         GameJpaEntity gameJpaEntity = gameJpaConverter.toJpa(game);
-
-        Set<PlayerJpaEntity> players = new HashSet<>();
-        for (Player player : game.getPlayers()) {
-            PlayerJpaEntity playerJpaEntity = playerJparepository.getReferenceById(player.getPlayerId().uuid());
-
-            if (player.getPlayerId().equals(game.getBoard().getCurrentPlayer().getPlayerId()))
-                gameJpaEntity.setCurrentPlayer(playerJpaEntity);
-
-            players.add(playerJpaEntity);
-        }
-        gameJpaEntity.setPlayers(players);
-
+        playerJparepository.saveAll(gameJpaEntity.getPlayers());
+        pieceJpaRepository.saveAll(gameJpaEntity.getPieces());
         GameJpaEntity savedGameJpaEntity = gameJpaRepository.save(gameJpaEntity);
-
-        for (Piece piece : game.getBoard().getPieces()) {
-            PieceJpaEntityId pieceJpaEntityId = new PieceJpaEntityId(
-                    game.getPlayedMatchId().uuid(),
-                    piece.getPiecePosition().x(),
-                    piece.getPiecePosition().y());
-            PieceJpaEntity pieceJpaEntity = new PieceJpaEntity(piece.isKing(), piece.getColor());
-            PlayerJpaEntity ownerPlayer = playerJparepository.getReferenceById(piece.getOwner().getPlayerId().uuid());
-
-            pieceJpaEntity.setPieceId(pieceJpaEntityId);
-            pieceJpaEntity.setGame(savedGameJpaEntity);
-            pieceJpaEntity.setOwner(ownerPlayer);
-            pieceJpaRepository.save(pieceJpaEntity);
-        }
-        return game;
+        return gameJpaConverter.toDomain(savedGameJpaEntity);
     }
 
     @Override

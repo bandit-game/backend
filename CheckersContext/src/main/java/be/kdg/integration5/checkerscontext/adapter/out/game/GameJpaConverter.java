@@ -16,10 +16,25 @@ import java.util.stream.Collectors;
 public class GameJpaConverter {
     public GameJpaEntity toJpa(Game game) {
         UUID gameId = game.getPlayedMatchId().uuid();
-        return new GameJpaEntity(
+        GameJpaEntity gameJpaEntity = new GameJpaEntity(
                 gameId,
-                game.isFinished()
+                game.isFinished(),
+                game.getPlayers().stream().map(PlayerJpaEntity::of).collect(Collectors.toSet()) ,
+                PlayerJpaEntity.of(game.getBoard().getCurrentPlayer())
         );
+
+        List<Piece> pieces = game.getBoard().getPieces();
+        Set<PieceJpaEntity> pieceJpaEntities = pieces.stream().map(piece -> new PieceJpaEntity(
+                new PieceJpaEntityId(gameId, piece.getPiecePosition().x(), piece.getPiecePosition().y()),
+                gameJpaEntity,
+                piece.isKing(),
+                piece.getColor(),
+                PlayerJpaEntity.of(piece.getOwner())
+        )).collect(Collectors.toSet());
+
+        gameJpaEntity.setPieces(pieceJpaEntities);
+
+        return gameJpaEntity;
     }
 
     public Game toDomain(GameJpaEntity gameJpaEntity) {
