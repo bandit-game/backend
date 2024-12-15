@@ -1,16 +1,16 @@
 -- Sample data for players table
 INSERT INTO players (player_id, name)
-VALUES ('11111111-1111-1111-1111-111111111111', 'Alice'),
-       ('22222222-2222-2222-2222-222222222222', 'Bob');
+VALUES ('7701935d-4efc-4f53-81f1-1010dce8a943', 'sofiia'),
+       ('5c035da0-3a05-4cd7-8e0f-d9cae488de8b', 'anna');
 
 -- Sample data for games table
 INSERT INTO games (game_id, is_finished, current_player_player_id)
-VALUES ('33333333-3333-3333-3333-333333333333', FALSE, '11111111-1111-1111-1111-111111111111');
+VALUES ('33333333-3333-3333-3333-333333333333', FALSE, '7701935d-4efc-4f53-81f1-1010dce8a943');
 
 -- Sample data for games_players table
 INSERT INTO games_players (game_id, player_id)
-VALUES ('33333333-3333-3333-3333-333333333333', '11111111-1111-1111-1111-111111111111'),
-       ('33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222');
+VALUES ('33333333-3333-3333-3333-333333333333', '7701935d-4efc-4f53-81f1-1010dce8a943'),
+       ('33333333-3333-3333-3333-333333333333', '5c035da0-3a05-4cd7-8e0f-d9cae488de8b');
 
 -- Sample data for pieces table
 DO '
@@ -23,8 +23,8 @@ FOR y IN 0..9
             INSERT INTO pieces (currentx, currenty, is_king, game_id, owner_id, piece_color)
             VALUES (x, y, false, ''33333333-3333-3333-3333-333333333333'',
                 CASE
-                    WHEN (y * 10 + x) < 40 THEN ''11111111-1111-1111-1111-111111111111''::UUID
-                    WHEN (y * 10 + x) > 60 THEN ''22222222-2222-2222-2222-222222222222''::UUID
+                    WHEN (y * 10 + x) < 40 THEN ''7701935d-4efc-4f53-81f1-1010dce8a943''::UUID
+                    WHEN (y * 10 + x) > 60 THEN ''5c035da0-3a05-4cd7-8e0f-d9cae488de8b''::UUID
                     END,
                 CASE
                     WHEN (y * 10 + x) < 40 THEN ''BLACK''
