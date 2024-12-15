@@ -32,7 +32,7 @@ public class MovePieceUseCaseImpl implements MovePieceUseCase {
 
         game.getBoard().movePiece(moverId, move);
 
-        persistGamePort.save(game);
-        notifyPlayerPort.notifyAllPlayersWithGameState(game);
+        Game updatedGame = persistGamePort.update(game);
+        notifyPlayerPort.notifyAllPlayersWithGameState(updatedGame);
     }
 }
