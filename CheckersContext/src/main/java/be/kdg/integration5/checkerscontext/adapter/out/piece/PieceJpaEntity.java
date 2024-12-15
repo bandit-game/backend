@@ -38,4 +38,15 @@ public class PieceJpaEntity {
     @JoinColumn(name = "owner_id", referencedColumnName = "player_id")
     private PlayerJpaEntity owner;
 
+    public PieceJpaEntity(boolean isKing, Piece.PieceColor pieceColor) {
+        this.isKing = isKing;
+        this.pieceColor = pieceColor;
+    }
+
+    public static PieceJpaEntity of(Piece piece) {
+        return new PieceJpaEntity(
+                piece.isKing(),
+                piece.getColor());
+    }
+
 }

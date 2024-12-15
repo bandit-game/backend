@@ -23,6 +23,7 @@ public class Move {
         this.initialPosition = initialPosition;
         this.futurePosition = futurePosition;
         this.type = type;
+        this.intermediateAttackPositions = new ArrayList<>();
     }
 
     public void addIntermediateAttackPosition(PiecePosition position) {
