@@ -51,7 +51,7 @@ public class FindAllPossibleMovesUseCaseIntegrationTest {
                 .get(1, TimeUnit.SECONDS);
 
         UUID gameId = UUID.fromString("33333333-3333-3333-3333-333333333333");
-        UUID playerId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        UUID playerId = UUID.fromString("7701935d-4efc-4f53-81f1-1010dce8a943");
 
         stompSession.subscribe(SUBSCRIBE_DESTINATION + playerId, new StompFrameHandler() {
             @Override
@@ -85,7 +85,7 @@ public class FindAllPossibleMovesUseCaseIntegrationTest {
                 .get(1, TimeUnit.SECONDS);
 
         UUID gameId = UUID.fromString("33333333-3333-3333-3333-333333333333");
-        UUID playerId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        UUID playerId = UUID.fromString("7701935d-4efc-4f53-81f1-1010dce8a943");
         // Subscribe to the player's queue
         stompSession.subscribe(SUBSCRIBE_DESTINATION + playerId, new StompFrameHandler() {
             @Override

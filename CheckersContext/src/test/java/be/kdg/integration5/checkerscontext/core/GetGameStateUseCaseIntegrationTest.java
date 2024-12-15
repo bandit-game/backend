@@ -46,7 +46,7 @@ public class GetGameStateUseCaseIntegrationTest {
                 .connect(WS_URI, new StompSessionHandlerAdapter() {})
                 .get(1, TimeUnit.SECONDS);
 
-        UUID playerId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        UUID playerId = UUID.fromString("7701935d-4efc-4f53-81f1-1010dce8a943");
         UUID gameId = UUID.fromString("33333333-3333-3333-3333-333333333333");
 
         stompSession.subscribe(SUBSCRIBE_DESTINATION + playerId, new StompFrameHandler() {
