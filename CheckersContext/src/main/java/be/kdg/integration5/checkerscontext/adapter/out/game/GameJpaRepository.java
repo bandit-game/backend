@@ -1,11 +1,9 @@
 package be.kdg.integration5.checkerscontext.adapter.out.game;
 
-import be.kdg.integration5.checkerscontext.domain.Game;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,7 +11,7 @@ import java.util.UUID;
 public interface GameJpaRepository extends JpaRepository<GameJpaEntity, UUID> {
 
 
-    @Query("select g from GameJpaEntity g " +
+    @Query("select distinct g from GameJpaEntity g " +
             "left join fetch g.players " +
             "left join fetch g.pieces " +
             "left join fetch g.currentPlayer " +

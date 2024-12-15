@@ -16,24 +16,10 @@ import java.util.stream.Collectors;
 public class GameJpaConverter {
     public GameJpaEntity toJpa(Game game) {
         UUID gameId = game.getPlayedMatchId().uuid();
-        GameJpaEntity gameJpaEntity = new GameJpaEntity(
+        return new GameJpaEntity(
                 gameId,
-                game.isFinished(),
-                game.getPlayers().stream().map(PlayerJpaEntity::of).toList(),
-                PlayerJpaEntity.of(game.getBoard().getCurrentPlayer())
+                game.isFinished()
         );
-
-        List<Piece> pieces = game.getBoard().getPieces();
-        Set<PieceJpaEntity> pieceJpaEntities = pieces.stream().map(piece -> new PieceJpaEntity(
-                new PieceJpaEntityId(gameId, piece.getPiecePosition().x(), piece.getPiecePosition().y()),
-                gameJpaEntity,
-                piece.isKing(),
-                piece.getColor(),
-                PlayerJpaEntity.of(piece.getOwner())
-        )).collect(Collectors.toSet());
-
-        gameJpaEntity.setPieces(pieceJpaEntities);
-        return gameJpaEntity;
     }
 
     public Game toDomain(GameJpaEntity gameJpaEntity) {
@@ -41,7 +27,7 @@ public class GameJpaConverter {
         if (pieceJpaEntities.isEmpty())
             throw new GameConversionException("PieceJpaEntities is null or empty.");
 
-        List<PlayerJpaEntity> playerJpaEntities = gameJpaEntity.getPlayers();
+        Set<PlayerJpaEntity> playerJpaEntities = gameJpaEntity.getPlayers();
         if (playerJpaEntities == null || playerJpaEntities.isEmpty())
             throw new GameConversionException("PlayerJpaEntities is null or empty.");
 

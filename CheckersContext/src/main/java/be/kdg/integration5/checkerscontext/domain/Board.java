@@ -49,7 +49,7 @@ public class Board {
     }
 
     private void createPieces(Player firstPlayer) {
-        Player secondPlayer = players.stream().filter(player -> player.equals(firstPlayer)).findFirst().orElseThrow(
+        Player secondPlayer = players.stream().filter(player -> !player.equals(firstPlayer)).findFirst().orElseThrow(
                 () -> new IllegalStateException("Second Player not found")
         );
 

@@ -6,9 +6,11 @@ import be.kdg.integration5.checkerscontext.port.in.MovePieceUseCase;
 import be.kdg.integration5.checkerscontext.port.out.FindGamePort;
 import be.kdg.integration5.checkerscontext.port.out.NotifyPlayerPort;
 import be.kdg.integration5.checkerscontext.port.out.PersistGamePort;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class MovePieceUseCaseImpl implements MovePieceUseCase {
     private final FindGamePort findGamePort;
     private final PersistGamePort persistGamePort;

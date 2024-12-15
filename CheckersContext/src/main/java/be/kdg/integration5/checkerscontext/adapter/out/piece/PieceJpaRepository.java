@@ -11,5 +11,4 @@ import java.util.zip.ZipEntry;
 
 @Repository
 public interface PieceJpaRepository extends JpaRepository<PieceJpaEntity, PieceJpaEntityId> {
-    List<PieceJpaEntity> findAllByPieceId_GameId(UUID gameId);
 }

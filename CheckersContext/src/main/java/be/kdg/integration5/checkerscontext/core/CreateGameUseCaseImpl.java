@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class CreateGameUseCaseImpl implements CreateGameUseCase {
 
     private final PersistGamePort persistGamePort;
@@ -34,6 +34,5 @@ public class CreateGameUseCaseImpl implements CreateGameUseCase {
         Game game = new Game(new GameId(command.lobbyId()), players);
         game.start();
         persistGamePort.save(game);
-
     }
 }

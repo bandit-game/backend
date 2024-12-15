@@ -1,16 +1,15 @@
 package be.kdg.integration5.checkerscontext.adapter.out.player;
 
+import be.kdg.integration5.checkerscontext.adapter.out.game.GameJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.Player;
 import be.kdg.integration5.checkerscontext.domain.PlayerId;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -26,6 +25,14 @@ public class PlayerJpaEntity {
 
     @Column(nullable = false)
     private String name;
+
+    @ManyToMany(mappedBy = "players", fetch = FetchType.LAZY)
+    private List<GameJpaEntity> games;
+
+    public PlayerJpaEntity(UUID playerId, String name) {
+        this.playerId = playerId;
+        this.name = name;
+    }
 
     public static PlayerJpaEntity of(Player player) {
         return new PlayerJpaEntity(

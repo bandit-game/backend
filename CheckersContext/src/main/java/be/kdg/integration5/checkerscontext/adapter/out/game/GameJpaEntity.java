@@ -35,15 +35,13 @@ public class GameJpaEntity {
             joinColumns = @JoinColumn(name = "game_id", referencedColumnName = "game_id"),
             inverseJoinColumns = @JoinColumn(name = "player_id", referencedColumnName = "player_id")
     )
-    private List<PlayerJpaEntity> players;
+    private Set<PlayerJpaEntity> players;
 
     @ManyToOne
     private PlayerJpaEntity currentPlayer;
 
-    public GameJpaEntity(UUID gameId, boolean isFinished, List<PlayerJpaEntity> players, PlayerJpaEntity currentPlayer) {
+    public GameJpaEntity(UUID gameId, boolean isFinished) {
         this.gameId = gameId;
         this.isFinished = isFinished;
-        this.players = players;
-        this.currentPlayer = currentPlayer;
     }
 }
