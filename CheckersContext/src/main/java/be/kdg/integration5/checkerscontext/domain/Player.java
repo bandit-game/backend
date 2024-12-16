@@ -6,7 +6,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @ToString
-//@EqualsAndHashCode(exclude = "name")
+@EqualsAndHashCode(exclude = "name")
 public class Player {
     private PlayerId playerId;
     private String name;
