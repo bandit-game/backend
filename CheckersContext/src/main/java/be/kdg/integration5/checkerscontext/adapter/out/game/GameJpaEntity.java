@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 
 import java.util.Set;
 import java.util.UUID;
@@ -25,7 +26,7 @@ public class GameJpaEntity {
     @Column(nullable = false)
     private boolean isFinished;
 
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
     private Set<PieceJpaEntity> pieces;
 
     @ManyToMany(fetch = FetchType.LAZY)

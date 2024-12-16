@@ -96,6 +96,9 @@ public class CreateGameUseCaseIntegrationTest {
 
         // Publish the test event to the RabbitMQ queue
         rabbitTemplate.convertAndSend(LOBBY_QUEUE, testEvent);
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException ignored) {}
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
             Game game = findGamePort.findById(new GameId(lobbyId));
             assertThat(game).isNotNull();

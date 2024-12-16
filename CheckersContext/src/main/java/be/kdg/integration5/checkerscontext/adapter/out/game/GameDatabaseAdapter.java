@@ -2,9 +2,7 @@ package be.kdg.integration5.checkerscontext.adapter.out.game;
 
 import be.kdg.integration5.checkerscontext.adapter.out.exception.GameNotFoundException;
 import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntity;
-import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntityId;
 import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaRepository;
-import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaRepository;
 import be.kdg.integration5.checkerscontext.domain.*;
 import be.kdg.integration5.checkerscontext.port.out.DeleteGamePort;
@@ -14,14 +12,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 
 @Component
 public class GameDatabaseAdapter implements PersistGamePort, DeleteGamePort, FindGamePort {
+    private final Logger logger = LoggerFactory.getLogger(GameDatabaseAdapter.class);
     private final GameJpaRepository gameJpaRepository;
     private final PieceJpaRepository pieceJpaRepository;
     private final PlayerJpaRepository playerJparepository;
     private final GameJpaConverter gameJpaConverter;
-    private final Logger logger = LoggerFactory.getLogger(GameDatabaseAdapter.class);
 
     public GameDatabaseAdapter(GameJpaRepository gameJpaRepository, PieceJpaRepository pieceJpaRepository, PlayerJpaRepository playerJparepository, GameJpaConverter gameJpaConverter) {
         this.gameJpaRepository = gameJpaRepository;
@@ -34,8 +36,13 @@ public class GameDatabaseAdapter implements PersistGamePort, DeleteGamePort, Fin
     public Game save(Game game) {
         GameJpaEntity gameJpaEntity = gameJpaConverter.toJpa(game);
         playerJparepository.saveAll(gameJpaEntity.getPlayers());
-        pieceJpaRepository.saveAll(gameJpaEntity.getPieces());
+
+        Set<PieceJpaEntity> pieceJpaEntities = new HashSet<>(gameJpaEntity.getPieces());
+        gameJpaEntity.setPieces(null);
         GameJpaEntity savedGameJpaEntity = gameJpaRepository.save(gameJpaEntity);
+
+        List<PieceJpaEntity> savedPieceJpaEntities = pieceJpaRepository.saveAll(pieceJpaEntities);
+        savedGameJpaEntity.setPieces(new HashSet<>(savedPieceJpaEntities));
         return gameJpaConverter.toDomain(savedGameJpaEntity);
     }
 

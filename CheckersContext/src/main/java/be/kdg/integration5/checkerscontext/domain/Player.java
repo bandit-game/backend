@@ -1,14 +1,12 @@
 package be.kdg.integration5.checkerscontext.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @ToString
+//@EqualsAndHashCode(exclude = "name")
 public class Player {
     private PlayerId playerId;
     private String name;

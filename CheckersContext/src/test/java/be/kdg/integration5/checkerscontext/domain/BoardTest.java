@@ -143,7 +143,7 @@ class BoardTest {
     }
 
     @Test
-    void testSwitchPlayerAfterMove() {
+    void testSwitchPlayerAfterGOMove() {
         Move move = new Move(
                 new PiecePosition(1, 2),
                 new PiecePosition(2, 3),
@@ -151,6 +151,22 @@ class BoardTest {
         );
 
         board.addPiece(new Piece(new PiecePosition(1, 2), Piece.PieceColor.BLACK, player1));
+        board.movePiece(player1.getPlayerId(), move);
+
+        // Assuming the game logic switches players after a valid move
+        assertEquals(player2, board.getCurrentPlayer());
+    }
+
+    @Test
+    void testSwitchPlayerAfterAttackMove() {
+        Move move = new Move(
+                new PiecePosition(1, 2),
+                new PiecePosition(3, 4),
+                Move.MoveType.ATTACK
+        );
+
+        board.addPiece(new Piece(new PiecePosition(1, 2), Piece.PieceColor.BLACK, player1));
+        board.addPiece(new Piece(new PiecePosition(2, 3), Piece.PieceColor.WHITE, player2));
         board.movePiece(player1.getPlayerId(), move);
 
         // Assuming the game logic switches players after a valid move
