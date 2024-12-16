@@ -4,4 +4,5 @@ import be.kdg.integration5.checkerscontext.domain.Game;
 
 public interface PersistGamePort {
     Game save(Game game);
+    Game update(Game game);
 }

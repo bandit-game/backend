@@ -27,7 +27,7 @@ public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfi
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         String allowedOrigin = "http://localhost:" + serverPort;
         registry.addEndpoint("ws")
-                .setAllowedOrigins("http://localhost:5173", allowedOrigin);
+                .setAllowedOrigins("http://localhost:5174", allowedOrigin);
     }
 }
 
