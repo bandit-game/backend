@@ -10,10 +10,10 @@ import java.util.UUID;
 @Repository
 public interface GameJpaRepository extends JpaRepository<GameJpaEntity, UUID> {
 
-
     @Query("select distinct g from GameJpaEntity g " +
             "left join fetch g.players " +
-            "left join fetch g.pieces " +
+            "left join fetch g.pieces p " +
+            "left join fetch p.owner " +
             "left join fetch g.currentPlayer " +
             "where g.gameId = :id")
     Optional<GameJpaEntity> findByIdFetched(UUID id);

@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Entity
 @Table(name = "pieces")
 @Getter
@@ -33,20 +31,7 @@ public class PieceJpaEntity {
     @Column(nullable = false)
     private Piece.PieceColor pieceColor;
 
-
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "player_id")
     private PlayerJpaEntity owner;
-
-    public PieceJpaEntity(boolean isKing, Piece.PieceColor pieceColor) {
-        this.isKing = isKing;
-        this.pieceColor = pieceColor;
-    }
-
-    public static PieceJpaEntity of(Piece piece) {
-        return new PieceJpaEntity(
-                piece.isKing(),
-                piece.getColor());
-    }
-
 }

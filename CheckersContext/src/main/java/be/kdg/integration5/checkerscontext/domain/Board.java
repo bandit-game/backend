@@ -200,9 +200,11 @@ public class Board {
     }
 
     private void switchCurrentPlayer() {
-        this.currentPlayer = players.stream().filter(player -> !player.equals(currentPlayer)).findFirst().orElseThrow(
-                () -> new IllegalStateException("Not enough players.")
-        );
+        int nextPlayerIndex = players.indexOf(currentPlayer) + 1;
+        if (nextPlayerIndex >= players.size())
+            nextPlayerIndex = 0;
+
+        this.currentPlayer = players.get(nextPlayerIndex);
     }
 
 
