@@ -1,10 +1,11 @@
 plugins {
     id("groovy-gradle-plugin")
+    id ("java-gradle-plugin")
 }
 
 
 group = "be.kdg.integration5"
-version = "0.0.1-SNAPSHOT"
+version = "1.0.0"
 
 
 repositories {
@@ -13,4 +14,13 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-gradle-plugin:3.3.5")
+}
+
+gradlePlugin {
+    plugins {
+        create("moduleConfig") {
+            id = "module-config"
+            implementationClass = "ModuleConfigCustom"
+        }
+    }
 }
