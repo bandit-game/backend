@@ -1,5 +1,5 @@
 plugins {
-    id("module-config")
+    id ("module-config")
 }
 
 extra["snippetsDir"] = file("build/generated-snippets")
