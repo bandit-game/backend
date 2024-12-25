@@ -1,6 +1,7 @@
-package be.kdg.integration5.gameplatformcontext;
+package be.kdg.integration5.gameplatformcontext.adapter;
 
 
+import be.kdg.integration5.gameplatformcontext.GamePlatformContextApplication;
 import be.kdg.integration5.gameplatformcontext.adapter.out.game.GameJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.game.GameJpaRepository;
 import be.kdg.integration5.gameplatformcontext.adapter.out.lobby.LobbyDatabaseAdapter;

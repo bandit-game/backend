@@ -1,4 +1,0 @@
-### GET all possible moves for square
-GET http://localhost:8042/api/v1/games/33333333-3333-3333-3333-333333333333/moves?
-    x=4&
-    y=3
