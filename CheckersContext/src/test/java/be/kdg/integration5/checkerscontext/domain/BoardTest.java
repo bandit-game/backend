@@ -4,6 +4,7 @@ import be.kdg.integration5.checkerscontext.domain.exception.MoveNotValidExceptio
 import be.kdg.integration5.checkerscontext.domain.exception.NotPlayablePositionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BoardTest {
+@ActiveProfiles("test")
+public class BoardTest {
     private Game game;
     private Board board;
     private Player player1;

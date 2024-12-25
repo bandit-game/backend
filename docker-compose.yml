@@ -27,6 +27,21 @@
       volumes:
         - ./postgres/data:/var/lib/postgres
 
+
+    postgers_test_db:
+      image: 'postgres:16.1-alpine'
+      restart: always
+      environment:
+        - 'POSTGRES_DB=test-db'
+        - 'POSTGRES_USER=user'
+        - 'POSTGRES_PASSWORD=password'
+      ports:
+        - '5442:5432'
+      networks:
+        - backend
+      volumes:
+        - ./postgres/data:/var/lib/postgres
+
     app_rabbitmq:
       image: rabbitmq:3.13.7-management-alpine
       environment:

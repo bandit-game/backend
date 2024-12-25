@@ -20,11 +20,11 @@ public class LobbyPlayerJpaEntity {
     @EmbeddedId
     private LobbyPlayerId id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("lobbyId")
     private LobbyJpaEntity lobby;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("playerId")
     private PlayerJpaEntity player;
 

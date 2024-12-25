@@ -34,4 +34,9 @@ public class PieceJpaEntity {
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "player_id")
     private PlayerJpaEntity owner;
+
+    public PieceJpaEntity(boolean isKing, Piece.PieceColor pieceColor) {
+        this.isKing = isKing;
+        this.pieceColor = pieceColor;
+    }
 }
