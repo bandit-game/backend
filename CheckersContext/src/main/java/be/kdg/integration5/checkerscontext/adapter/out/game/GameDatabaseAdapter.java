@@ -2,6 +2,7 @@ package be.kdg.integration5.checkerscontext.adapter.out.game;
 
 import be.kdg.integration5.checkerscontext.adapter.out.exception.GameNotFoundException;
 import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntityId;
 import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaRepository;
 import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaRepository;
 import be.kdg.integration5.checkerscontext.domain.*;
@@ -12,9 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Component
