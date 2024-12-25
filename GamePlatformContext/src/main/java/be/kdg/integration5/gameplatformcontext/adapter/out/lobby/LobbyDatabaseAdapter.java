@@ -53,16 +53,16 @@ public class LobbyDatabaseAdapter implements FindLobbyPort, PersistLobbyPort, De
     }
 
     @Override
-    @Transactional
     public Lobby save(Lobby lobby) {
         LobbyJpaEntity lobbyJpaEntity = LobbyJpaEntity.of(lobby);
         PlayerJpaEntity ownerJpaEntity = playerJpaRepository.getReferenceById(lobby.getLobbyOwner().getPlayerId().uuid());
         GameJpaEntity gameJpaEntity = gameJpaRepository.getReferenceById(lobby.getPlayingGame().getGameId().uuid());
 
-
         lobbyJpaEntity.setLobbyOwner(ownerJpaEntity);
         lobbyJpaEntity.setGame(gameJpaEntity);
+
         LobbyJpaEntity savedLobbyJpaEntity = lobbyJpaRepository.save(lobbyJpaEntity);
+        List<LobbyPlayerJpaEntity> lobbyPlayers = new ArrayList<>();
 
         for (Player player : lobby.getPlayers()) {
             PlayerJpaEntity playerJpaEntity = playerJpaRepository.getReferenceById(player.getPlayerId().uuid());
@@ -70,8 +70,10 @@ public class LobbyDatabaseAdapter implements FindLobbyPort, PersistLobbyPort, De
             LobbyPlayerJpaEntity lobbyPlayerJpaEntity = new LobbyPlayerJpaEntity(lobbyPlayerId);
             lobbyPlayerJpaEntity.setLobby(savedLobbyJpaEntity);
             lobbyPlayerJpaEntity.setPlayer(playerJpaEntity);
-            lobbyPlayerJpaRepository.save(lobbyPlayerJpaEntity);
+            LobbyPlayerJpaEntity savedLobbyPlayer = lobbyPlayerJpaRepository.save(lobbyPlayerJpaEntity);
+            lobbyPlayers.add(savedLobbyPlayer);
         }
+        savedLobbyJpaEntity.setLobbyPlayers(lobbyPlayers);
 
         return savedLobbyJpaEntity.toDomain(gameJpaEntity.toDomain(), lobby.getPlayers());
     }

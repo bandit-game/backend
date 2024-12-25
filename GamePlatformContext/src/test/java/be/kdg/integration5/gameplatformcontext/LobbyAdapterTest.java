@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ActiveProfiles("test")
 @ContextConfiguration(classes = { GamePlatformContextApplication.class })
 @SpringBootTest
 public class LobbyAdapterTest {
@@ -97,10 +99,7 @@ public class LobbyAdapterTest {
         // Assert
         assertEquals(1, lobbies.size());
         assertEquals(lobbies.getFirst().getLobbyOwner().getPlayerId(), player.getPlayerId());
+        assertEquals(1, lobbies.getFirst().getPlayers().size());
     }
 
-    @Test
-    void testMethod() {
-        System.out.println("Hellow");
-    }
 }
