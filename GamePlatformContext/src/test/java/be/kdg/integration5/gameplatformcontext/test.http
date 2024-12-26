@@ -1,10 +1,10 @@
 POST http://localhost:8180/realms/Bandit%20Games/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id = client &
-client_secret = UY85nBmZeRixYZy177yKkCtskdn31GUn &
-username = developer &
-password = password &
+client_id = <client> &
+client_secret = <secret> &
+username = <client> &
+password = <password> &
 grant_type = password &
 scope = openid
 
@@ -16,5 +16,10 @@ scope = openid
 
 ###
 
+POST http://localhost:8041/api/v1/chat/query
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
-GET http://localhost:8041/api/v1/games
+{
+    "query": "Hello chatbot!"
+}
