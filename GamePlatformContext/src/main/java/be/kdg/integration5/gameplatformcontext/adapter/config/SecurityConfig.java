@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) ->
                         authorize
                                 .requestMatchers(HttpMethod.GET, "/ws").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/chat/query").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(mgmt -> mgmt.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
