@@ -1,11 +1,21 @@
 package be.kdg.integration5.common.events;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public record LobbyCreatedEvent(UUID lobbyId, UUID firstPlayerId, List<PlayerEvent> players) {
 
-    public record PlayerEvent(UUID playerId, String username) {
+    public LobbyCreatedEvent {
+        Objects.requireNonNull(lobbyId);
+        Objects.requireNonNull(firstPlayerId);
+        Objects.requireNonNull(players);
+    }
 
+    public record PlayerEvent(UUID playerId, String username) {
+        public PlayerEvent {
+            Objects.requireNonNull(playerId);
+            Objects.requireNonNull(username);
+        }
     }
 }
