@@ -1,0 +1,35 @@
+package be.kdg.integration5.statisticscontext.adapter.in;
+
+import be.kdg.integration5.common.events.FinishGameSessionEvent;
+import be.kdg.integration5.common.events.PlayerMoveEvent;
+import be.kdg.integration5.common.events.StartGameSessionEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+@Component
+public class GameSessionListener {
+
+    private static final String GAME_START_QUEUE = "game_start_queue";
+    private static final String GAME_END_QUEUE = "game_end_queue";
+    private static final String PLAYER_MOVE_QUEUE = "player_move_queue";
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @RabbitListener(queues = GAME_START_QUEUE, messageConverter = "#{jackson2JsonMessageConverter}")
+    public void processGameStart(StartGameSessionEvent event) {
+        logger.info("Received start game session {}", event.lobbyId());
+    }
+
+    @RabbitListener(queues = PLAYER_MOVE_QUEUE, messageConverter = "#{jackson2JsonMessageConverter}")
+    public void processPlayerMove(PlayerMoveEvent event) {
+        logger.info("Received player move event by {}", event.playerId());
+    }
+
+    @RabbitListener(queues = GAME_END_QUEUE, messageConverter = "#{jackson2JsonMessageConverter}")
+    public void processGameEnd(FinishGameSessionEvent event) {
+        logger.info("Received end game session {}", event.gameId());
+    }
+
+}
