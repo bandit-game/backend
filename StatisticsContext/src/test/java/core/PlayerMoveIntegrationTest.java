@@ -11,10 +11,13 @@ import be.kdg.integration5.statisticscontext.adapter.out.move.MoveJpaRepository;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaConverter;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaRepository;
+import be.kdg.integration5.statisticscontext.adapter.out.player_session.PlayerSessionJpaRepository;
+import be.kdg.integration5.statisticscontext.adapter.out.session.SessionJpaRepository;
 import be.kdg.integration5.statisticscontext.domain.*;
 import be.kdg.integration5.statisticscontext.port.in.GameSessionStartedUseCase;
 import be.kdg.integration5.statisticscontext.port.in.PlayerMadeMoveUseCase;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { StatisticsContextApplication.class })
@@ -42,6 +46,12 @@ public class PlayerMoveIntegrationTest {
 
     @Autowired
     private MoveJpaRepository moveJpaRepository;
+
+    @Autowired
+    private PlayerSessionJpaRepository playerSessionJpaRepository;
+
+    @Autowired
+    private SessionJpaRepository sessionJpaRepository;
 
     @Autowired
     private PlayerJpaConverter playerJpaConverter;
@@ -83,6 +93,18 @@ public class PlayerMoveIntegrationTest {
 
     }
 
+
+    @AfterEach
+    void tearDown() {
+        session = null;
+        playerList = new ArrayList<>();
+        moveJpaRepository.deleteAll();
+        playerSessionJpaRepository.deleteAll();
+        sessionJpaRepository.deleteAll();
+        gameJpaRepository.deleteAll();
+        playerJpaRepository.deleteAll();
+    }
+
     @Test
     void testPlayerMovedSuccessfully() {
         // Arrange
@@ -92,7 +114,6 @@ public class PlayerMoveIntegrationTest {
                 playerList.get(1).getPlayerId().uuid(),
                 LocalDateTime.now().plusMinutes(1)
         );
-
 
         // Act
         playerMadeMoveUseCase.saveMove(event);
@@ -104,5 +125,58 @@ public class PlayerMoveIntegrationTest {
         assertThat(moveEntities, hasItem(hasProperty("endTime", nullValue())));
         assertThat(moveEntities, everyItem(hasProperty("moveNumber", equalTo(1))));
         assertThat(moveEntities, hasItem(hasProperty("startTime", equalTo(event.timestamp()))));
+    }
+
+    @Test
+    void testMultipleSuccessfulMoves() {
+        // Arrange
+        PlayerMoveEvent event1 = new PlayerMoveEvent(
+                session.getSessionId().uuid(),
+                playerList.get(0).getPlayerId().uuid(),
+                playerList.get(1).getPlayerId().uuid(),
+                LocalDateTime.now().plusMinutes(1)
+        );
+
+        PlayerMoveEvent event2 = new PlayerMoveEvent(
+                session.getSessionId().uuid(),
+                playerList.get(1).getPlayerId().uuid(),
+                playerList.get(0).getPlayerId().uuid(),
+                LocalDateTime.now().plusMinutes(2)
+        );
+
+        PlayerMoveEvent event3 = new PlayerMoveEvent(
+                session.getSessionId().uuid(),
+                playerList.get(0).getPlayerId().uuid(),
+                playerList.get(1).getPlayerId().uuid(),
+                LocalDateTime.now().plusMinutes(3)
+        );
+
+        // Act
+        playerMadeMoveUseCase.saveMove(event1);
+        playerMadeMoveUseCase.saveMove(event2);
+        playerMadeMoveUseCase.saveMove(event3);
+
+        // Assert
+        List<MoveJpaEntity> moveEntities = moveJpaRepository.findAll();
+        assertThat(moveEntities, hasSize(4));
+        assertThat(moveEntities, hasItem(hasProperty("endTime", nullValue())));
+        // Filter items for moveNumber = 1
+        List<MoveJpaEntity> moveNumberOne = moveEntities.stream()
+                .filter(move -> move.getMoveNumber() == 1)
+                .collect(Collectors.toList());
+        assertThat(moveNumberOne, hasSize(2));
+
+        // Filter items for moveNumber = 2
+        List<MoveJpaEntity> moveNumberTwo = moveEntities.stream()
+                .filter(move -> move.getMoveNumber() == 2)
+                .collect(Collectors.toList());
+        assertThat(moveNumberTwo, hasSize(2));
+
+        // Filter items with endTime = null
+        List<MoveJpaEntity> endTimeNull = moveEntities.stream()
+                .filter(move -> move.getEndTime() == null)
+                .collect(Collectors.toList());
+        assertThat(endTimeNull, hasSize(1));
+
     }
 }
