@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -14,4 +15,11 @@ public class Move {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private int moveNumber;
+
+    public Move(LocalDateTime startTime, int moveNumber) {
+        this.startTime = startTime;
+        this.moveNumber = moveNumber;
+        this.moveId = new MoveId(UUID.randomUUID());
+        this.endTime = null;
+    }
 }

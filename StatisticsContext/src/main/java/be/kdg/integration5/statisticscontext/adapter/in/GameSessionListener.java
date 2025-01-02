@@ -4,6 +4,7 @@ import be.kdg.integration5.common.events.FinishGameSessionEvent;
 import be.kdg.integration5.common.events.PlayerMoveEvent;
 import be.kdg.integration5.common.events.StartGameSessionEvent;
 import be.kdg.integration5.statisticscontext.port.in.GameSessionStartedUseCase;
+import be.kdg.integration5.statisticscontext.port.in.PlayerMadeMoveUseCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -17,10 +18,12 @@ public class GameSessionListener {
     private static final String PLAYER_MOVE_QUEUE = "player_move_queue";
 
     private final GameSessionStartedUseCase gameSessionStartedUseCase;
+    private final PlayerMadeMoveUseCase playerMadeMoveUseCase;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public GameSessionListener(GameSessionStartedUseCase gameSessionStartedUseCase) {
+    public GameSessionListener(GameSessionStartedUseCase gameSessionStartedUseCase, PlayerMadeMoveUseCase playerMadeMoveUseCase) {
         this.gameSessionStartedUseCase = gameSessionStartedUseCase;
+        this.playerMadeMoveUseCase = playerMadeMoveUseCase;
     }
 
     @RabbitListener(queues = GAME_START_QUEUE, messageConverter = "#{jackson2JsonMessageConverter}")
@@ -32,6 +35,7 @@ public class GameSessionListener {
     @RabbitListener(queues = PLAYER_MOVE_QUEUE, messageConverter = "#{jackson2JsonMessageConverter}")
     public void processPlayerMove(PlayerMoveEvent event) {
         logger.info("Received player move event by {}", event.playerId());
+        playerMadeMoveUseCase.saveMove(event);
     }
 
     @RabbitListener(queues = GAME_END_QUEUE, messageConverter = "#{jackson2JsonMessageConverter}")
