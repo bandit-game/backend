@@ -13,6 +13,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -37,7 +38,7 @@ public class SessionJpaEntity {
     private boolean isDraw;
 
     @OneToMany(mappedBy = "session")
-    private List<PlayerSessionJpaEntity> players;
+    private Set<PlayerSessionJpaEntity> players;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private GameJpaEntity game;

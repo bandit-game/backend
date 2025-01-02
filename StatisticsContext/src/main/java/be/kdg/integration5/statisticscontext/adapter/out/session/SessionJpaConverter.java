@@ -1,6 +1,7 @@
 package be.kdg.integration5.statisticscontext.adapter.out.session;
 
 import be.kdg.integration5.statisticscontext.adapter.out.game.GameJpaConverter;
+import be.kdg.integration5.statisticscontext.adapter.out.move.MoveJpaConverter;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaConverter;
 import be.kdg.integration5.statisticscontext.domain.PlayerActivity;
 import be.kdg.integration5.statisticscontext.domain.Session;
@@ -14,10 +15,12 @@ public class SessionJpaConverter {
 
     private final PlayerJpaConverter playerJpaConverter;
     private final GameJpaConverter gameJpaConverter;
+    private final MoveJpaConverter moveJpaConverter;
 
-    public SessionJpaConverter(PlayerJpaConverter playerJpaConverter, GameJpaConverter gameJpaConverter) {
+    public SessionJpaConverter(PlayerJpaConverter playerJpaConverter, GameJpaConverter gameJpaConverter, MoveJpaConverter moveJpaConverter) {
         this.playerJpaConverter = playerJpaConverter;
         this.gameJpaConverter = gameJpaConverter;
+        this.moveJpaConverter = moveJpaConverter;
     }
 
     public SessionJpaEntity toJpa(Session session) {
@@ -38,8 +41,12 @@ public class SessionJpaConverter {
                 entity.getPlayers()
                         .stream()
                         .map(player -> new PlayerActivity(
-                                playerJpaConverter.toDomain(player.getPlayer())
-                        )).collect(Collectors.toList()),
+                                playerJpaConverter.toDomain(player.getPlayer()),
+                                player.getMoves()
+                                        .stream()
+                                        .map(moveJpaConverter::toDomain)
+                                        .collect(Collectors.toList())))
+                        .collect(Collectors.toList()),
                 gameJpaConverter.toDomain(entity.getGame()),
                 entity.getWinner() == null ? null : playerJpaConverter.toDomain(entity.getWinner())
         );

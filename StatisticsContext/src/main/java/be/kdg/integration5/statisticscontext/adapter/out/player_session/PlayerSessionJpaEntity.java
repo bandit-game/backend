@@ -1,6 +1,7 @@
 package be.kdg.integration5.statisticscontext.adapter.out.player_session;
 
 
+import be.kdg.integration5.statisticscontext.adapter.out.move.MoveJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.session.SessionJpaEntity;
 import jakarta.persistence.*;
@@ -9,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -29,6 +32,9 @@ public class PlayerSessionJpaEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("playerId")
     private PlayerJpaEntity player;
+
+    @OneToMany(mappedBy = "playerSession")
+    private Set<MoveJpaEntity> moves;
 
     public PlayerSessionJpaEntity(PlayerSessionId playerSessionId) {
         this.playerSessionId = playerSessionId;

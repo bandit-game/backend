@@ -4,6 +4,8 @@ import be.kdg.integration5.common.events.StartGameSessionEvent;
 import be.kdg.integration5.statisticscontext.StatisticsContextApplication;
 import be.kdg.integration5.statisticscontext.adapter.out.game.GameJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.game.GameJpaRepository;
+import be.kdg.integration5.statisticscontext.adapter.out.move.MoveJpaEntity;
+import be.kdg.integration5.statisticscontext.adapter.out.move.MoveJpaRepository;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaConverter;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaRepository;
 import be.kdg.integration5.statisticscontext.adapter.out.player_session.PlayerSessionId;
@@ -58,7 +60,11 @@ public class SessionStartIntegrationTest {
     @Autowired
     private PlayerJpaConverter playerJpaConverter;
 
+    @Autowired
+    private MoveJpaRepository moveJpaRepository;
+
     private List<Player> playerList;
+
 
     @BeforeEach
     void setup() {
@@ -109,6 +115,7 @@ public class SessionStartIntegrationTest {
         // Assert
 
         List<PlayerSessionJpaEntity> playerSessionJpaEntities = playerSessionJpaRepository.findAllById(playerSessionIds);
+        List<MoveJpaEntity> moveJpaEntities = moveJpaRepository.findAll();
         Optional<SessionJpaEntity> savedSession = sessionJpaRepository.findById(lobbyId);
 
         assertThat(savedSession.isPresent(), is(true));
@@ -117,6 +124,7 @@ public class SessionStartIntegrationTest {
         assertThat(session.getSessionId(), is(equalTo(lobbyId)));
         assertThat(session.getStartTime(), is(notNullValue()));
         assertThat(playerSessionJpaEntities.size(), is(2));
+        assertThat(moveJpaEntities.size(), is(1));
         assertThat(session.getWinner(), is(nullValue()));
 
     }

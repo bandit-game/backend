@@ -29,7 +29,7 @@ public class GameSessionStartedUseCaseImpl implements GameSessionStartedUseCase 
     }
 
     @Override
-    public void startGame(StartGameSessionEvent startGameSessionEvent) {
+    public Session startGame(StartGameSessionEvent startGameSessionEvent) {
         String normalizedName = Game.normalizeName(startGameSessionEvent.gameName());
         Game game = findGamePort.findByName(normalizedName);
 
@@ -37,10 +37,10 @@ public class GameSessionStartedUseCaseImpl implements GameSessionStartedUseCase 
         List<Player> players = findPlayerPort.findPlayersByIds(playerIds);
 
         Session session = new Session(new SessionId(startGameSessionEvent.lobbyId()), game);
-        session.start(startGameSessionEvent.timestamp(), players);
+        session.start(startGameSessionEvent.timestamp(), players, new PlayerId(startGameSessionEvent.firstPlayerId()));
 
         Session savedSession = persistSessionPort.save(session);
         logger.info("Game session saved: {}", savedSession.getSessionId());
-
+        return savedSession;
     }
 }

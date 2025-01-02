@@ -9,11 +9,12 @@ import java.util.UUID;
 
 @Repository
 public interface SessionJpaRepository extends JpaRepository<SessionJpaEntity, UUID> {
-    @Query("select s from SessionJpaEntity s " +
-    "left join s.game g " +
-    "left join s.winner w " +
-    "left join s.players ps " +
-    "left join ps.player p " +
+    @Query("select distinct s from SessionJpaEntity s " +
+    "left join fetch s.game g " +
+    "left join fetch s.winner w " +
+    "left join fetch s.players ps " +
+    "left join fetch ps.moves m " +
+    "left join fetch ps.player p " +
     "where s.sessionId = :sessionId")
     Optional<SessionJpaEntity> findBySessionIdFetched(UUID sessionId);
 }
