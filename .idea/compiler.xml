@@ -9,6 +9,7 @@
         </processorPath>
         <module name="GamePlatform.CheckersContext.main" />
         <module name="GamePlatform.GamePlatformContext.main" />
+        <module name="GamePlatform.StatisticsContext.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="21">
