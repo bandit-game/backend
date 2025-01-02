@@ -24,7 +24,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") // Includes JUnit 5
-    testImplementation("org.springframework.boot:spring-boot-testcontainers") // For integration tests with Testcontainers
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:rabbitmq")
+    testImplementation("org.testcontainers:postgresql")
 
 }
 

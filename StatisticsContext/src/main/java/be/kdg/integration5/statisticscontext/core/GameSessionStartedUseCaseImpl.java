@@ -30,7 +30,8 @@ public class GameSessionStartedUseCaseImpl implements GameSessionStartedUseCase 
 
     @Override
     public void startGame(StartGameSessionEvent startGameSessionEvent) {
-        Game game = findGamePort.findByName("TEMPORARY");
+        String normalizedName = Game.normalizeName(startGameSessionEvent.gameName());
+        Game game = findGamePort.findByName(normalizedName);
 
         List<PlayerId> playerIds = startGameSessionEvent.playerIds().stream().map(PlayerId::new).toList();
         List<Player> players = findPlayerPort.findPlayersByIds(playerIds);

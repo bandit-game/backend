@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public record StartGameSessionEvent(UUID lobbyId, UUID firstPlayerId, List<UUID> playerIds, LocalDateTime timestamp) {
+public record StartGameSessionEvent(String gameName, UUID lobbyId, UUID firstPlayerId, List<UUID> playerIds, LocalDateTime timestamp) {
     public StartGameSessionEvent {
+        Objects.requireNonNull(gameName);
         Objects.requireNonNull(lobbyId);
         Objects.requireNonNull(firstPlayerId);
         Objects.requireNonNull(playerIds);
