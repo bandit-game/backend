@@ -1,5 +1,6 @@
 package be.kdg.integration5.statisticscontext.domain;
 
+import be.kdg.integration5.statisticscontext.domain.exception.MoveDateTimeConflictException;
 import be.kdg.integration5.statisticscontext.domain.exception.NoMovesInPlayerActivityException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +29,10 @@ public class PlayerActivity {
 
     public void endMove(LocalDateTime moveDateTime) {
         Move move = this.getLastMove();
+
+        if (moveDateTime.isBefore(move.getStartTime()))
+            throw new MoveDateTimeConflictException("Move datetime cannot be before start time.");
+
         move.setEndTime(moveDateTime);
     }
 

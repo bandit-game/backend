@@ -1,6 +1,7 @@
 package be.kdg.integration5.statisticscontext.domain;
 
 
+import be.kdg.integration5.statisticscontext.domain.exception.NotFirstPlayerException;
 import be.kdg.integration5.statisticscontext.domain.exception.PlayerNotPartOfSessionException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -42,6 +43,10 @@ public class Session {
 
     public void processMove(PlayerId playerId, PlayerId nextPlayerId, LocalDateTime moveDateTime) {
         PlayerActivity playerActivity = this.getPlayerActivity(playerId);
+
+        if (playerActivity.getMoves() == null || playerActivity.getMoves().isEmpty())
+            throw new NotFirstPlayerException("Player " + playerId + " is not first player.");
+
         playerActivity.endMove(moveDateTime);
 
         PlayerActivity nextPlayerActivity = this.getPlayerActivity(nextPlayerId);
