@@ -69,10 +69,13 @@ public class GameDatabaseAdapter implements PersistGamePort, DeleteGamePort, Fin
             PieceJpaEntity pieceJpaEntity = existingPieceMap.remove(pieceId);
             if (pieceJpaEntity == null) {
                 // Create and add a new piece
-                pieceJpaEntity = new PieceJpaEntity(piece.isKing(), piece.getColor());
-                pieceJpaEntity.setPieceId(pieceId);
-                pieceJpaEntity.setGame(gameJpaEntity);
-                pieceJpaEntity.setOwner(playerJparepository.getReferenceById(piece.getOwner().getPlayerId().uuid()));
+                pieceJpaEntity = new PieceJpaEntity(
+                        pieceId,
+                        gameJpaEntity,
+                        piece.isKing(),
+                        piece.getColor(),
+                        playerJparepository.getReferenceById(piece.getOwner().getPlayerId().uuid())
+                );
                 existingPieces.add(pieceJpaEntity);
             } else {
                 pieceJpaEntity.setKing(piece.isKing());

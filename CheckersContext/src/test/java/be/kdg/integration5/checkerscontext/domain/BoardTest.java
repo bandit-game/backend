@@ -25,7 +25,6 @@ public class BoardTest {
         player2 = new Player(new PlayerId(UUID.randomUUID()), "Bob");
         List<Player> players = List.of(player1, player2);
 
-
         List<Piece> pieces = new ArrayList<>();
 
         Board newBoard = new Board(pieces, players, player1);
@@ -36,7 +35,7 @@ public class BoardTest {
 
 
     @Test
-    void testPiecesPlacedCorrectly() {
+    void shouldPlacePiecesCorrectlyOnBoardStart() {
         game.start();
         Square[][] squares = game.getBoard().getSquares();
         Square testSquare = null;
@@ -59,7 +58,7 @@ public class BoardTest {
     }
 
     @Test
-    void testBoardGeneratedCorrectly() {
+    void shouldGenerateBoardWithCorrectDimensionsAndNonNullSquares() {
         Square[][] squares = board.getSquares();
         assertEquals(Board.BOARD_SIZE, squares.length);
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
@@ -71,7 +70,142 @@ public class BoardTest {
     }
 
     @Test
-    void testValidMove() {
+    void shouldReturnTwoPossibleNormalMovesForNonKingPiece() {
+        Piece piece = new Piece(new PiecePosition(3, 4), Piece.PieceColor.BLACK, player1);
+        board.addPiece(piece);
+
+        List<Move> possibleMoves = board.getPossibleMoves(piece);
+        assertEquals(2, possibleMoves.size());
+        assertTrue(possibleMoves.contains(new Move(new PiecePosition(3, 4), new PiecePosition(4, 5), Move.MoveType.GO)));
+        assertTrue(possibleMoves.contains(new Move(new PiecePosition(3, 4), new PiecePosition(2, 5), Move.MoveType.GO)));
+    }
+
+    @Test
+    void shouldReturnSingleAttackMoveWhenEnemyPieceIsAdjacent() {
+        Piece piece = new Piece(new PiecePosition(3, 4), Piece.PieceColor.WHITE, player1);
+        board.addPiece(piece);
+        board.addPiece(new Piece(new PiecePosition(4, 5), Piece.PieceColor.BLACK, player2));
+
+        List<Move> possibleMoves = board.getPossibleMoves(piece);
+        assertEquals(1, possibleMoves.size());
+        assertTrue(possibleMoves.contains(new Move(new PiecePosition(3, 4), new PiecePosition(5, 6), Move.MoveType.ATTACK)));
+    }
+
+    @Test
+    void shouldReturnSingleMultiStepAttackMoveWithIntermediatePositions() {
+        Piece piece = new Piece(new PiecePosition(2, 3), Piece.PieceColor.WHITE, player1);
+        board.addPiece(piece);
+        board.addPiece(new Piece(new PiecePosition(3, 4), Piece.PieceColor.BLACK, player2));
+        board.addPiece(new Piece(new PiecePosition(5, 6), Piece.PieceColor.BLACK, player2));
+
+        List<Move> possibleMoves = board.getPossibleMoves(piece);
+        assertEquals(1, possibleMoves.size());
+        Move expectedMove = new Move(new PiecePosition(2, 3), new PiecePosition(6, 7), Move.MoveType.ATTACK);
+        expectedMove.addIntermediateAttackPosition(new PiecePosition(4, 5));
+        assertTrue(possibleMoves.contains(expectedMove));
+    }
+
+    @Test
+    void shouldAllowKingToMoveInAllDirections() {
+        Piece king = new Piece(new PiecePosition(3, 4), Piece.PieceColor.WHITE, player1);
+        king.setKing(true);
+        board.addPiece(king);
+
+        List<Move> possibleMoves = board.getPossibleMoves(king);
+        assertTrue(possibleMoves.contains(new Move(new PiecePosition(3, 4), new PiecePosition(5, 6), Move.MoveType.GO)));
+        assertTrue(possibleMoves.contains(new Move(new PiecePosition(3, 4), new PiecePosition(1, 2), Move.MoveType.GO)));
+        assertTrue(possibleMoves.contains(new Move(new PiecePosition(3, 4), new PiecePosition(5, 2), Move.MoveType.GO)));
+        assertTrue(possibleMoves.contains(new Move(new PiecePosition(3, 4), new PiecePosition(1, 6), Move.MoveType.GO)));
+    }
+
+    @Test
+    void shouldReturnTwoGOMovesForwardWhenHaveEnemyPieceAdjacentButNotPossibleToAttack() {
+        Piece piece = new Piece(new PiecePosition(2, 3), Piece.PieceColor.WHITE, player1);
+        board.addPiece(piece);
+        board.addPiece(new Piece(new PiecePosition(3, 4), Piece.PieceColor.BLACK, player2));
+        board.addPiece(new Piece(new PiecePosition(4, 5), Piece.PieceColor.BLACK, player2));
+
+        List<Move> possibleMoves = board.getPossibleMoves(piece);
+        assertEquals(2, possibleMoves.size());
+        Move expectedMove1 = new Move(new PiecePosition(2, 3), new PiecePosition(1, 2), Move.MoveType.GO);
+        Move expectedMove2 = new Move(new PiecePosition(2, 3), new PiecePosition(3, 2), Move.MoveType.GO);
+        assertTrue(possibleMoves.contains(expectedMove1));
+        assertTrue(possibleMoves.contains(expectedMove2));
+    }
+
+    @Test
+    void shouldReturnTwoAttackMovesOfTheSameMoveLengthWhenHaveTwoEnemyPieceAdjacentAndPossibleToAttack() {
+        Piece piece = new Piece(new PiecePosition(2, 5), Piece.PieceColor.WHITE, player1);
+        board.addPiece(piece);
+        board.addPiece(new Piece(new PiecePosition(1, 4), Piece.PieceColor.BLACK, player2));
+        board.addPiece(new Piece(new PiecePosition(3, 4), Piece.PieceColor.BLACK, player2));
+
+        List<Move> possibleMoves = board.getPossibleMoves(piece);
+        assertEquals(2, possibleMoves.size());
+        Move expectedMove1 = new Move(new PiecePosition(2, 5), new PiecePosition(0, 3), Move.MoveType.ATTACK);
+        Move expectedMove2 = new Move(new PiecePosition(2, 5), new PiecePosition(4, 3), Move.MoveType.ATTACK);
+        assertTrue(possibleMoves.contains(expectedMove1));
+        assertTrue(possibleMoves.contains(expectedMove2));
+    }
+
+    @Test
+    void shouldReturnOneMoveWhenPieceIsAtCornerOfBoard() {
+        Piece piece = new Piece(new PiecePosition(9, 0), Piece.PieceColor.BLACK, player1);
+        board.addPiece(piece);
+
+        List<Move> possibleMoves = board.getPossibleMoves(piece);
+        assertEquals(1, possibleMoves.size());
+        assertTrue(possibleMoves.contains(new Move(new PiecePosition(9, 0), new PiecePosition(8, 1), Move.MoveType.GO)));
+    }
+
+    @Test
+    void shouldReturnNoMovesWhenPieceIsBlockedByAlliedPieces() {
+        Piece piece = new Piece(new PiecePosition(4, 3), Piece.PieceColor.WHITE, player1);
+        board.addPiece(piece);
+        board.addPiece(new Piece(new PiecePosition(3, 2), Piece.PieceColor.WHITE, player1));
+        board.addPiece(new Piece(new PiecePosition(5, 2), Piece.PieceColor.WHITE, player1));
+
+        List<Move> possibleMoves = board.getPossibleMoves(piece);
+        assertEquals(0, possibleMoves.size());
+    }
+
+    @Test
+    void shouldReturnAllPossibleAttackMovesWhenSurroundedByEnemies() {
+        PiecePosition piecePosition = new PiecePosition(3, 4);
+        Piece piece = new Piece(piecePosition, Piece.PieceColor.WHITE, player1);
+        board.addPiece(piece);
+        board.addPiece(new Piece(new PiecePosition(2, 3), Piece.PieceColor.BLACK, player2));
+        board.addPiece(new Piece(new PiecePosition(2, 5), Piece.PieceColor.BLACK, player2));
+        board.addPiece(new Piece(new PiecePosition(4, 3), Piece.PieceColor.BLACK, player2));
+        board.addPiece(new Piece(new PiecePosition(4, 5), Piece.PieceColor.BLACK, player2));
+
+        List<Move> possibleMoves = board.getPossibleMoves(piece);
+        assertEquals(4, possibleMoves.size());
+        assertTrue(possibleMoves.stream().allMatch(move -> move.getType() == Move.MoveType.ATTACK));
+        assertTrue(possibleMoves.stream().allMatch(move -> move.getMoveLength() == 2));
+        assertTrue(possibleMoves.stream().allMatch(move -> move.getInitialPosition().equals(piecePosition)));
+    }
+
+    @Test
+    void shouldAllowKingToMoveFreelyNearEdge() {
+        Piece king = new Piece(new PiecePosition(0, 1), Piece.PieceColor.WHITE, player1);
+        king.setKing(true);
+        board.addPiece(king);
+
+        List<Move> possibleMoves = board.getPossibleMoves(king);
+
+        assertEquals(9, possibleMoves.size());
+        assertTrue(possibleMoves.contains(new Move(new PiecePosition(0, 1), new PiecePosition(1, 0), Move.MoveType.GO)));
+        for (int x = king.getPiecePosition().x() + 1, y = king.getPiecePosition().y() + 1; x >= 0 && x < Board.BOARD_SIZE && y >= 0 && y < Board.BOARD_SIZE; x++, y++) {
+            assertTrue(possibleMoves.contains(new Move(new PiecePosition(0, 1), new PiecePosition(x, y), Move.MoveType.GO)));
+        }
+        assertTrue(possibleMoves.stream().allMatch(move -> move.getMoveLength() == 2));
+    }
+
+
+
+    @Test
+    void shouldNotThrowExceptionForValidGoMove() {
         Move move = new Move(
                 new PiecePosition(2, 3),
                 new PiecePosition(1, 2),
@@ -86,7 +220,7 @@ public class BoardTest {
     }
 
     @Test
-    void testInvalidMove() {
+    void shouldThrowExceptionForInvalidMove() {
         Move invalidMove = new Move(
                 new PiecePosition(1, 2),
                 new PiecePosition(3, 4),
@@ -97,7 +231,7 @@ public class BoardTest {
     }
 
     @Test
-    void testMultipleStepsAttackMove() {
+    void shouldExecuteMultipleStepAttackMoveSuccessfully() {
         Move attackMove = new Move(
                 new PiecePosition(1, 2),
                 new PiecePosition(1, 6),
@@ -123,7 +257,7 @@ public class BoardTest {
     }
 
     @Test
-    void testOutOfBoundsMove() {
+    void shouldThrowExceptionForOutOfBoundsMove() {
         assertThrows(IndexOutOfBoundsException.class, () -> new Move(
                 new PiecePosition(0, 1),
                 new PiecePosition(-1, 0),
@@ -132,20 +266,20 @@ public class BoardTest {
     }
 
     @Test
-    void testNotPlayablePosition() {
+    void shouldThrowExceptionForMoveToNotPlayablePosition() {
         assertThrows(NotPlayablePositionException.class, () -> new PiecePosition(0, 0));
         assertThrows(NotPlayablePositionException.class, () -> new PiecePosition(2, 2));
         assertThrows(NotPlayablePositionException.class, () -> new PiecePosition(4, 4));
     }
 
     @Test
-    void testPlayerIsParticipant() {
+    void shouldValidatePlayerParticipationInGame() {
         assertEquals(board.getCurrentPlayer().getPlayerId(), player1.getPlayerId());
         assertTrue(board.getPlayers().contains(player2));
     }
 
     @Test
-    void testSwitchPlayerAfterGOMove() {
+    void shouldSwitchPlayerAfterValidGoMove() {
         Move move = new Move(
                 new PiecePosition(1, 2),
                 new PiecePosition(2, 3),
@@ -160,7 +294,7 @@ public class BoardTest {
     }
 
     @Test
-    void testSwitchPlayerAfterAttackMove() {
+    void shouldSwitchPlayerAfterValidAttackMove() {
         Move move = new Move(
                 new PiecePosition(1, 2),
                 new PiecePosition(3, 4),
@@ -177,7 +311,7 @@ public class BoardTest {
 
 
     @Test
-    void testMoveToSamePosition() {
+    void shouldThrowExceptionForMoveToSamePosition() {
         Move samePositionMove = new Move(
                 new PiecePosition(1, 2),
                 new PiecePosition(1, 2),
@@ -187,7 +321,7 @@ public class BoardTest {
     }
 
     @Test
-    void testInvalidPlayerMove() {
+    void shouldThrowExceptionForMoveByWrongPlayer() {
         Move move = new Move(
                 new PiecePosition(2, 3),
                 new PiecePosition(3, 4),
@@ -199,7 +333,7 @@ public class BoardTest {
     }
 
     @Test
-    void testOccupiedTargetSquare() {
+    void shouldThrowExceptionForMoveToOccupiedSquare() {
         Move move = new Move(
                 new PiecePosition(1, 2),
                 new PiecePosition(3, 4),
@@ -212,7 +346,7 @@ public class BoardTest {
     }
 
     @Test
-    void testBackwardMoveForNonKing() {
+    void shouldThrowExceptionForBackwardMoveByNonKing() {
         Move backwardMove = new Move(
                 new PiecePosition(3, 4),
                 new PiecePosition(2, 5),
@@ -224,7 +358,7 @@ public class BoardTest {
     }
 
     @Test
-    void testOversteppingSquares() {
+    void shouldThrowExceptionForOversteppingInGoMove() {
         Move oversteppingMove = new Move(
                 new PiecePosition(2, 3),
                 new PiecePosition(4, 5),
@@ -236,7 +370,7 @@ public class BoardTest {
     }
 
     @Test
-    void testKingMultiSquareMove() {
+    void shouldAllowKingToMoveMultipleSquares() {
         Move kingMove = new Move(
                 new PiecePosition(2, 3),
                 new PiecePosition(4, 5),
@@ -250,7 +384,7 @@ public class BoardTest {
     }
 
     @Test
-    void testAttackMoveNoCapturablePiece() {
+    void shouldThrowExceptionForAttackMoveWithNoCapturablePiece() {
         Move invalidAttackMove = new Move(
                 new PiecePosition(1, 2),
                 new PiecePosition(3, 4),
@@ -263,7 +397,7 @@ public class BoardTest {
 
 
     @Test
-    void testCrossingMultiplePiecesInGoMove() {
+    void shouldThrowExceptionForCrossingMultiplePiecesInGoMove() {
         Move invalidGoMove = new Move(
                 new PiecePosition(1, 2),
                 new PiecePosition(5, 6),
@@ -276,7 +410,7 @@ public class BoardTest {
     }
 
     @Test
-    void testMovingOpponentPiece() {
+    void shouldThrowExceptionForMovingOpponentPiece() {
         Move moveOpponentPiece = new Move(
                 new PiecePosition(3, 4),
                 new PiecePosition(5, 6),
@@ -286,6 +420,4 @@ public class BoardTest {
 
         assertThrows(MoveNotValidException.class, () -> board.movePiece(player1.getPlayerId(), moveOpponentPiece));
     }
-
-
 }

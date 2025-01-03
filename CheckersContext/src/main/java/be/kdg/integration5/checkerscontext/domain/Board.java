@@ -9,8 +9,9 @@ import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -114,67 +115,164 @@ public class Board {
     }
 
     public List<Move> getPossibleMoves(Piece piece) {
-        List<Move> attackMoves = new ArrayList<>();
+        List<Move> attackMoves = getAllAttackMoves(piece);
+        if (!attackMoves.isEmpty())
+            return attackMoves;
+
+        return getAllGoMoves(piece);
+    }
+
+    private List<Move> getAllGoMoves(Piece piece) {
         List<Move> goMoves = new ArrayList<>();
 
         int currentX = piece.getPiecePosition().x();
         int currentY = piece.getPiecePosition().y();
         Piece.PieceColor pieceColor = piece.getColor();
+        boolean isKing = piece.isKing();
 
         for (MoveDirection direction : MoveDirection.values()) {
             int targetX = currentX + direction.xShift;
             int targetY = currentY + direction.yShift;
 
-            if (!piece.isKing() && !isMovingForward(direction.yShift, pieceColor)) continue;
+            if (isKing) {
+                for (int x = targetX, y = targetY; !isOutOfBounds(x, y); x += direction.xShift, y += direction.yShift) {
+                    if(squares[y][x].isEmpty())
+                        goMoves.add(new Move(
+                                new PiecePosition(currentX, currentY),
+                                new PiecePosition(x, y),
+                                Move.MoveType.GO
+                        ));
+                    else
+                        break;
+                }
+            } else {
+                if (!isMovingForward(direction.yShift, pieceColor)) continue;
 
-            if (isOutOfBounds(targetX, targetY)) continue;
+                if (isOutOfBounds(targetX, targetY)) continue;
 
-            Square targetSquare = squares[targetY][targetX];
+                Square targetSquare = squares[targetY][targetX];
 
-            if (canAttack(targetX, targetY, direction, pieceColor)) {
-                attackMoves.add(createAttackMove(currentX, currentY, targetX, targetY));
-            } else if (targetSquare.isEmpty()) {
-                goMoves.add(new Move(
-                        new PiecePosition(currentX, currentY),
-                        new PiecePosition(targetX, targetY),
-                        Move.MoveType.GO
-                ));
+                if (targetSquare.isEmpty()) {
+                    goMoves.add(new Move(
+                            new PiecePosition(currentX, currentY),
+                            new PiecePosition(targetX, targetY),
+                            Move.MoveType.GO
+                    ));
+                }
+            }
+        }
+        return goMoves;
+    }
+
+    private List<Move> getAllAttackMoves(Piece piece) {
+        return getAttackMovesFromSquare(piece);
+    }
+
+    private List<Move> getAttackMovesFromSquare(Piece piece) {
+        return getAttackMovesFromSquare(piece, new ArrayList<>());
+    }
+
+    private List<Move> getAttackMovesFromSquare(Piece piece, List<PiecePosition> markedForRemovalPositions) {
+        PiecePosition piecePosition = piece.getPiecePosition();
+        Piece.PieceColor pieceColor = piece.getColor();
+        boolean isKing = piece.isKing();
+
+        List<Move> attackMoves = new ArrayList<>();
+        for (MoveDirection direction : MoveDirection.values()) {
+            List<PiecePosition> possibleLandingPositions = getPossibleLandingPositions(piecePosition, direction, pieceColor, isKing, markedForRemovalPositions);
+
+            for (PiecePosition landingPosition : possibleLandingPositions) {
+                PiecePosition enemyPosition = findPiecePositionInBetween(piecePosition, landingPosition, direction);
+                markedForRemovalPositions.add(enemyPosition);
+                Piece pieceOnLandedSquare = new Piece(landingPosition, isKing, pieceColor, piece.getOwner());
+                List<Move> possibleAttackMovesFromLandingPosition = getAttackMovesFromSquare(pieceOnLandedSquare, markedForRemovalPositions);
+                if (!possibleAttackMovesFromLandingPosition.isEmpty()) {
+                    attackMoves.addAll(joinAttackMoves(piecePosition, possibleAttackMovesFromLandingPosition));
+                } else {
+                    attackMoves.add(new Move(piecePosition, landingPosition, Move.MoveType.ATTACK));
+                }
+            }
+        }
+        return selectLongestAttackMoves(attackMoves);
+    }
+
+    private PiecePosition findPiecePositionInBetween(PiecePosition startPosition, PiecePosition endPosition, MoveDirection direction) {
+        for (int x = startPosition.x() + direction.xShift, y = startPosition.y() + direction.yShift; x != endPosition.x() && y != endPosition.y(); x += direction.xShift, y += direction.yShift) {
+            if (!squares[y][x].isEmpty())
+                return new PiecePosition(x, y);
+        }
+        throw new IllegalStateException("No pieces found in between two positions.");
+    }
+
+    private List<Move> selectLongestAttackMoves(List<Move> allAttackMoves) {
+        if (allAttackMoves.isEmpty())
+            return allAttackMoves;
+
+        allAttackMoves.sort((Comparator.comparingInt(Move::getMoveLength)));
+        int longestMoveLength = allAttackMoves.getFirst().getMoveLength();
+        return allAttackMoves.stream().filter(move -> move.getMoveLength() == longestMoveLength).toList();
+    }
+
+    private List<PiecePosition> getPossibleLandingPositions(PiecePosition piecePosition, MoveDirection direction, Piece.PieceColor pieceColor, boolean isKing, List<PiecePosition> markedForRemovalPositions) {
+        List<PiecePosition> possibleLandingSquares = new ArrayList<>();
+        int enemyX, enemyY, landingX, landingY;
+        if (!isKing) {
+            enemyX = piecePosition.x() + direction.xShift;
+            enemyY = piecePosition.y() + direction.yShift;
+
+            landingX = enemyX + direction.xShift;
+            landingY = enemyY + direction.yShift;
+
+            if (isOutOfBounds(enemyX, enemyY) || isOutOfBounds(landingX, landingY)) {
+                return possibleLandingSquares;
+            }
+
+            Square enemySquare = squares[enemyY][enemyX];
+            Piece enemyPiece = enemySquare.getPlacedPiece();
+            if (enemyPiece == null)
+                return possibleLandingSquares;
+
+            Square landingSquare = squares[landingY][landingX];
+
+            PiecePosition enemyPiecePosition = enemyPiece.getPiecePosition();
+
+            if (!enemySquare.isEmpty() &&
+                    enemyPiece.getColor() != pieceColor &&
+                    landingSquare.isEmpty() &&
+                    !markedForRemovalPositions.contains(enemyPiecePosition)) {
+//                markedForRemovalPositions.add(new PiecePosition(enemyX, enemyY));
+                possibleLandingSquares.add(new PiecePosition(landingX, landingY));
+            }
+        } else {
+            boolean enemyFound = false;
+            for (int x = piecePosition.x(), y = piecePosition.x(); !isOutOfBounds(x, y); x += direction.xShift, y += direction.yShift) {
+                Square enemySquare = squares[y][x];
+                if (!enemyFound) {
+                    if (!enemySquare.isEmpty() && !markedForRemovalPositions.contains(new PiecePosition(x, y))) {
+                        int nextX = x + direction.xShift;
+                        int nextY = y + direction.yShift;
+                        if (!isOutOfBounds(nextX, nextY)) {
+                            Square nextSquare = squares[nextY][nextX];
+                            if (nextSquare.isEmpty()) {
+                                enemyFound = true;
+                            }
+                        }
+                    }
+                } else {
+                    possibleLandingSquares.add(new PiecePosition(x, y));
+                }
             }
         }
 
-        return !attackMoves.isEmpty() ? attackMoves : goMoves;
+        return possibleLandingSquares;
     }
 
-    private boolean canAttack(int newX, int newY, MoveDirection direction, Piece.PieceColor pieceColor) {
-        int landingX = newX + direction.xShift;
-        int landingY = newY + direction.yShift;
-
-        if (isOutOfBounds(landingX, landingY)) return false;
-
-        Square enemySquare = squares[newY][newX];
-        Square landingSquare = squares[landingY][landingX];
-
-        return !enemySquare.isEmpty() &&
-                enemySquare.getPlacedPiece().getColor() != pieceColor &&
-                landingSquare.isEmpty();
+    private List<Move> joinAttackMoves(PiecePosition initialPosition, List<Move> finishingAttackMovesList) {
+        for (Move finishingMove : finishingAttackMovesList) {
+            finishingMove.addNewInitialPositionInSequence(initialPosition);
+        }
+        return finishingAttackMovesList;
     }
-
-    private Move createAttackMove(int currentX, int currentY, int enemyX, int enemyY) {
-        int xShift = enemyX - currentX;
-        int yShift = enemyY - currentY;
-
-        int landingX = enemyX + xShift;
-        int landingY = enemyY + yShift;
-
-        Move attackMove = new Move(
-                new PiecePosition(currentX, currentY),
-                new PiecePosition(landingX, landingY),
-                Move.MoveType.ATTACK
-        );
-//        attackMove.addIntermediateAttackPosition(enemySquare.getPlayedPosition());
-        return attackMove;
-    }
-
 
     private boolean isMovingForward(int yChange, Piece.PieceColor pieceColor) {
         return (pieceColor == Piece.PieceColor.WHITE && yChange < 0) || (pieceColor == Piece.PieceColor.BLACK && yChange > 0);

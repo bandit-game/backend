@@ -1,9 +1,6 @@
 package be.kdg.integration5.checkerscontext.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +10,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class Move {
     private PiecePosition initialPosition;
     private List<PiecePosition> intermediateAttackPositions;
@@ -26,11 +24,37 @@ public class Move {
         this.intermediateAttackPositions = new ArrayList<>();
     }
 
+    public int getMoveLength() {
+        return intermediateAttackPositions.size() + 2;
+    }
+
     public void addIntermediateAttackPosition(PiecePosition position) {
+        addIntermediateAttackPosition(position, false);
+    }
+
+    public void addIntermediateAttackPosition(PiecePosition position, boolean inBeginning) {
         if (intermediateAttackPositions == null)
             intermediateAttackPositions = new ArrayList<>();
 
-        intermediateAttackPositions.add(position);
+        if (inBeginning)
+            intermediateAttackPositions.addFirst(position);
+        else
+            intermediateAttackPositions.add(position);
+    }
+
+    public void addNewInitialPositionInSequence(PiecePosition newInitialPosition) {
+        if (newInitialPosition == this.initialPosition)
+            return;
+
+        addIntermediateAttackPosition(this.initialPosition, true);
+
+        this.initialPosition = newInitialPosition;
+    }
+
+    public void addNewFuturePositionInSequence(PiecePosition newFuturePosition) {
+        addIntermediateAttackPosition(this.futurePosition);
+
+        this.futurePosition = newFuturePosition;
     }
 
     public List<PiecePosition> getAllAttackSteps() {
