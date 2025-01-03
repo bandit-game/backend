@@ -28,8 +28,9 @@ public class Player {
         this.age = age;
         this.gender = gender;
         this.location = location;
-        this.metrics = null;
+        this.metrics = new Metrics();
     }
+
 
     @Override
     public boolean equals(Object o) {

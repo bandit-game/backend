@@ -5,6 +5,7 @@ import be.kdg.integration5.statisticscontext.domain.PlayerId;
 import be.kdg.integration5.statisticscontext.domain.Session;
 import be.kdg.integration5.statisticscontext.domain.SessionId;
 import be.kdg.integration5.statisticscontext.port.in.GameSessionFinishedUseCase;
+import be.kdg.integration5.statisticscontext.port.out.FetchPredictionPort;
 import be.kdg.integration5.statisticscontext.port.out.FindSessionPort;
 import be.kdg.integration5.statisticscontext.port.out.PersistSessionPort;
 import jakarta.transaction.Transactional;
@@ -16,10 +17,12 @@ public class GameSessionFinishedUseCaseImpl implements GameSessionFinishedUseCas
 
     private final PersistSessionPort persistSessionPort;
     private final FindSessionPort findSessionPort;
+    private final FetchPredictionPort fetchPredictionPort;
 
-    public GameSessionFinishedUseCaseImpl(PersistSessionPort persistSessionPort, FindSessionPort findSessionPort) {
+    public GameSessionFinishedUseCaseImpl(PersistSessionPort persistSessionPort, FindSessionPort findSessionPort, FetchPredictionPort fetchPredictionPort) {
         this.persistSessionPort = persistSessionPort;
         this.findSessionPort = findSessionPort;
+        this.fetchPredictionPort = fetchPredictionPort;
     }
 
     @Override
@@ -31,6 +34,7 @@ public class GameSessionFinishedUseCaseImpl implements GameSessionFinishedUseCas
                 event.timestamp(),
                 event.isDraw()
         );
+
         return persistSessionPort.update(session);
     }
 }

@@ -15,6 +15,7 @@ public interface SessionJpaRepository extends JpaRepository<SessionJpaEntity, UU
     "left join fetch s.players ps " +
     "left join fetch ps.moves m " +
     "left join fetch ps.player p " +
+    "left join fetch p.playerMetrics pm " +
     "where s.sessionId = :sessionId")
     Optional<SessionJpaEntity> findBySessionIdFetched(UUID sessionId);
 }

@@ -1,11 +1,13 @@
 package be.kdg.integration5.statisticscontext.domain;
 
 import be.kdg.integration5.statisticscontext.domain.exception.MoveDateTimeConflictException;
+import be.kdg.integration5.statisticscontext.domain.exception.MoveWithoutEndTimeException;
 import be.kdg.integration5.statisticscontext.domain.exception.NoMovesInPlayerActivityException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -37,8 +39,38 @@ public class PlayerActivity {
             move.setEndTime(moveDateTime);
     }
 
+    public void updateMetrics(boolean isWinner, boolean isDraw, boolean isFirstMove, LocalDateTime startTime) {
+        Move lastMove = this.getLastMove();
+        LocalDateTime endTime = lastMove.getEndTime();
+
+        if (endTime == null)
+            throw new MoveWithoutEndTimeException("Move %s has no end time set.".formatted(lastMove.getMoveId().uuid()));
+
+        // Calculate game duration
+        double gameDuration = Duration.between(startTime, endTime).toMinutes();
+
+        // Calculate average move duration
+        double avgMoveDuration = moves.stream()
+                .filter(move -> move.getEndTime() != null)
+                .mapToDouble(move -> Duration.between(move.getStartTime(), move.getEndTime()).toMinutes())
+                .average()
+                .orElse(0);
+
+        // Calculate total moves
+        double totalMoves = moves.size();
+
+        // Update player metrics
+        Metrics metrics = player.getMetrics();
+        metrics.updateValues(isWinner, isDraw, isFirstMove, gameDuration, avgMoveDuration, totalMoves, startTime);
+    }
+
     public Move getLastMove() {
         return moves.stream().max(Comparator.comparing(Move::getStartTime))
+                .orElseThrow(() -> new NoMovesInPlayerActivityException("No moves found for player %s".formatted(player.getPlayerId().uuid())));
+    }
+
+    public Move getFirstMove() {
+        return moves.stream().min(Comparator.comparing(Move::getStartTime))
                 .orElseThrow(() -> new NoMovesInPlayerActivityException("No moves found for player %s".formatted(player.getPlayerId().uuid())));
     }
 

@@ -11,6 +11,9 @@ import be.kdg.integration5.statisticscontext.adapter.out.move.MoveJpaRepository;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaConverter;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaRepository;
+import be.kdg.integration5.statisticscontext.adapter.out.player_metrics.PlayerMetricsJpaConverter;
+import be.kdg.integration5.statisticscontext.adapter.out.player_metrics.PlayerMetricsJpaEntity;
+import be.kdg.integration5.statisticscontext.adapter.out.player_metrics.PlayerMetricsJpaRepository;
 import be.kdg.integration5.statisticscontext.adapter.out.player_session.PlayerSessionJpaRepository;
 import be.kdg.integration5.statisticscontext.adapter.out.session.SessionJpaRepository;
 import be.kdg.integration5.statisticscontext.domain.*;
@@ -54,7 +57,13 @@ public class PlayerMoveIntegrationTest {
     private SessionJpaRepository sessionJpaRepository;
 
     @Autowired
+    private PlayerMetricsJpaRepository playerMetricsJpaRepository;
+
+    @Autowired
     private PlayerJpaConverter playerJpaConverter;
+
+    @Autowired
+    private PlayerMetricsJpaConverter playerMetricsJpaConverter;
 
     @Autowired
     private PlayerMadeMoveUseCase playerMadeMoveUseCase;
@@ -79,7 +88,6 @@ public class PlayerMoveIntegrationTest {
         playerList.add(player1);
         playerList.add(player2);
         List<PlayerJpaEntity> playerEntities = playerList.stream().map(playerJpaConverter::toJpa).toList();
-        playerJpaRepository.saveAll(playerEntities);
 
         StartGameSessionEvent event = new StartGameSessionEvent(
                 chessGame.name(),
@@ -89,6 +97,18 @@ public class PlayerMoveIntegrationTest {
                 LocalDateTime.now()
 
         );
+
+        List<PlayerMetricsJpaEntity> playerMetricsJpaEntities = playerEntities.stream().map(p -> {
+            PlayerMetricsJpaEntity playerMetricsJpaEntity = new PlayerMetricsJpaEntity();
+            playerMetricsJpaConverter.updateFields(playerMetricsJpaEntity, new Metrics());
+            playerMetricsJpaEntity.setPlayerId(p.getPlayerId());
+            playerMetricsJpaEntity.setPlayer(p);
+            return playerMetricsJpaEntity;
+        }).toList();
+
+        playerJpaRepository.saveAll(playerEntities);
+        playerMetricsJpaRepository.saveAll(playerMetricsJpaEntities);
+
         session = gameSessionStartedUseCase.startGame(event);
 
     }
@@ -102,6 +122,7 @@ public class PlayerMoveIntegrationTest {
         playerSessionJpaRepository.deleteAll();
         sessionJpaRepository.deleteAll();
         gameJpaRepository.deleteAll();
+        playerMetricsJpaRepository.deleteAll();
         playerJpaRepository.deleteAll();
     }
 
@@ -120,11 +141,13 @@ public class PlayerMoveIntegrationTest {
 
         // Assert
         List<MoveJpaEntity> moveEntities = moveJpaRepository.findAll();
+        List<PlayerMetricsJpaEntity> playerMetricsEntities = playerMetricsJpaRepository.findAll();
 
         assertThat(moveEntities, hasSize(2));
         assertThat(moveEntities, hasItem(hasProperty("endTime", nullValue())));
         assertThat(moveEntities, everyItem(hasProperty("moveNumber", equalTo(1))));
         assertThat(moveEntities, hasItem(hasProperty("startTime", equalTo(event.timestamp()))));
+        assertThat(playerMetricsEntities, hasSize(2));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package be.kdg.integration5.statisticscontext.adapter.out.player;
 
+import be.kdg.integration5.statisticscontext.adapter.out.player_metrics.PlayerMetricsJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.player_session.PlayerSessionJpaEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,9 @@ public class PlayerJpaEntity {
 
     @OneToMany(mappedBy = "player")
     private List<PlayerSessionJpaEntity> sessions;
+
+    @OneToOne(mappedBy = "player")
+    private PlayerMetricsJpaEntity playerMetrics;
 
     public PlayerJpaEntity(UUID playerId, String city, String country, String gender, int age, String playerName) {
         this.playerId = playerId;

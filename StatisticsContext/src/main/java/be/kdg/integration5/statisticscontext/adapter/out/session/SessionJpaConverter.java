@@ -47,8 +47,13 @@ public class SessionJpaConverter {
                                         .map(moveJpaConverter::toDomain)
                                         .collect(Collectors.toList())))
                         .collect(Collectors.toList()),
-                gameJpaConverter.toDomain(entity.getGame()),
+                entity.getGame() == null ? null : gameJpaConverter.toDomain(entity.getGame()),
                 entity.getWinner() == null ? null : playerJpaConverter.toDomain(entity.getWinner())
         );
+    }
+
+    public void updateValues(SessionJpaEntity sessionJpaEntity, Session session) {
+        sessionJpaEntity.setDraw(session.isDraw());
+        sessionJpaEntity.setFinishTime(session.getFinishTime());
     }
 }
