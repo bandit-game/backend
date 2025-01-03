@@ -33,7 +33,8 @@ public class PlayerActivity {
         if (moveDateTime.isBefore(move.getStartTime()))
             throw new MoveDateTimeConflictException("Move datetime cannot be before start time.");
 
-        move.setEndTime(moveDateTime);
+        if (move.getEndTime() == null)
+            move.setEndTime(moveDateTime);
     }
 
     public Move getLastMove() {

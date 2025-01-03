@@ -8,5 +8,12 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class Predictions {
-    private double currentChurn;
+    private double churn;
+    private double firstMoveWinProbability;
+    private String skillLevel;
+    private double consistencyScore;
+    private double platformEngagementProbability;
+
 }
+
+

@@ -3,6 +3,7 @@ package be.kdg.integration5.statisticscontext.domain;
 
 import be.kdg.integration5.statisticscontext.domain.exception.NotFirstPlayerException;
 import be.kdg.integration5.statisticscontext.domain.exception.PlayerNotPartOfSessionException;
+import be.kdg.integration5.statisticscontext.domain.exception.SessionResultConflictException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,8 +53,21 @@ public class Session {
         PlayerActivity nextPlayerActivity = this.getPlayerActivity(nextPlayerId);
         nextPlayerActivity.startMove(moveDateTime);
     }
-    public void gameFinish() {
-        // update all metrics of all players
+    public void gameFinish(PlayerId winnerId, LocalDateTime finishTime, boolean isDraw) {
+        if (winnerId != null && activities.stream().noneMatch(activity -> activity.getPlayer().getPlayerId().equals(winnerId)))
+            throw new PlayerNotPartOfSessionException("Player " + winnerId + " is not part of session.");
+
+        if (winnerId != null && isDraw)
+            throw new SessionResultConflictException("Session cannot have a winner and have draw at the same time.");
+
+        activities.forEach(activity -> activity.endMove(finishTime));
+        this.finishTime = finishTime;
+        this.isDraw = isDraw;
+
+        if (!isDraw) {
+            PlayerActivity winnerActivity = this.getPlayerActivity(winnerId);
+            this.winner = winnerActivity.getPlayer();
+        }
     }
 
     private PlayerActivity getPlayerActivity(PlayerId playerId) {

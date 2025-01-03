@@ -16,9 +16,11 @@ public class Metrics {
     private double avgMoveDuration;
     private double avgMoveAmount;
     private double avgGameDuration;
-    private int topDayOfWeek;
-    private int topDayOfMonth;
-    private int topMonth;
-    private DayPart topDayPart;
+    private int totalWeekdaysPlayed;
+    private int totalWeekendsPlayed;
+    private int totalMorningPlays;
+    private int totalAfternoonPlays;
+    private int totalEveningPlays;
+    private int totalNightPlays;
 
 }
