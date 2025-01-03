@@ -274,37 +274,6 @@ public class Board {
         return finishingAttackMovesList;
     }
 
-    private boolean canAttack(int newX, int newY, MoveDirection direction, Piece.PieceColor pieceColor) {
-        int landingX = newX + direction.xShift;
-        int landingY = newY + direction.yShift;
-
-        if (isOutOfBounds(landingX, landingY)) return false;
-
-        Square enemySquare = squares[newY][newX];
-        Square landingSquare = squares[landingY][landingX];
-
-        return !enemySquare.isEmpty() &&
-                enemySquare.getPlacedPiece().getColor() != pieceColor &&
-                landingSquare.isEmpty();
-    }
-
-    private Move createAttackMove(int currentX, int currentY, int enemyX, int enemyY) {
-        int xShift = enemyX - currentX;
-        int yShift = enemyY - currentY;
-
-        int landingX = enemyX + xShift;
-        int landingY = enemyY + yShift;
-
-        Move attackMove = new Move(
-                new PiecePosition(currentX, currentY),
-                new PiecePosition(landingX, landingY),
-                Move.MoveType.ATTACK
-        );
-//        attackMove.addIntermediateAttackPosition(enemySquare.getPlayedPosition());
-        return attackMove;
-    }
-
-
     private boolean isMovingForward(int yChange, Piece.PieceColor pieceColor) {
         return (pieceColor == Piece.PieceColor.WHITE && yChange < 0) || (pieceColor == Piece.PieceColor.BLACK && yChange > 0);
     }
