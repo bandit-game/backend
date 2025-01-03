@@ -420,4 +420,106 @@ public class BoardTest {
 
         assertThrows(MoveNotValidException.class, () -> board.movePiece(player1.getPlayerId(), moveOpponentPiece));
     }
+
+    @Test
+    void shouldUpgradeToKingWhenPieceReachesOppositeEnd() {
+        Piece piece = new Piece(new PiecePosition(6, 1), Piece.PieceColor.WHITE, player1);
+        board.addPiece(piece);
+
+        Move move = new Move(
+                new PiecePosition(6, 1),
+                new PiecePosition(7, 0),
+                Move.MoveType.GO
+        );
+
+        board.movePiece(player1.getPlayerId(), move);
+        Piece upgradedPiece = board.getSquares()[0][7].getPlacedPiece();
+        assertTrue(upgradedPiece.isKing(), "The piece should be upgraded to a king.");
+    }
+
+    @Test
+    void shouldNotUpgradeWhenPieceIsNotAtOppositeEnd() {
+        Piece piece = new Piece(new PiecePosition(6, 3), Piece.PieceColor.WHITE, player1);
+        board.addPiece(piece);
+
+        Move move = new Move(
+                new PiecePosition(6, 3),
+                new PiecePosition(5, 2),
+                Move.MoveType.GO
+        );
+
+        board.movePiece(player1.getPlayerId(), move);
+        Piece movedPiece = board.getSquares()[2][5].getPlacedPiece();
+        assertFalse(movedPiece.isKing(), "The piece should not be upgraded if it hasn't reached the opposite end.");
+    }
+
+    @Test
+    void shouldUpgradeOnlyAtOpponentSideForWhitePieces() {
+        Piece piece = new Piece(new PiecePosition(2, 1), Piece.PieceColor.WHITE, player1);
+        board.addPiece(piece);
+
+        Move move = new Move(
+                new PiecePosition(2, 1),
+                new PiecePosition(1, 0),
+                Move.MoveType.GO
+        );
+
+        board.movePiece(player1.getPlayerId(), move);
+        Piece upgradedPiece = board.getSquares()[0][1].getPlacedPiece();
+        assertTrue(upgradedPiece.isKing(), "White pieces should be upgraded only at the opponent's side.");
+    }
+
+    @Test
+    void shouldUpgradeOnlyAtOpponentSideForBlackPieces() {
+        PiecePosition piecePosition = new PiecePosition(Board.BOARD_SIZE - 3, Board.BOARD_SIZE - 2);
+        Piece piece = new Piece(piecePosition, Piece.PieceColor.BLACK, player2);
+        board.addPiece(piece);
+
+        Move move = new Move(
+                piecePosition,
+                new PiecePosition(Board.BOARD_SIZE-2, Board.BOARD_SIZE-1),
+                Move.MoveType.GO
+        );
+
+        board.movePiece(player2.getPlayerId(), move);
+        Piece upgradedPiece = board.getSquares()[Board.BOARD_SIZE-1][Board.BOARD_SIZE-2].getPlacedPiece();
+        assertTrue(upgradedPiece.isKing(), "Black pieces should be upgraded only at the opponent's side.");
+    }
+
+    @Test
+    void shouldNotUpgradeWhenKingAlready() {
+        Piece king = new Piece(new PiecePosition(4, 1), Piece.PieceColor.WHITE, player1);
+        king.setKing(true);
+        board.addPiece(king);
+
+        Move move = new Move(
+                new PiecePosition(4, 1),
+                new PiecePosition(3, 0),
+                Move.MoveType.GO
+        );
+
+        board.movePiece(player1.getPlayerId(), move);
+        Piece movedPiece = board.getSquares()[0][3].getPlacedPiece();
+        assertTrue(movedPiece.isKing(), "A king should remain a king after moving.");
+    }
+
+    @Test
+    void shouldNotUpgradeIfLandingOnIntermediatePosition() {
+        Piece piece = new Piece(new PiecePosition(4, 7), Piece.PieceColor.WHITE, player1);
+        board.addPiece(piece);
+        board.addPiece(new Piece(new PiecePosition(3, 6), Piece.PieceColor.BLACK, player2));
+        board.addPiece(new Piece(new PiecePosition(1, 4), Piece.PieceColor.BLACK, player2));
+
+        Move move = new Move(
+                new PiecePosition(4, 7),
+                List.of(new PiecePosition(2, 5)),
+                new PiecePosition(0, 3),
+                Move.MoveType.ATTACK
+        );
+
+        board.movePiece(player1.getPlayerId(), move);
+        Piece movedPiece = board.getSquares()[3][0].getPlacedPiece();
+        assertFalse(movedPiece.isKing(), "A piece should not upgrade to a king if the landing position is not on the opponent's side.");
+    }
+
 }

@@ -24,6 +24,10 @@ public class Piece {
         this.piecePosition = new PiecePosition(x,y);
     }
 
+    public void upgrade() {
+        setKing(true);
+    }
+
     /*public void setSquare(Square square) {
         if (!square.isEmpty())
             throw new IllegalStateException("Cannot place a piece on an occupied square. (x: %s, y: %s)".formatted(square.getX(), square.getY()));
