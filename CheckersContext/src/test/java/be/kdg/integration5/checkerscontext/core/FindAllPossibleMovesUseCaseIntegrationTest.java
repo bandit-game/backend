@@ -105,7 +105,7 @@ public class FindAllPossibleMovesUseCaseIntegrationTest {
 
         // Wait and verify the response
         PossibleMovesForPlayerResponseDto response = receivedMessages.poll(5, TimeUnit.SECONDS);
-        assertThat(response).isNotNull();
+    assertThat(response).isNotNull();
         assertThat(response.playerId()).isEqualTo(playerId);
         assertThat(response.moves().size()).isEqualTo(2);
     }

@@ -142,6 +142,8 @@ public class Board {
                                 new PiecePosition(x, y),
                                 Move.MoveType.GO
                         ));
+                    else
+                        break;
                 }
             } else {
                 if (!isMovingForward(direction.yShift, pieceColor)) continue;
@@ -182,7 +184,8 @@ public class Board {
             for (PiecePosition landingPosition : possibleLandingPositions) {
                 PiecePosition enemyPosition = findPiecePositionInBetween(piecePosition, landingPosition, direction);
                 markedForRemovalPositions.add(enemyPosition);
-                List<Move> possibleAttackMovesFromLandingPosition = getAttackMovesFromSquare(piece, markedForRemovalPositions);
+                Piece pieceOnLandedSquare = new Piece(landingPosition, isKing, pieceColor, piece.getOwner());
+                List<Move> possibleAttackMovesFromLandingPosition = getAttackMovesFromSquare(pieceOnLandedSquare, markedForRemovalPositions);
                 if (!possibleAttackMovesFromLandingPosition.isEmpty()) {
                     attackMoves.addAll(joinAttackMoves(piecePosition, possibleAttackMovesFromLandingPosition));
                 } else {
@@ -202,6 +205,9 @@ public class Board {
     }
 
     private List<Move> selectLongestAttackMoves(List<Move> allAttackMoves) {
+        if (allAttackMoves.isEmpty())
+            return allAttackMoves;
+
         allAttackMoves.sort((Comparator.comparingInt(Move::getMoveLength)));
         int longestMoveLength = allAttackMoves.getFirst().getMoveLength();
         return allAttackMoves.stream().filter(move -> move.getMoveLength() == longestMoveLength).toList();
@@ -217,16 +223,24 @@ public class Board {
             landingX = enemyX + direction.xShift;
             landingY = enemyY + direction.yShift;
 
+            if (isOutOfBounds(enemyX, enemyY) || isOutOfBounds(landingX, landingY)) {
+                return possibleLandingSquares;
+            }
+
             Square enemySquare = squares[enemyY][enemyX];
+            Piece enemyPiece = enemySquare.getPlacedPiece();
+            if (enemyPiece == null)
+                return possibleLandingSquares;
+
             Square landingSquare = squares[landingY][landingX];
 
-            PiecePosition enemyPiecePosition = enemySquare.getPlacedPiece().getPiecePosition();
+            PiecePosition enemyPiecePosition = enemyPiece.getPiecePosition();
 
             if (!enemySquare.isEmpty() &&
-                    enemySquare.getPlacedPiece().getColor() != pieceColor &&
+                    enemyPiece.getColor() != pieceColor &&
                     landingSquare.isEmpty() &&
                     !markedForRemovalPositions.contains(enemyPiecePosition)) {
-                markedForRemovalPositions.add(new PiecePosition(enemyX, enemyY));
+//                markedForRemovalPositions.add(new PiecePosition(enemyX, enemyY));
                 possibleLandingSquares.add(new PiecePosition(landingX, landingY));
             }
         } else {

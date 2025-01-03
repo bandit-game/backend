@@ -43,6 +43,9 @@ public class Move {
     }
 
     public void addNewInitialPositionInSequence(PiecePosition newInitialPosition) {
+        if (newInitialPosition == this.initialPosition)
+            return;
+
         addIntermediateAttackPosition(this.initialPosition, true);
 
         this.initialPosition = newInitialPosition;
