@@ -136,7 +136,7 @@ public class Board {
 
             if (isKing) {
                 for (int x = targetX, y = targetY; !isOutOfBounds(x, y); x += direction.xShift, y += direction.yShift) {
-                    if(squares[y][x].isEmpty())
+                    if (squares[y][x].isEmpty())
                         goMoves.add(new Move(
                                 new PiecePosition(currentX, currentY),
                                 new PiecePosition(x, y),
@@ -293,8 +293,30 @@ public class Board {
         if (move.getType() == Move.MoveType.ATTACK)
             removeCapturedPieces(move);
 
+        checkForPieceUpgrade(move);
+
         updateBoard();
         switchCurrentPlayer();
+    }
+
+    private void checkForPieceUpgrade(Move move) {
+        PiecePosition futurePosition = move.getFuturePosition();
+        Piece piece = this.squares[futurePosition.y()][futurePosition.x()].getPlacedPiece();
+        if (piece == null)
+            return;
+
+        if (shouldUpgradePiece(piece))
+            piece.upgrade();
+    }
+
+    private boolean shouldUpgradePiece(Piece checkedPiece) {
+        if (checkedPiece == null)
+            return false;
+
+        int y = checkedPiece.getPiecePosition().y();
+
+        return (checkedPiece.getColor() == Piece.PieceColor.WHITE && y == 0) ||
+                (checkedPiece.getColor() == Piece.PieceColor.BLACK && y == BOARD_SIZE - 1);
     }
 
     private void switchCurrentPlayer() {

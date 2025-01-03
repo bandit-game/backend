@@ -8,7 +8,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @ToString
 @EqualsAndHashCode
 public class Move {
@@ -22,6 +21,13 @@ public class Move {
         this.futurePosition = futurePosition;
         this.type = type;
         this.intermediateAttackPositions = new ArrayList<>();
+    }
+
+    public Move(PiecePosition initialPosition, List<PiecePosition> intermediateAttackPositions, PiecePosition futurePosition, MoveType type) {
+        this.initialPosition = initialPosition;
+        this.intermediateAttackPositions = new ArrayList<>(intermediateAttackPositions);
+        this.futurePosition = futurePosition;
+        this.type = type;
     }
 
     public int getMoveLength() {
