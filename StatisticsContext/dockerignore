@@ -3,9 +3,9 @@
 # All files and directories containing 'Context' in their names
 *Context*/
 
-# GamePlatformContext and its contents
-!GamePlatformContext/
-!GamePlatformContext/**
+# StatisticsContext and its contents
+!StatisticsContext/
+!StatisticsContext/**
 
 # Compiled class file
 *.class
