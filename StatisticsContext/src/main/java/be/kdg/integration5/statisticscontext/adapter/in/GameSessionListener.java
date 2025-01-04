@@ -3,6 +3,7 @@ package be.kdg.integration5.statisticscontext.adapter.in;
 import be.kdg.integration5.common.events.FinishGameSessionEvent;
 import be.kdg.integration5.common.events.PlayerMoveEvent;
 import be.kdg.integration5.common.events.StartGameSessionEvent;
+import be.kdg.integration5.statisticscontext.port.in.GameSessionFinishedUseCase;
 import be.kdg.integration5.statisticscontext.port.in.GameSessionStartedUseCase;
 import be.kdg.integration5.statisticscontext.port.in.PlayerMadeMoveUseCase;
 import org.slf4j.Logger;
@@ -19,11 +20,13 @@ public class GameSessionListener {
 
     private final GameSessionStartedUseCase gameSessionStartedUseCase;
     private final PlayerMadeMoveUseCase playerMadeMoveUseCase;
+    private final GameSessionFinishedUseCase gameSessionFinishedUseCase;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public GameSessionListener(GameSessionStartedUseCase gameSessionStartedUseCase, PlayerMadeMoveUseCase playerMadeMoveUseCase) {
+    public GameSessionListener(GameSessionStartedUseCase gameSessionStartedUseCase, PlayerMadeMoveUseCase playerMadeMoveUseCase, GameSessionFinishedUseCase gameSessionFinishedUseCase) {
         this.gameSessionStartedUseCase = gameSessionStartedUseCase;
         this.playerMadeMoveUseCase = playerMadeMoveUseCase;
+        this.gameSessionFinishedUseCase = gameSessionFinishedUseCase;
     }
 
     @RabbitListener(queues = GAME_START_QUEUE, messageConverter = "#{jackson2JsonMessageConverter}")
@@ -41,6 +44,7 @@ public class GameSessionListener {
     @RabbitListener(queues = GAME_END_QUEUE, messageConverter = "#{jackson2JsonMessageConverter}")
     public void processGameEnd(FinishGameSessionEvent event) {
         logger.info("Received end game session {}", event.gameId());
+        gameSessionFinishedUseCase.finishGameSession(event);
     }
 
 }

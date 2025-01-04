@@ -16,7 +16,7 @@ public class Player {
     private Gender gender;
     private Location location;
     private Metrics metrics;
-
+    private Predictions predictions;
 
     public enum Gender {
         MALE, FEMALE
@@ -28,8 +28,10 @@ public class Player {
         this.age = age;
         this.gender = gender;
         this.location = location;
-        this.metrics = null;
+        this.metrics = new Metrics();
+        this.predictions = new Predictions(0.0, 0.0, Predictions.PlayerClass.BEGINNER);
     }
+
 
     @Override
     public boolean equals(Object o) {

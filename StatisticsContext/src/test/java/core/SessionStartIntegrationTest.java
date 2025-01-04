@@ -7,19 +7,18 @@ import be.kdg.integration5.statisticscontext.adapter.out.game.GameJpaRepository;
 import be.kdg.integration5.statisticscontext.adapter.out.move.MoveJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.move.MoveJpaRepository;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaConverter;
+import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaRepository;
+import be.kdg.integration5.statisticscontext.adapter.out.player_metrics.PlayerMetricsJpaConverter;
+import be.kdg.integration5.statisticscontext.adapter.out.player_metrics.PlayerMetricsJpaEntity;
+import be.kdg.integration5.statisticscontext.adapter.out.player_metrics.PlayerMetricsJpaRepository;
 import be.kdg.integration5.statisticscontext.adapter.out.player_session.PlayerSessionId;
 import be.kdg.integration5.statisticscontext.adapter.out.player_session.PlayerSessionJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.player_session.PlayerSessionJpaRepository;
-import be.kdg.integration5.statisticscontext.adapter.out.session.SessionJpaConverter;
 import be.kdg.integration5.statisticscontext.adapter.out.session.SessionJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.session.SessionJpaRepository;
 import be.kdg.integration5.statisticscontext.domain.*;
 import be.kdg.integration5.statisticscontext.port.in.GameSessionStartedUseCase;
-import be.kdg.integration5.statisticscontext.port.out.FindGamePort;
-import be.kdg.integration5.statisticscontext.port.out.FindPlayerPort;
-import be.kdg.integration5.statisticscontext.port.out.PersistSessionPort;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,7 +57,13 @@ public class SessionStartIntegrationTest {
     private PlayerSessionJpaRepository playerSessionJpaRepository;
 
     @Autowired
+    private PlayerMetricsJpaRepository playerMetricsJpaRepository;
+
+    @Autowired
     private PlayerJpaConverter playerJpaConverter;
+
+    @Autowired
+    private PlayerMetricsJpaConverter playerMetricsJpaConverter;
 
     @Autowired
     private MoveJpaRepository moveJpaRepository;
@@ -78,22 +83,31 @@ public class SessionStartIntegrationTest {
         playerList = new ArrayList<>();
         playerList.add(player1);
         playerList.add(player2);
+        List<PlayerJpaEntity> playerJpaEntities = playerList.stream().map(playerJpaConverter::toJpa).toList();
+        List<PlayerMetricsJpaEntity> playerMetricsJpaEntities = playerJpaEntities.stream().map(p -> {
+            PlayerMetricsJpaEntity playerMetricsJpaEntity = new PlayerMetricsJpaEntity();
+            playerMetricsJpaConverter.updateFields(playerMetricsJpaEntity, new Metrics());
+            playerMetricsJpaEntity.setPlayerId(p.getPlayerId());
+            playerMetricsJpaEntity.setPlayer(p);
+            return playerMetricsJpaEntity;
+        }).toList();
 
-        playerJpaRepository.saveAll(playerList.stream().map(playerJpaConverter::toJpa).toList());
-
+        playerJpaRepository.saveAll(playerJpaEntities);
+        playerMetricsJpaRepository.saveAll(playerMetricsJpaEntities);
     }
 
     @AfterEach
     void tearDown() {
         playerList = new ArrayList<>();
+        moveJpaRepository.deleteAll();
         playerSessionJpaRepository.deleteAll();
         sessionJpaRepository.deleteAll();
         gameJpaRepository.deleteAll();
+        playerMetricsJpaRepository.deleteAll();
         playerJpaRepository.deleteAll();
     }
 
     @Test
-    @Transactional
     void testStartGameSession() {
         // Arrange
         UUID lobbyId = UUID.randomUUID();
@@ -116,6 +130,7 @@ public class SessionStartIntegrationTest {
 
         List<PlayerSessionJpaEntity> playerSessionJpaEntities = playerSessionJpaRepository.findAllById(playerSessionIds);
         List<MoveJpaEntity> moveJpaEntities = moveJpaRepository.findAll();
+        List<PlayerMetricsJpaEntity> playerMetricsJpaEntities = playerMetricsJpaRepository.findAll();
         Optional<SessionJpaEntity> savedSession = sessionJpaRepository.findById(lobbyId);
 
         assertThat(savedSession.isPresent(), is(true));
@@ -126,6 +141,7 @@ public class SessionStartIntegrationTest {
         assertThat(playerSessionJpaEntities.size(), is(2));
         assertThat(moveJpaEntities.size(), is(1));
         assertThat(session.getWinner(), is(nullValue()));
+        assertThat(playerMetricsJpaEntities.size(), is(2));
 
     }
 
