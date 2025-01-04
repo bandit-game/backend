@@ -14,5 +14,5 @@ values (0, 0, 0 , 0 ,0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 'f7c56b6e-d7dc-4bde-bdf9-e9b0
        (0, 0, 0 , 0 ,0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, '6a1d9b5a-e2e2-4060-9025-3175acd06e3c');
 
 insert into player_predicitons(churn, first_move_win_probability, player_player_id, player_class)
-values (0, 0, 'BEGINNER', 'f7c56b6e-d7dc-4bde-bdf9-e9b0ecec8bf5'),
-       (0, 0, 'BEGINNER', '6a1d9b5a-e2e2-4060-9025-3175acd06e3c');
+values (0, 0, 'f7c56b6e-d7dc-4bde-bdf9-e9b0ecec8bf5', 'BEGINNER'),
+       (0, 0, '6a1d9b5a-e2e2-4060-9025-3175acd06e3c', 'BEGINNER');

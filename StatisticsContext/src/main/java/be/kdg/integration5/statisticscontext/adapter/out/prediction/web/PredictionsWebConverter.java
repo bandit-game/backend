@@ -14,6 +14,7 @@ public class PredictionsWebConverter {
 
     public PredictionsRequest toRequest(List<Player> players) {
         return new PredictionsRequest(
+                Predictions.getPredictionsList(),
                 players.stream().map(p ->
                         new PredictionsRequest.PlayerMetricsBody(
                                 p.getPlayerId().uuid(),

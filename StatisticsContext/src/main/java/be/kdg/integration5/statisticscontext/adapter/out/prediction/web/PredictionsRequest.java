@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public record PredictionsRequest(List<PlayerMetricsBody> playerMetrics) {
+public record PredictionsRequest(List<String> predictionVariables, List<PlayerMetricsBody> playerMetrics) {
     public record PlayerMetricsBody(
             UUID playerId,
             String gender,

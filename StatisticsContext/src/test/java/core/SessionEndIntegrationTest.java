@@ -221,4 +221,5 @@ public class SessionEndIntegrationTest {
             assertThat(winnerMetrics.getTotalNightPlays(), equalTo(1));
         }
     }
+
 }

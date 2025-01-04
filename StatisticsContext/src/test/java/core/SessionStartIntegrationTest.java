@@ -15,15 +15,10 @@ import be.kdg.integration5.statisticscontext.adapter.out.player_metrics.PlayerMe
 import be.kdg.integration5.statisticscontext.adapter.out.player_session.PlayerSessionId;
 import be.kdg.integration5.statisticscontext.adapter.out.player_session.PlayerSessionJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.player_session.PlayerSessionJpaRepository;
-import be.kdg.integration5.statisticscontext.adapter.out.session.SessionJpaConverter;
 import be.kdg.integration5.statisticscontext.adapter.out.session.SessionJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.session.SessionJpaRepository;
 import be.kdg.integration5.statisticscontext.domain.*;
 import be.kdg.integration5.statisticscontext.port.in.GameSessionStartedUseCase;
-import be.kdg.integration5.statisticscontext.port.out.FindGamePort;
-import be.kdg.integration5.statisticscontext.port.out.FindPlayerPort;
-import be.kdg.integration5.statisticscontext.port.out.PersistSessionPort;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
