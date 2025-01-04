@@ -14,6 +14,8 @@ import be.kdg.integration5.statisticscontext.adapter.out.player_metrics.PlayerMe
 import be.kdg.integration5.statisticscontext.adapter.out.player_metrics.PlayerMetricsJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.player_metrics.PlayerMetricsJpaRepository;
 import be.kdg.integration5.statisticscontext.adapter.out.player_session.PlayerSessionJpaRepository;
+import be.kdg.integration5.statisticscontext.adapter.out.prediction.db.PredictionsJpaEntity;
+import be.kdg.integration5.statisticscontext.adapter.out.prediction.db.PredictionsJpaRepository;
 import be.kdg.integration5.statisticscontext.adapter.out.session.SessionJpaRepository;
 import be.kdg.integration5.statisticscontext.domain.*;
 import be.kdg.integration5.statisticscontext.port.in.GameSessionFinishedUseCase;
@@ -59,6 +61,9 @@ public class SessionEndIntegrationTest {
 
     @Autowired
     private PlayerMetricsJpaRepository playerMetricsJpaRepository;
+
+    @Autowired
+    private PredictionsJpaRepository predictionsJpaRepository;
 
     @Autowired
     private PlayerJpaConverter playerJpaConverter;
@@ -110,8 +115,20 @@ public class SessionEndIntegrationTest {
             return playerMetricsJpaEntity;
         }).toList();
 
+        List<PredictionsJpaEntity> predictionsJpaEntities = playerEntities.stream().map(playerJpaEntity -> {
+            PredictionsJpaEntity predictionsJpaEntity = new PredictionsJpaEntity(
+                    0,
+                    Predictions.PlayerClass.BEGINNER,
+                    0
+            );
+            predictionsJpaEntity.setPlayerId(playerJpaEntity.getPlayerId());
+            predictionsJpaEntity.setPlayer(playerJpaEntity);
+            return predictionsJpaEntity;
+        }).toList();
+
         playerJpaRepository.saveAll(playerEntities);
         playerMetricsJpaRepository.saveAll(playerMetricsJpaEntities);
+        predictionsJpaRepository.saveAll(predictionsJpaEntities);
 
         session = gameSessionStartedUseCase.startGame(event);
 
@@ -127,6 +144,7 @@ public class SessionEndIntegrationTest {
         sessionJpaRepository.deleteAll();
         gameJpaRepository.deleteAll();
         playerMetricsJpaRepository.deleteAll();
+        predictionsJpaRepository.deleteAll();
         playerJpaRepository.deleteAll();
     }
 
