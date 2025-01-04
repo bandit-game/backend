@@ -102,4 +102,8 @@ public class Session {
                 .map(PlayerActivity::getPlayer)
                 .orElseThrow(() -> new NoMovesInPlayerActivityException("Session " + this.getSessionId().uuid() + " has no moves."));
     }
+
+    public List<Player> getPlayers() {
+        return activities.stream().map(PlayerActivity::getPlayer).collect(Collectors.toList());
+    }
 }

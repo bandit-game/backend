@@ -2,6 +2,7 @@ package be.kdg.integration5.statisticscontext.adapter.out.player_metrics;
 
 
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaEntity;
+import be.kdg.integration5.statisticscontext.domain.Predictions;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

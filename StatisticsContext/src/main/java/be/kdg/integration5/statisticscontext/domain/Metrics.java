@@ -28,6 +28,23 @@ public class Metrics {
     private int totalEveningPlays;
     private int totalNightPlays;
 
+    public Metrics(int totalGamesPlayed, int totalWins, int totalLosses, int totalDraws, int totalIsFirst, double avgMoveDuration, double avgMoveAmount, double avgGameDuration, int totalWeekdaysPlayed, int totalWeekendsPlayed, int totalMorningPlays, int totalAfternoonPlays, int totalEveningPlays, int totalNightPlays) {
+        this.totalGamesPlayed = totalGamesPlayed;
+        this.totalWins = totalWins;
+        this.totalLosses = totalLosses;
+        this.totalDraws = totalDraws;
+        this.totalIsFirst = totalIsFirst;
+        this.avgMoveDuration = avgMoveDuration;
+        this.avgMoveAmount = avgMoveAmount;
+        this.avgGameDuration = avgGameDuration;
+        this.totalWeekdaysPlayed = totalWeekdaysPlayed;
+        this.totalWeekendsPlayed = totalWeekendsPlayed;
+        this.totalMorningPlays = totalMorningPlays;
+        this.totalAfternoonPlays = totalAfternoonPlays;
+        this.totalEveningPlays = totalEveningPlays;
+        this.totalNightPlays = totalNightPlays;
+    }
+
     public void updateValues(
             boolean isWinner,
             boolean isDraw,

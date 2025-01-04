@@ -1,7 +1,9 @@
 package be.kdg.integration5.statisticscontext.adapter.out.player;
 
+import be.kdg.integration5.statisticscontext.adapter.out.prediction.db.PredictionsJpaEntity;
 import be.kdg.integration5.statisticscontext.domain.Player;
 import be.kdg.integration5.statisticscontext.domain.PlayerId;
+import be.kdg.integration5.statisticscontext.domain.Predictions;
 import be.kdg.integration5.statisticscontext.domain.SessionId;
 import be.kdg.integration5.statisticscontext.port.out.FindPlayerPort;
 import be.kdg.integration5.statisticscontext.port.out.PersistPlayerPort;
@@ -33,23 +35,22 @@ public class PlayerDatabaseAdapter implements FindPlayerPort, PersistPlayerPort 
     }
 
     @Override
-    public void updateAllInSession(List<Player> players, SessionId sessionId) {
-        List<PlayerJpaEntity> existingEntities = playerJpaRepository.findAllById(players.stream().map(p -> p.getPlayerId().uuid()).toList());
+    public void updateAll(List<Player> players) {
+        List<UUID> playerUuids = players.stream().map(p -> p.getPlayerId().uuid()).toList();
+        List<PlayerJpaEntity> playerJpaEntities = playerJpaRepository.findAllByIdsFetched(playerUuids);
         Map<UUID, Player> playerMap = players.stream()
                 .collect(Collectors.toMap(p -> p.getPlayerId().uuid(), p -> p));
 
-        existingEntities = existingEntities
-                .stream()
-                .map(entity -> {
-                    Player player = playerMap.get(entity.getPlayerId());
-                    if (player != null) {
-                        return playerJpaConverter.toJpa(player); // Update the entity
-                    }
-                    return null;
-                })
-                .collect(Collectors.toList());
+        playerJpaEntities.forEach(playerJpaEntity -> {
+            Player domainPlayer = playerMap.get(playerJpaEntity.getPlayerId());
+            Predictions domainPredictions = domainPlayer.getPredictions();
+            PredictionsJpaEntity predictionsJpaEntity = playerJpaEntity.getPredictions();
 
+            predictionsJpaEntity.setChurn(domainPredictions.getChurn());
+            predictionsJpaEntity.setFirstMoveWinProbability(domainPredictions.getFirstMoveWinProbability());
+            predictionsJpaEntity.setPlayerClass(domainPredictions.getPlayerClass());
+        });
 
-        playerJpaRepository.saveAll(players.stream().map(playerJpaConverter::toJpa).toList());
+        playerJpaRepository.saveAll(playerJpaEntities);
     }
 }

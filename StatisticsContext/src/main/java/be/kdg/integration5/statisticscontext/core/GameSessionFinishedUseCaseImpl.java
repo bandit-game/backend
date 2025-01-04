@@ -1,15 +1,17 @@
 package be.kdg.integration5.statisticscontext.core;
 
 import be.kdg.integration5.common.events.FinishGameSessionEvent;
-import be.kdg.integration5.statisticscontext.domain.PlayerId;
-import be.kdg.integration5.statisticscontext.domain.Session;
-import be.kdg.integration5.statisticscontext.domain.SessionId;
+import be.kdg.integration5.statisticscontext.domain.*;
 import be.kdg.integration5.statisticscontext.port.in.GameSessionFinishedUseCase;
 import be.kdg.integration5.statisticscontext.port.out.FetchPredictionPort;
 import be.kdg.integration5.statisticscontext.port.out.FindSessionPort;
+import be.kdg.integration5.statisticscontext.port.out.PersistPlayerPort;
 import be.kdg.integration5.statisticscontext.port.out.PersistSessionPort;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -18,11 +20,13 @@ public class GameSessionFinishedUseCaseImpl implements GameSessionFinishedUseCas
     private final PersistSessionPort persistSessionPort;
     private final FindSessionPort findSessionPort;
     private final FetchPredictionPort fetchPredictionPort;
+    private final PersistPlayerPort persistPlayerPort;
 
-    public GameSessionFinishedUseCaseImpl(PersistSessionPort persistSessionPort, FindSessionPort findSessionPort, FetchPredictionPort fetchPredictionPort) {
+    public GameSessionFinishedUseCaseImpl(PersistSessionPort persistSessionPort, FindSessionPort findSessionPort, FetchPredictionPort fetchPredictionPort, PersistPlayerPort persistPlayerPort) {
         this.persistSessionPort = persistSessionPort;
         this.findSessionPort = findSessionPort;
         this.fetchPredictionPort = fetchPredictionPort;
+        this.persistPlayerPort = persistPlayerPort;
     }
 
     @Override
@@ -34,7 +38,20 @@ public class GameSessionFinishedUseCaseImpl implements GameSessionFinishedUseCas
                 event.timestamp(),
                 event.isDraw()
         );
+        Session finishedSession = persistSessionPort.update(session);
 
-        return persistSessionPort.update(session);
+        List<Player> updatedPlayers = fetchPredictionPort.fetchPredictions(session.getPlayers())
+                .entrySet()
+                .stream()
+                .map(entry -> {
+                    Player player = entry.getKey();
+                    player.setPredictions(entry.getValue());
+                    return player;
+                })
+                .collect(Collectors.toList());
+
+        persistPlayerPort.updateAll(updatedPlayers);
+
+        return finishedSession;
     }
 }
