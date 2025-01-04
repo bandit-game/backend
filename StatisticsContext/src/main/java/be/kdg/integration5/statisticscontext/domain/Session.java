@@ -80,7 +80,7 @@ public class Session {
             if (!isDraw)
                 isWinner = activity.getPlayer().getPlayerId().equals(winnerId);
 
-            activity.updateMetrics(isWinner, isDraw, isFirst, this.startTime);
+            activity.updateMetrics(isWinner, isDraw, isFirst, this.startTime, this.finishTime);
         });
 
     }

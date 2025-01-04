@@ -1,12 +1,11 @@
 package core;
 
-
+import be.kdg.integration5.common.events.FinishGameSessionEvent;
 import be.kdg.integration5.common.events.PlayerMoveEvent;
 import be.kdg.integration5.common.events.StartGameSessionEvent;
 import be.kdg.integration5.statisticscontext.StatisticsContextApplication;
 import be.kdg.integration5.statisticscontext.adapter.out.game.GameJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.game.GameJpaRepository;
-import be.kdg.integration5.statisticscontext.adapter.out.move.MoveJpaEntity;
 import be.kdg.integration5.statisticscontext.adapter.out.move.MoveJpaRepository;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaConverter;
 import be.kdg.integration5.statisticscontext.adapter.out.player.PlayerJpaEntity;
@@ -17,6 +16,7 @@ import be.kdg.integration5.statisticscontext.adapter.out.player_metrics.PlayerMe
 import be.kdg.integration5.statisticscontext.adapter.out.player_session.PlayerSessionJpaRepository;
 import be.kdg.integration5.statisticscontext.adapter.out.session.SessionJpaRepository;
 import be.kdg.integration5.statisticscontext.domain.*;
+import be.kdg.integration5.statisticscontext.port.in.GameSessionFinishedUseCase;
 import be.kdg.integration5.statisticscontext.port.in.GameSessionStartedUseCase;
 import be.kdg.integration5.statisticscontext.port.in.PlayerMadeMoveUseCase;
 import jakarta.transaction.Transactional;
@@ -27,19 +27,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { StatisticsContextApplication.class })
 @SpringBootTest
-public class PlayerMoveIntegrationTest {
+public class SessionEndIntegrationTest {
 
     @Autowired
     private GameJpaRepository gameJpaRepository;
@@ -71,6 +72,9 @@ public class PlayerMoveIntegrationTest {
     @Autowired
     private GameSessionStartedUseCase gameSessionStartedUseCase;
 
+    @Autowired
+    private GameSessionFinishedUseCase gameSessionFinishedUseCase;
+
     private List<Player> playerList;
 
     private Session session;
@@ -78,7 +82,7 @@ public class PlayerMoveIntegrationTest {
     @BeforeEach
     void setup() {
         // Seed test data for game and players
-        Game chessGame = new Game(new GameId(UUID.randomUUID()), "chess");
+        Game chessGame = new Game(new GameId(UUID.randomUUID()), "game");
         gameJpaRepository.save(new GameJpaEntity(chessGame.gameId().uuid(), chessGame.name()));
 
         Player player1 = new Player("Player 1", new PlayerId(UUID.randomUUID()), 25, Player.Gender.MALE, new Location("USA", "New York"));
@@ -126,52 +130,40 @@ public class PlayerMoveIntegrationTest {
         playerJpaRepository.deleteAll();
     }
 
-    @Test
-    void shouldSavePlayerMoveSuccessfully() {
-        // Arrange
-        PlayerMoveEvent event = new PlayerMoveEvent(
-                session.getSessionId().uuid(),
-                playerList.get(0).getPlayerId().uuid(),
-                playerList.get(1).getPlayerId().uuid(),
-                LocalDateTime.now().plusMinutes(1)
-        );
-
-        // Act
-        playerMadeMoveUseCase.saveMove(event);
-
-        // Assert
-        List<MoveJpaEntity> moveEntities = moveJpaRepository.findAll();
-        List<PlayerMetricsJpaEntity> playerMetricsEntities = playerMetricsJpaRepository.findAll();
-
-        assertThat(moveEntities, hasSize(2));
-        assertThat(moveEntities, hasItem(hasProperty("endTime", nullValue())));
-        assertThat(moveEntities, everyItem(hasProperty("moveNumber", equalTo(1))));
-        assertThat(moveEntities, hasItem(hasProperty("startTime", equalTo(event.timestamp()))));
-        assertThat(playerMetricsEntities, hasSize(2));
-    }
 
     @Test
-    void shouldSaveMultipleSuccessfulMoves() {
+    void shouldUpdateSessionValuesAndPlayerMetrics() {
         // Arrange
+        LocalDateTime finishTime = LocalDateTime.now().plusMinutes(4);
+        Player winner = playerList.get(0);
+        Player loser = playerList.get(1);
+
         PlayerMoveEvent event1 = new PlayerMoveEvent(
                 session.getSessionId().uuid(),
-                playerList.get(0).getPlayerId().uuid(),
-                playerList.get(1).getPlayerId().uuid(),
+                winner.getPlayerId().uuid(),
+                loser.getPlayerId().uuid(),
                 LocalDateTime.now().plusMinutes(1)
         );
 
         PlayerMoveEvent event2 = new PlayerMoveEvent(
                 session.getSessionId().uuid(),
-                playerList.get(1).getPlayerId().uuid(),
-                playerList.get(0).getPlayerId().uuid(),
+                loser.getPlayerId().uuid(),
+                winner.getPlayerId().uuid(),
                 LocalDateTime.now().plusMinutes(2)
         );
 
         PlayerMoveEvent event3 = new PlayerMoveEvent(
                 session.getSessionId().uuid(),
-                playerList.get(0).getPlayerId().uuid(),
-                playerList.get(1).getPlayerId().uuid(),
+                winner.getPlayerId().uuid(),
+                loser.getPlayerId().uuid(),
                 LocalDateTime.now().plusMinutes(3)
+        );
+
+        FinishGameSessionEvent gameSessionFinishedEvent = new FinishGameSessionEvent(
+                session.getSessionId().uuid(),
+                winner.getPlayerId().uuid(),
+                finishTime,
+                false
         );
 
         // Act
@@ -179,27 +171,54 @@ public class PlayerMoveIntegrationTest {
         playerMadeMoveUseCase.saveMove(event2);
         playerMadeMoveUseCase.saveMove(event3);
 
+        Session finishedSession = gameSessionFinishedUseCase.finishGameSession(gameSessionFinishedEvent);
+
         // Assert
-        List<MoveJpaEntity> moveEntities = moveJpaRepository.findAll();
-        assertThat(moveEntities, hasSize(4));
-        assertThat(moveEntities, hasItem(hasProperty("endTime", nullValue())));
-        // Filter items for moveNumber = 1
-        List<MoveJpaEntity> moveNumberOne = moveEntities.stream()
-                .filter(move -> move.getMoveNumber() == 1)
-                .collect(Collectors.toList());
-        assertThat(moveNumberOne, hasSize(2));
+        assertThat(finishedSession.getFinishTime(), equalTo(finishTime));
+        assertThat(finishedSession.isDraw(), equalTo(false));
+        assertThat(finishedSession.getWinner(), equalTo(winner));
 
-        // Filter items for moveNumber = 2
-        List<MoveJpaEntity> moveNumberTwo = moveEntities.stream()
-                .filter(move -> move.getMoveNumber() == 2)
-                .collect(Collectors.toList());
-        assertThat(moveNumberTwo, hasSize(2));
+        Metrics winnerMetrics = finishedSession.getWinner().getMetrics();
 
-        // Filter items with endTime = null
-        List<MoveJpaEntity> endTimeNull = moveEntities.stream()
-                .filter(move -> move.getEndTime() == null)
-                .collect(Collectors.toList());
-        assertThat(endTimeNull, hasSize(1));
+        assertThat(winnerMetrics.getTotalGamesPlayed(), equalTo(1));
+        assertThat(winnerMetrics.getTotalWins(), equalTo(1));
+        assertThat(winnerMetrics.getTotalLosses(), equalTo(0));
+        assertThat(winnerMetrics.getTotalDraws(), equalTo(0));
+        assertThat(winnerMetrics.getTotalIsFirst(), equalTo(1)); // Assuming player 0 started the game
+        assertThat(winnerMetrics.getAvgMoveDuration(), equalTo(60.0));
+        assertThat(winnerMetrics.getAvgMoveAmount(), equalTo(2.0));
+        assertThat(winnerMetrics.getAvgGameDuration(), equalTo(240.0));
 
+        DayOfWeek sessionDay = finishTime.getDayOfWeek();
+        if (sessionDay.getValue() <= 5) {
+            assertThat(winnerMetrics.getTotalWeekdaysPlayed(), equalTo(1));
+            assertThat(winnerMetrics.getTotalWeekendsPlayed(), equalTo(0));
+        } else {
+            assertThat(winnerMetrics.getTotalWeekdaysPlayed(), equalTo(0));
+            assertThat(winnerMetrics.getTotalWeekendsPlayed(), equalTo(1));
+        }
+
+        int sessionHour = finishTime.getHour();
+        if (sessionHour >= 6 && sessionHour < 12) {
+            assertThat(winnerMetrics.getTotalMorningPlays(), equalTo(1));
+            assertThat(winnerMetrics.getTotalAfternoonPlays(), equalTo(0));
+            assertThat(winnerMetrics.getTotalEveningPlays(), equalTo(0));
+            assertThat(winnerMetrics.getTotalNightPlays(), equalTo(0));
+        } else if (sessionHour >= 12 && sessionHour < 18) {
+            assertThat(winnerMetrics.getTotalMorningPlays(), equalTo(0));
+            assertThat(winnerMetrics.getTotalAfternoonPlays(), equalTo(1));
+            assertThat(winnerMetrics.getTotalEveningPlays(), equalTo(0));
+            assertThat(winnerMetrics.getTotalNightPlays(), equalTo(0));
+        } else if (sessionHour >= 18 && sessionHour < 24) {
+            assertThat(winnerMetrics.getTotalMorningPlays(), equalTo(0));
+            assertThat(winnerMetrics.getTotalAfternoonPlays(), equalTo(0));
+            assertThat(winnerMetrics.getTotalEveningPlays(), equalTo(1));
+            assertThat(winnerMetrics.getTotalNightPlays(), equalTo(0));
+        } else {
+            assertThat(winnerMetrics.getTotalMorningPlays(), equalTo(0));
+            assertThat(winnerMetrics.getTotalAfternoonPlays(), equalTo(0));
+            assertThat(winnerMetrics.getTotalEveningPlays(), equalTo(0));
+            assertThat(winnerMetrics.getTotalNightPlays(), equalTo(1));
+        }
     }
 }

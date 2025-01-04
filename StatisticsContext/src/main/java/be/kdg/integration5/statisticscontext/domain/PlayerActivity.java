@@ -39,20 +39,16 @@ public class PlayerActivity {
             move.setEndTime(moveDateTime);
     }
 
-    public void updateMetrics(boolean isWinner, boolean isDraw, boolean isFirstMove, LocalDateTime startTime) {
+    public void updateMetrics(boolean isWinner, boolean isDraw, boolean isFirstMove, LocalDateTime startTime, LocalDateTime finishTime) {
         Move lastMove = this.getLastMove();
-        LocalDateTime endTime = lastMove.getEndTime();
-
-        if (endTime == null)
-            throw new MoveWithoutEndTimeException("Move %s has no end time set.".formatted(lastMove.getMoveId().uuid()));
 
         // Calculate game duration
-        double gameDuration = Duration.between(startTime, endTime).toMinutes();
+        double gameDuration = Duration.between(startTime, finishTime).toSeconds();
 
         // Calculate average move duration
         double avgMoveDuration = moves.stream()
                 .filter(move -> move.getEndTime() != null)
-                .mapToDouble(move -> Duration.between(move.getStartTime(), move.getEndTime()).toMinutes())
+                .mapToDouble(move -> Duration.between(move.getStartTime(), move.getEndTime()).toSeconds())
                 .average()
                 .orElse(0);
 

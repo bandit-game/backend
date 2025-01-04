@@ -104,6 +104,7 @@ public class SessionStartIntegrationTest {
     @AfterEach
     void tearDown() {
         playerList = new ArrayList<>();
+        moveJpaRepository.deleteAll();
         playerSessionJpaRepository.deleteAll();
         sessionJpaRepository.deleteAll();
         gameJpaRepository.deleteAll();
@@ -112,7 +113,6 @@ public class SessionStartIntegrationTest {
     }
 
     @Test
-    @Transactional
     void testStartGameSession() {
         // Arrange
         UUID lobbyId = UUID.randomUUID();

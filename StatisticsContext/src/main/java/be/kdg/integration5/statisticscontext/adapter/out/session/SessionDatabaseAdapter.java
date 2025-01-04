@@ -96,13 +96,6 @@ public class SessionDatabaseAdapter implements PersistSessionPort, FindSessionPo
         SessionJpaEntity sessionJpaEntity = sessionJpaRepository.findBySessionIdFetched(session.getSessionId().uuid())
                 .orElseThrow(() -> new SessionNotFoundException("Session %s not found".formatted(session.getSessionId().uuid())));
 
-        // Update SessionJpaEntity fields
-        sessionJpaConverter.updateValues(sessionJpaEntity, session);
-        if (session.getWinner() != null) {
-            PlayerJpaEntity winnerJpa = playerJpaRepository.getReferenceById(session.getWinner().getPlayerId().uuid());
-            sessionJpaEntity.setWinner(winnerJpa);
-        }
-
         for (PlayerSessionJpaEntity playerSessionJpaEntity : sessionJpaEntity.getPlayers()) {
             PlayerActivity playerActivity = session.getActivities()
                     .stream()
@@ -127,6 +120,14 @@ public class SessionDatabaseAdapter implements PersistSessionPort, FindSessionPo
             // Update player metrics
             PlayerMetricsJpaEntity playerMetricsJpaEntity = playerSessionJpaEntity.getPlayer().getPlayerMetrics();
             playerMetricsJpaConverter.updateFields(playerMetricsJpaEntity, playerActivity.getPlayer().getMetrics());
+        }
+
+        // Update SessionJpaEntity fields
+        sessionJpaConverter.updateValues(sessionJpaEntity, session);
+
+        if (session.getWinner() != null) {
+            PlayerJpaEntity winnerJpa = playerJpaRepository.getReferenceById(session.getWinner().getPlayerId().uuid());
+            sessionJpaEntity.setWinner(winnerJpa);
         }
 
         return sessionJpaConverter.toDomain(sessionJpaRepository.save(sessionJpaEntity));
