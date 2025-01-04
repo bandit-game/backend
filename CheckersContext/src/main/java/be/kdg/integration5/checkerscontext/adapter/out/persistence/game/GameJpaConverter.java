@@ -1,9 +1,9 @@
-package be.kdg.integration5.checkerscontext.adapter.out.game;
+package be.kdg.integration5.checkerscontext.adapter.out.persistence.game;
 
-import be.kdg.integration5.checkerscontext.adapter.out.exception.GameConversionException;
-import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntity;
-import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntityId;
-import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.exception.GameConversionException;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.piece.PieceJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.piece.PieceJpaEntityId;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.player.PlayerJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.*;
 import org.springframework.stereotype.Component;
 

@@ -1,15 +1,14 @@
-package be.kdg.integration5.checkerscontext.adapter.out.dto;
+package be.kdg.integration5.checkerscontext.adapter.out.persistence.dto;
 
 import be.kdg.integration5.checkerscontext.adapter.in.dto.PieceGetDto;
 import be.kdg.integration5.checkerscontext.domain.Game;
-import be.kdg.integration5.checkerscontext.domain.Piece;
-import be.kdg.integration5.checkerscontext.domain.Player;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public record GameStateResponseDto(UUID currentPlayer, List<PlayerResponseDto> players, List<PieceGetDto> pieces) {
+public record GameStateResponseDto(Boolean isFinished, UUID currentPlayer, List<PlayerResponseDto> players, List<PieceGetDto> pieces) {
     public GameStateResponseDto {
+        Objects.requireNonNull(isFinished);
         Objects.requireNonNull(currentPlayer);
         Objects.requireNonNull(pieces);
     }
@@ -36,6 +35,7 @@ public record GameStateResponseDto(UUID currentPlayer, List<PlayerResponseDto> p
 
 
         return new GameStateResponseDto(
+                game.isFinished(),
                 game.getBoard().getCurrentPlayer().getPlayerId().uuid(),
                 players,
                 pieces

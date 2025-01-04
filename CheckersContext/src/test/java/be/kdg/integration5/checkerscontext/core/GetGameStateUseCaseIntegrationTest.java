@@ -1,6 +1,6 @@
 package be.kdg.integration5.checkerscontext.core;
 
-import be.kdg.integration5.checkerscontext.adapter.out.dto.GameStateResponseDto;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.dto.GameStateResponseDto;
 import be.kdg.integration5.checkerscontext.adapter.in.dto.GetGameStateRequestDto;
 import be.kdg.integration5.checkerscontext.domain.Board;
 import org.junit.jupiter.api.BeforeEach;

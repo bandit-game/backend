@@ -1,6 +1,6 @@
-package be.kdg.integration5.checkerscontext.adapter.out.player;
+package be.kdg.integration5.checkerscontext.adapter.out.persistence.player;
 
-import be.kdg.integration5.checkerscontext.adapter.out.game.GameJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.game.GameJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.Player;
 import be.kdg.integration5.checkerscontext.domain.PlayerId;
 import jakarta.persistence.*;

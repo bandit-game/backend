@@ -4,6 +4,7 @@ import be.kdg.integration5.checkerscontext.domain.*;
 import be.kdg.integration5.checkerscontext.port.in.MovePieceCommand;
 import be.kdg.integration5.checkerscontext.port.in.MovePieceUseCase;
 import be.kdg.integration5.checkerscontext.port.out.FindGamePort;
+import be.kdg.integration5.checkerscontext.port.out.NotifyGameEndPort;
 import be.kdg.integration5.checkerscontext.port.out.NotifyPlayerPort;
 import be.kdg.integration5.checkerscontext.port.out.PersistGamePort;
 import jakarta.transaction.Transactional;
@@ -15,11 +16,13 @@ public class MovePieceUseCaseImpl implements MovePieceUseCase {
     private final FindGamePort findGamePort;
     private final PersistGamePort persistGamePort;
     private final NotifyPlayerPort notifyPlayerPort;
+    private final NotifyGameEndPort notifyGameEndPort;
 
-    public MovePieceUseCaseImpl(FindGamePort findGamePort, PersistGamePort persistGamePort, NotifyPlayerPort notifyPlayerPort) {
+    public MovePieceUseCaseImpl(FindGamePort findGamePort, PersistGamePort persistGamePort, NotifyPlayerPort notifyPlayerPort, NotifyGameEndPort notifyGameEndPort) {
         this.findGamePort = findGamePort;
         this.persistGamePort = persistGamePort;
         this.notifyPlayerPort = notifyPlayerPort;
+        this.notifyGameEndPort = notifyGameEndPort;
     }
 
     @Override
@@ -32,7 +35,8 @@ public class MovePieceUseCaseImpl implements MovePieceUseCase {
 
         game.getBoard().movePiece(moverId, move);
 
-
+        if (game.checkForGameOver())
+            notifyGameEndPort.notifyGameEnd(game);
 
         Game updatedGame = persistGamePort.update(game);
         notifyPlayerPort.notifyAllPlayersWithGameState(updatedGame);

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MQTopology {
-    private static final String LOBBY_EVENTS_EXCHANGE = "warehouse_events";
+    private static final String LOBBY_EVENTS_EXCHANGE = "lobby_events";
     private static final String LOBBY_QUEUE = "lobby_queue";
 
     private static final String GAME_EVENTS_EXCHANGE = "game_events";

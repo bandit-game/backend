@@ -1,13 +1,12 @@
-package be.kdg.integration5.checkerscontext.adapter.out.game;
+package be.kdg.integration5.checkerscontext.adapter.out.persistence.game;
 
-import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntity;
-import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.piece.PieceJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.player.PlayerJpaEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 
 import java.util.Set;
 import java.util.UUID;
