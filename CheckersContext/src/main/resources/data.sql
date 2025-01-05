@@ -4,8 +4,8 @@ VALUES ('7701935d-4efc-4f53-81f1-1010dce8a943', 'sofiia'),
        ('5c035da0-3a05-4cd7-8e0f-d9cae488de8b', 'anna');
 
 -- Sample data for games table
-INSERT INTO games (game_id, is_finished, current_player_player_id)
-VALUES ('33333333-3333-3333-3333-333333333333', FALSE, '7701935d-4efc-4f53-81f1-1010dce8a943');
+INSERT INTO games (game_id, is_finished, is_draw, current_player_player_id)
+VALUES ('33333333-3333-3333-3333-333333333333', FALSE, FALSE, '7701935d-4efc-4f53-81f1-1010dce8a943');
 
 -- Sample data for games_players table
 INSERT INTO games_players (game_id, player_id)

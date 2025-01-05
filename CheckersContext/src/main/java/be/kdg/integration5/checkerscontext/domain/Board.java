@@ -2,16 +2,13 @@ package be.kdg.integration5.checkerscontext.domain;
 
 import be.kdg.integration5.checkerscontext.domain.exception.DirectionSearchException;
 import be.kdg.integration5.checkerscontext.domain.exception.MoveNotValidException;
+import be.kdg.integration5.checkerscontext.domain.exception.NoPiecesLeftException;
 import be.kdg.integration5.checkerscontext.domain.exception.NotPossibleToPlacePieceException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Getter
 @Setter
@@ -451,6 +448,20 @@ public class Board {
 
     private boolean isMoveDiagonal(int deltaY, int deltaX) {
         return Math.abs(deltaY) == Math.abs(deltaX);
+    }
+
+    public boolean piecesOfBothColorsArePresent() {
+        return pieces.stream().anyMatch(piece -> piece.getColor() == Piece.PieceColor.BLACK) &&
+                pieces.stream().anyMatch(piece -> piece.getColor() == Piece.PieceColor.WHITE);
+    }
+
+    public Optional<Player> getWinningPiecesOwner() {
+        if (piecesOfBothColorsArePresent())
+            return Optional.empty();
+
+        return Optional.of(pieces.stream().findFirst().orElseThrow(
+                () -> new NoPiecesLeftException("There are no pieces left on the board to find the winner.")
+        ).getOwner());
     }
 
 

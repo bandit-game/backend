@@ -1,10 +1,10 @@
-package be.kdg.integration5.checkerscontext.adapter.out.game;
+package be.kdg.integration5.checkerscontext.adapter.out.persistence.game;
 
-import be.kdg.integration5.checkerscontext.adapter.out.exception.GameNotFoundException;
-import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntity;
-import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaEntityId;
-import be.kdg.integration5.checkerscontext.adapter.out.piece.PieceJpaRepository;
-import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaRepository;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.exception.GameNotFoundException;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.piece.PieceJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.piece.PieceJpaEntityId;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.piece.PieceJpaRepository;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.player.PlayerJpaRepository;
 import be.kdg.integration5.checkerscontext.domain.*;
 import be.kdg.integration5.checkerscontext.port.out.DeleteGamePort;
 import be.kdg.integration5.checkerscontext.port.out.FindGamePort;

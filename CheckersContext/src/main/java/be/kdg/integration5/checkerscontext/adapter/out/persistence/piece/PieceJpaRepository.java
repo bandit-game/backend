@@ -1,13 +1,7 @@
-package be.kdg.integration5.checkerscontext.adapter.out.piece;
+package be.kdg.integration5.checkerscontext.adapter.out.persistence.piece;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.zip.ZipEntry;
 
 @Repository
 public interface PieceJpaRepository extends JpaRepository<PieceJpaEntity, PieceJpaEntityId> {

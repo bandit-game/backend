@@ -1,9 +1,8 @@
-package be.kdg.integration5.checkerscontext.adapter.out.piece;
+package be.kdg.integration5.checkerscontext.adapter.out.persistence.piece;
 
 import be.kdg.integration5.checkerscontext.domain.GameId;
 import be.kdg.integration5.checkerscontext.domain.Piece;
 import be.kdg.integration5.checkerscontext.port.out.FindPiecePort;
-import org.springframework.stereotype.Component;
 
 
 // TODO

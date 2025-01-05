@@ -1,7 +1,7 @@
-package be.kdg.integration5.checkerscontext.adapter.out.piece;
+package be.kdg.integration5.checkerscontext.adapter.out.persistence.piece;
 
-import be.kdg.integration5.checkerscontext.adapter.out.game.GameJpaEntity;
-import be.kdg.integration5.checkerscontext.adapter.out.player.PlayerJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.game.GameJpaEntity;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.player.PlayerJpaEntity;
 import be.kdg.integration5.checkerscontext.domain.Piece;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
