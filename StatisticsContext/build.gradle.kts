@@ -30,6 +30,8 @@ dependencies {
     testImplementation("org.testcontainers:rabbitmq")
     testImplementation("org.testcontainers:postgresql")
 
+    implementation("com.opencsv:opencsv:4.6")
+
 }
 
 dependencyManagement {
