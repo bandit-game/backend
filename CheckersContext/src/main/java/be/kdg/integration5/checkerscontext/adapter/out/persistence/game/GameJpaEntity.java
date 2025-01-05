@@ -25,6 +25,13 @@ public class GameJpaEntity {
     @Column(nullable = false)
     private boolean isFinished;
 
+    @Column(nullable = false)
+    private boolean isDraw;
+
+    @ManyToOne
+    @JoinColumn(name = "winner_id", referencedColumnName = "player_id")
+    private PlayerJpaEntity winner;
+
     @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
     private Set<PieceJpaEntity> pieces;
 
@@ -39,9 +46,11 @@ public class GameJpaEntity {
     @ManyToOne
     private PlayerJpaEntity currentPlayer;
 
-    public GameJpaEntity(UUID gameId, boolean isFinished, Set<PlayerJpaEntity> players, PlayerJpaEntity currentPlayer) {
+    public GameJpaEntity(UUID gameId, boolean isFinished, boolean isDraw, PlayerJpaEntity winner, Set<PlayerJpaEntity> players, PlayerJpaEntity currentPlayer) {
         this.gameId = gameId;
         this.isFinished = isFinished;
+        this.isDraw = isDraw;
+        this.winner = winner;
         this.players = players;
         this.currentPlayer = currentPlayer;
     }

@@ -1,6 +1,7 @@
 package be.kdg.integration5.checkerscontext.adapter.out.messaging;
 
 import be.kdg.integration5.checkerscontext.domain.Game;
+import be.kdg.integration5.checkerscontext.domain.Player;
 import be.kdg.integration5.checkerscontext.port.out.NotifyGameEndPort;
 import be.kdg.integration5.common.events.FinishGameSessionEvent;
 import org.slf4j.Logger;
@@ -27,11 +28,13 @@ public class GameEndEventPublisher implements NotifyGameEndPort {
 
     @Override
     public void notifyGameEnd(Game game) {
-        final String ROUTING_KEY = "warehouse.%s.material.dumped".formatted();
+        UUID gameUUID = game.getPlayedMatchId().uuid();
+        final String ROUTING_KEY = String.format("game.%s.finished", gameUUID);
         LOGGER.info("Notifying RabbitMQ: {}", ROUTING_KEY);
+        Player winner = game.getWinner();
         rabbitTemplate.convertAndSend(EXCHANGE_NAME, ROUTING_KEY, new FinishGameSessionEvent(
-                game.getPlayedMatchId().uuid(),
-                game.getWinner(),
+                gameUUID,
+                winner != null ? winner.getPlayerId().uuid() : null,
                 LocalDateTime.now(),
                 game.isDraw()
         ));

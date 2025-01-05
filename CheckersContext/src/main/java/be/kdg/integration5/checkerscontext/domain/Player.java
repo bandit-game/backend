@@ -14,7 +14,8 @@ public class Player {
     @Getter(AccessLevel.NONE)
     private boolean wantsDraw;
 
-    public Player(String name) {
+    public Player(PlayerId playerId, String name) {
+        this.playerId = playerId;
         this.name = name;
     }
 

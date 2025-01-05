@@ -30,6 +30,15 @@ public class Game {
         this.players = players;
     }
 
+    public Game(GameId playedMatchId, Board board, boolean isFinished, boolean isDraw, Player winner, List<Player> players) {
+        this.playedMatchId = playedMatchId;
+        this.board = board;
+        this.isFinished = isFinished;
+        this.isDraw = isDraw;
+        this.winner = winner;
+        this.players = players;
+    }
+
 
     public void start() {
         this.board = new Board(getPlayers());
@@ -64,6 +73,8 @@ public class Game {
 
         return isFinished;
     }
+
+
 
     private boolean bothPlayersWantDraw() {
         return players.stream().allMatch(Player::doesWantToDraw);

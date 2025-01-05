@@ -19,6 +19,8 @@ public class GameJpaConverter {
         GameJpaEntity gameJpaEntity = new GameJpaEntity(
                 gameId,
                 game.isFinished(),
+                game.isDraw(),
+                game.getWinner() != null ? PlayerJpaEntity.of(game.getWinner()) : null,
                 game.getPlayers().stream().map(PlayerJpaEntity::of).collect(Collectors.toSet()) ,
                 PlayerJpaEntity.of(game.getBoard().getCurrentPlayer())
         );
@@ -67,7 +69,10 @@ public class GameJpaConverter {
 
         UUID gameUUID = pieceJpaEntities.getFirst().getPieceId().getGameId();
         GameId gameId = new GameId(gameUUID);
+        boolean isFinished = gameJpaEntity.isFinished();
+        boolean isDraw = gameJpaEntity.isDraw();
+        Player winner = gameJpaEntity.getWinner() != null ? gameJpaEntity.getWinner().toDomain() : null;
 
-        return new Game(gameId, board, players);
+        return new Game(gameId, board, isFinished, isDraw, winner, players);
     }
 }
