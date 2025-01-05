@@ -26,12 +26,16 @@ public class FindAllPossibleMovesUseCaseImpl implements FindAllPossibleMovesUseC
     @Override
     public List<Move> findAllPossibleMoves(FindAllPossibleMovesCommand findAllPossibleMovesCommand) {
         GameId gameId = findAllPossibleMovesCommand.gameId();
-        Game game = findGamePort.findById(gameId);
-        Board board = game.getBoard();
-        Player currentPlayer = game.getBoard().getCurrentPlayer();
-
         int x = findAllPossibleMovesCommand.x();
-        int y = findAllPossibleMovesCommand.y();
+        int y = findAllPossibleMovesCommand.y()
+                ;
+        Game game = findGamePort.findById(gameId);
+
+        if (game.isFinished())
+            return List.of();
+
+        Player currentPlayer = game.getBoard().getCurrentPlayer();
+        Board board = game.getBoard();
         Square targetSquare = board.getSquares()[y][x];
 
         if (targetSquare.isEmpty())

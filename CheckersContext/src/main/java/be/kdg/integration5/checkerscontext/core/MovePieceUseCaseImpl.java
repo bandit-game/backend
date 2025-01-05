@@ -30,15 +30,18 @@ public class MovePieceUseCaseImpl implements MovePieceUseCase {
         GameId gameId = movePieceCommand.gameId();
         Game game = findGamePort.findById(gameId);
 
-        PlayerId moverId = movePieceCommand.playerId();
-        Move move = movePieceCommand.move();
+        Game updatedGame = game;
+        if (!game.isFinished()) {
+            PlayerId moverId = movePieceCommand.playerId();
+            Move move = movePieceCommand.move();
 
-        game.getBoard().movePiece(moverId, move);
+            game.getBoard().movePiece(moverId, move);
 
-        if (game.checkForGameOver())
-            notifyGameEndPort.notifyGameEnd(game);
+            if (game.checkForGameOver())
+                notifyGameEndPort.notifyGameEnd(game);
 
-        Game updatedGame = persistGamePort.update(game);
+            updatedGame = persistGamePort.update(game);
+        }
         notifyPlayerPort.notifyAllPlayersWithGameState(updatedGame);
     }
 }
