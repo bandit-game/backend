@@ -13,7 +13,7 @@ import java.util.List;
 @Component
 public class SessionCsvConverter {
 
-    public List<String[]> toCsv(List<Session> sessions) {
+    public List<String[]> toCsvRows(List<Session> sessions) {
         List<String[]> rows = new ArrayList<>();
 
         for (Session session : sessions) {

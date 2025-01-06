@@ -56,7 +56,7 @@ public class SessionCsvExporterUnitTest {
                 new String[]{"1800.0", "1", "false", "2", "player1", "session1", "true", "MALE", "25", "USA", "New York", "2024-01-01T10:00", "120.0", "true"},
                 new String[]{"1800.0", "1", "false", "0", "player2", "session1", "false", "FEMALE", "30", "Canada", "Toronto", "2024-01-01T10:00", "0.0", "false"}
         );
-        when(sessionCsvConverter.toCsv(mockSessions)).thenReturn(mockConvertedSessions);
+        when(sessionCsvConverter.toCsvRows(mockSessions)).thenReturn(mockConvertedSessions);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -91,7 +91,7 @@ public class SessionCsvExporterUnitTest {
         assertThat(csvRows.get(2), is(mockConvertedSessions.get(1)));
 
         // Verify interactions with the converter
-        verify(sessionCsvConverter, times(1)).toCsv(mockSessions);
+        verify(sessionCsvConverter, times(1)).toCsvRows(mockSessions);
     }
 
 }

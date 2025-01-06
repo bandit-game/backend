@@ -20,7 +20,7 @@ public class SessionCsvExporter implements ExportSessionPort {
     @Override
     public void exportEntities(List<Session> sessions, OutputStream outputStream) {
         try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream))) {
-            List<String[]> convertedSessions = sessionCsvConverter.toCsv(sessions);
+            List<String[]> convertedSessions = sessionCsvConverter.toCsvRows(sessions);
             String[] header = {
                     "SessionDuration",
                     "GameId",

@@ -35,7 +35,7 @@ public class PlayerJpaConverter {
                 entity.getAge(),
                 Player.Gender.valueOf(entity.getGender()),
                 new Location(entity.getCountry(), entity.getCity()),
-                playerMetricsJpaConverter.toDomain(entity.getPlayerMetrics()),
+                entity.getPlayerMetrics() == null ? null : playerMetricsJpaConverter.toDomain(entity.getPlayerMetrics()),
                 entity.getPredictions() == null ? null : predictionsJpaConverter.toDomain(entity.getPredictions()));
     }
 

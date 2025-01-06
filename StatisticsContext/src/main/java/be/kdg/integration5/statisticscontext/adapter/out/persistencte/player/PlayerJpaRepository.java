@@ -15,4 +15,9 @@ public interface PlayerJpaRepository extends JpaRepository<PlayerJpaEntity, UUID
     "left join fetch p.predictions pr " +
     "where p.playerId in :uuids")
     List<PlayerJpaEntity> findAllByIdsFetched(List<UUID> uuids);
+
+    @Query("select p from PlayerJpaEntity p " +
+    "left join fetch p.playerMetrics m " +
+    "left join fetch p.predictions pr")
+    List<PlayerJpaEntity> findAllFetched();
 }

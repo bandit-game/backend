@@ -25,7 +25,7 @@ public class SessionCsvConverterUnitTest {
     private SessionCsvConverter sessionCsvConverter;
 
     @Test
-    void testToCsv_convertsSessionsCorrectly() {
+    void testToCsv_Rows_convertsSessionsCorrectly() {
         // Arrange
         Player player1 = new Player(
                 new PlayerId(UUID.randomUUID()),
@@ -70,7 +70,7 @@ public class SessionCsvConverterUnitTest {
         List<Session> sessions = List.of(session);
 
         // Act
-        List<String[]> csvRows = sessionCsvConverter.toCsv(sessions);
+        List<String[]> csvRows = sessionCsvConverter.toCsvRows(sessions);
 
         // Assert
         assertThat(csvRows, hasSize(2));

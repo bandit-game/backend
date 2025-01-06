@@ -33,6 +33,14 @@ public class PlayerDatabaseAdapter implements FindPlayerPort, PersistPlayerPort 
     }
 
     @Override
+    public List<Player> findAllFetched() {
+        return playerJpaRepository.findAllFetched()
+                .stream()
+                .map(playerJpaConverter::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void updateAll(List<Player> players) {
         List<UUID> playerUuids = players.stream().map(p -> p.getPlayerId().uuid()).toList();
         List<PlayerJpaEntity> playerJpaEntities = playerJpaRepository.findAllByIdsFetched(playerUuids);
