@@ -15,6 +15,9 @@ public class MQTopology {
     private static final String NEW_PLAYER_QUEUE = "game_start_queue";
     private static final String NEW_GAME_QUEUE = "game_end_queue";
 
+    private static final String LOBBY_EVENTS_EXCHANGE = "lobby_events";
+    private static final String LOBBY_QUEUE = "lobby_queue";
+
     @Bean
     TopicExchange statisticsEventsExchange() {
         return new TopicExchange(STATISTICS_EXCHANGE);
@@ -31,6 +34,24 @@ public class MQTopology {
                 .bind(newPlayerQueue)
                 .to(statisticsEventsExchange)
                 .with("player.#.registered");
+    }
+
+    @Bean
+    TopicExchange lobbyEventsExchange() {
+        return new TopicExchange(LOBBY_EVENTS_EXCHANGE);
+    }
+
+    @Bean
+    Queue lobbyQueue() {
+        return new Queue(LOBBY_QUEUE, true);
+    }
+
+    @Bean
+    Binding lobbyBinding(TopicExchange lobbyEventsExchange, Queue lobbyQueue) {
+        return BindingBuilder
+                .bind(lobbyQueue)
+                .to(lobbyEventsExchange)
+                .with("lobby.#.created");
     }
 
 

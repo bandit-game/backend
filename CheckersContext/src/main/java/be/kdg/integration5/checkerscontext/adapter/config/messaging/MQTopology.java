@@ -10,31 +10,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MQTopology {
-    private static final String LOBBY_EVENTS_EXCHANGE = "lobby_events";
-    private static final String LOBBY_QUEUE = "lobby_queue";
-
     private static final String GAME_EVENTS_EXCHANGE = "game_events";
     private static final String GAME_START_QUEUE = "game_start_queue";
     private static final String GAME_END_QUEUE = "game_end_queue";
     private static final String PLAYER_MOVE_QUEUE = "player_move_queue";
-
-    @Bean
-    TopicExchange lobbyEventsExchange() {
-        return new TopicExchange(LOBBY_EVENTS_EXCHANGE);
-    }
-
-    @Bean
-    Queue lobbyQueue() {
-        return new Queue(LOBBY_QUEUE, true);
-    }
-
-    @Bean
-    Binding lobbyBinding(TopicExchange lobbyEventsExchange, Queue lobbyQueue) {
-        return BindingBuilder
-                .bind(lobbyQueue)
-                .to(lobbyEventsExchange)
-                .with("lobby.#.created");
-    }
 
     @Bean
     TopicExchange gameEventsExchange() {
