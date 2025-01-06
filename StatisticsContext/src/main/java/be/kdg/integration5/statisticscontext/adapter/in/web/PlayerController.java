@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.OutputStream;
 
 @RestController
-@RequestMapping("/api/players")
+@RequestMapping("/api/v1/players")
 public class PlayerController {
 
     private final CollectPlayerStatisticsCsvUseCase collectPlayerStatisticsCsvUseCase;
@@ -21,7 +21,7 @@ public class PlayerController {
         this.collectPlayerStatisticsCsvUseCase = collectPlayerStatisticsCsvUseCase;
     }
 
-    @GetMapping("/export/csv")
+    @GetMapping("/csv")
     @PreAuthorize("hasRole('admin')")
     public void exportSessionStatisticsCsv(HttpServletResponse response) {
         response.setContentType("text/csv");
