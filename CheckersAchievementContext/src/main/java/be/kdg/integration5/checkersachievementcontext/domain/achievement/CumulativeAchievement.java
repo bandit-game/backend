@@ -13,8 +13,13 @@ public abstract class CumulativeAchievement<T extends Comparable<T>> extends Ach
 
     public abstract void increment();
 
+    public abstract boolean conditionToIncrementIsMet(Game game, PlayerId playerId);
+
     @Override
     public boolean isFulfilled(Game game, PlayerId playerId) {
+        if (conditionToIncrementIsMet(game, playerId))
+            increment();
+
         return counter.compareTo(desiredAmount) >= 0;
     }
 }
