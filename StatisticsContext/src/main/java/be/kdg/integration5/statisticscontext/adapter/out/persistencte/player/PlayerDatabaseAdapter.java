@@ -1,6 +1,11 @@
 package be.kdg.integration5.statisticscontext.adapter.out.persistencte.player;
 
+import be.kdg.integration5.statisticscontext.adapter.out.persistencte.player_metrics.PlayerMetricsJpaConverter;
+import be.kdg.integration5.statisticscontext.adapter.out.persistencte.player_metrics.PlayerMetricsJpaEntity;
+import be.kdg.integration5.statisticscontext.adapter.out.persistencte.player_metrics.PlayerMetricsJpaRepository;
+import be.kdg.integration5.statisticscontext.adapter.out.persistencte.predictions.PredictionsJpaConverter;
 import be.kdg.integration5.statisticscontext.adapter.out.persistencte.predictions.PredictionsJpaEntity;
+import be.kdg.integration5.statisticscontext.adapter.out.persistencte.predictions.PredictionsJpaRepository;
 import be.kdg.integration5.statisticscontext.domain.Player;
 import be.kdg.integration5.statisticscontext.domain.PlayerId;
 import be.kdg.integration5.statisticscontext.domain.Predictions;
@@ -18,10 +23,18 @@ public class PlayerDatabaseAdapter implements FindPlayerPort, PersistPlayerPort 
 
     private final PlayerJpaRepository playerJpaRepository;
     private final PlayerJpaConverter playerJpaConverter;
+    private final PlayerMetricsJpaConverter playerMetricsJpaConverter;
+    private final PredictionsJpaConverter predictionsJpaConverter;
+    private final PlayerMetricsJpaRepository playerMetricsJpaRepository;
+    private final PredictionsJpaRepository predictionsJpaRepository;
 
-    public PlayerDatabaseAdapter(PlayerJpaRepository playerJpaRepository, PlayerJpaConverter playerJpaConverter) {
+    public PlayerDatabaseAdapter(PlayerJpaRepository playerJpaRepository, PlayerJpaConverter playerJpaConverter, PlayerMetricsJpaConverter playerMetricsJpaConverter, PredictionsJpaConverter predictionsJpaConverter, PlayerMetricsJpaRepository playerMetricsJpaRepository, PredictionsJpaRepository predictionsJpaRepository) {
         this.playerJpaRepository = playerJpaRepository;
         this.playerJpaConverter = playerJpaConverter;
+        this.playerMetricsJpaConverter = playerMetricsJpaConverter;
+        this.predictionsJpaConverter = predictionsJpaConverter;
+        this.playerMetricsJpaRepository = playerMetricsJpaRepository;
+        this.predictionsJpaRepository = predictionsJpaRepository;
     }
 
     @Override
@@ -38,6 +51,27 @@ public class PlayerDatabaseAdapter implements FindPlayerPort, PersistPlayerPort 
                 .stream()
                 .map(playerJpaConverter::toDomain)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Player save(Player player) {
+        PlayerJpaEntity playerJpaEntity = playerJpaConverter.toJpa(player);
+        PlayerJpaEntity savedPlayerJpaEntity = playerJpaRepository.save(playerJpaEntity);
+
+        PlayerMetricsJpaEntity metricsJpaEntity = playerMetricsJpaConverter.toJpa(player.getMetrics());
+        metricsJpaEntity.setPlayerId(savedPlayerJpaEntity.getPlayerId());
+        metricsJpaEntity.setPlayer(savedPlayerJpaEntity);
+        PlayerMetricsJpaEntity savedMetrics = playerMetricsJpaRepository.save(metricsJpaEntity);
+
+        PredictionsJpaEntity predictionsJpaEntity = predictionsJpaConverter.toJpa(player.getPredictions());
+        predictionsJpaEntity.setPlayerId(savedPlayerJpaEntity.getPlayerId());
+        predictionsJpaEntity.setPlayer(savedPlayerJpaEntity);
+        PredictionsJpaEntity savedPredictions = predictionsJpaRepository.save(predictionsJpaEntity);
+
+        savedPlayerJpaEntity.setPlayerMetrics(savedMetrics);
+        savedPlayerJpaEntity.setPredictions(savedPredictions);
+
+        return playerJpaConverter.toDomain(savedPlayerJpaEntity);
     }
 
     @Override

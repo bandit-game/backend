@@ -25,6 +25,25 @@ public class PlayerMetricsJpaConverter {
         );
     }
 
+    public PlayerMetricsJpaEntity toJpa(Metrics metrics) {
+        return new PlayerMetricsJpaEntity(
+                metrics.getTotalGamesPlayed(),
+                metrics.getTotalWins(),
+                metrics.getTotalLosses(),
+                metrics.getTotalDraws(),
+                metrics.getTotalIsFirst(),
+                metrics.getAvgMoveDuration(),
+                metrics.getAvgMoveAmount(),
+                metrics.getAvgGameDuration(),
+                metrics.getTotalWeekdaysPlayed(),
+                metrics.getTotalWeekendsPlayed(),
+                metrics.getTotalMorningPlays(),
+                metrics.getTotalAfternoonPlays(),
+                metrics.getTotalEveningPlays(),
+                metrics.getTotalNightPlays()
+        );
+    }
+
 
     public void updateFields(PlayerMetricsJpaEntity metricsJpaEntity, Metrics updatedMetrics) {
         metricsJpaEntity.setTotalGamesPlayed(updatedMetrics.getTotalGamesPlayed());

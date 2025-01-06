@@ -1,4 +1,4 @@
-package be.kdg.integration5.gameplatformcontext.adapter.in.messaging;
+package be.kdg.integration5.gameplatformcontext.adapter.out.messaging;
 
 import be.kdg.integration5.gameplatformcontext.domain.Lobby;
 import be.kdg.integration5.gameplatformcontext.port.out.NotifyGameStartPort;

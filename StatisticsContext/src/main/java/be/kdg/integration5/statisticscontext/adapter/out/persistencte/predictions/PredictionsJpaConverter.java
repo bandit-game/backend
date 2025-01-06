@@ -13,4 +13,12 @@ public class PredictionsJpaConverter {
                 entity.getPlayerClass()
         );
     }
+
+    public PredictionsJpaEntity toJpa(Predictions predictions) {
+        return new PredictionsJpaEntity(
+                predictions.getFirstMoveWinProbability(),
+                predictions.getPlayerClass(),
+                predictions.getChurn()
+        );
+    }
 }

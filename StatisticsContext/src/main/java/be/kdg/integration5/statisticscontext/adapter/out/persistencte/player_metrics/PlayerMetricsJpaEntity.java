@@ -68,8 +68,7 @@ public class PlayerMetricsJpaEntity {
     @Column(name = "total_night_plays", nullable = false)
     private int totalNightPlays;
 
-    public PlayerMetricsJpaEntity(UUID playerId, int totalGamesPlayed, int totalWins, int totalLosses, int totalDraws, int totalIsFirst, double avgMoveDuration, double avgMoveAmount, double avgGameDuration, int totalWeekdaysPlayed, int totalWeekendsPlayed, int totalMorningPlays, int totalAfternoonPlays, int totalEveningPlays, int totalNightPlays) {
-        this.playerId = playerId;
+    public PlayerMetricsJpaEntity(int totalGamesPlayed, int totalWins, int totalLosses, int totalDraws, int totalIsFirst, double avgMoveDuration, double avgMoveAmount, double avgGameDuration, int totalWeekdaysPlayed, int totalWeekendsPlayed, int totalMorningPlays, int totalAfternoonPlays, int totalEveningPlays, int totalNightPlays) {
         this.totalGamesPlayed = totalGamesPlayed;
         this.totalWins = totalWins;
         this.totalLosses = totalLosses;
