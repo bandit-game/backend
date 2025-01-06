@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 import static org.hamcrest.Matchers.containsString;
 
 @ActiveProfiles("test")
@@ -27,7 +26,7 @@ public class CollectSessionStatisticsCsvIntegrationTest {
     @Test
     @WithMockUser(roles = "admin")
     void testExportSessionStatisticsCsv() throws Exception {
-        mockMvc.perform(get("/api/sessions/export/csv"))
+        mockMvc.perform(get("/api/v1/sessions/csv"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/csv"))
                 .andExpect(header().string("Content-Disposition", containsString("attachment; filename=")))
