@@ -2,6 +2,7 @@ package be.kdg.integration5.gameplatformcontext.adapter;
 
 
 import be.kdg.integration5.gameplatformcontext.GamePlatformContextApplication;
+import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.game.GameJpaConverter;
 import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.game.GameJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.game.GameJpaRepository;
 import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.lobby.LobbyDatabaseAdapter;
@@ -42,24 +43,27 @@ public class LobbyAdapterUnitTest {
     private Game game;
 
     private Player player;
+
     @Autowired
     private LobbyJpaRepository lobbyJpaRepository;
 
+    @Autowired
+    private GameJpaConverter gameJpaConverter;
 
     @BeforeEach
     void setUp() {
         game = new Game(
+
                 "Title",
                 "http://localhost:8080/image",
                 "http://localhost:8080/backend",
                 "http://localhost:8080/frontend",
-                new ArrayList<>(),
                 new Price(100.0, Currency.getInstance("USD")),
                 2,
                 "Description"
 
         );
-        GameJpaEntity gameJpa = GameJpaEntity.of(game);
+        GameJpaEntity gameJpa = gameJpaConverter.toJpa(game);
         player = new Player(
                 new PlayerId(UUID.randomUUID()),
                 "user",

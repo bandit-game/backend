@@ -7,16 +7,18 @@ extra["springCloudAzureVersion"] = "5.18.0"
 
 dependencies {
     implementation(project(":common"))
-    implementation("org.springframework.boot:spring-boot-starter-amqp")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-jdbc")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-websocket")
-    implementation("com.azure.spring:spring-cloud-azure-starter")
-    implementation("com.azure.spring:spring-cloud-azure-starter-jdbc-postgresql")
-    implementation("com.azure.spring:spring-cloud-azure-starter-storage")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-amqp") // RabbitMQ
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa") // JPA
+    implementation("org.springframework.boot:spring-boot-starter-jdbc") // JDBC
+    implementation("org.springframework.boot:spring-boot-starter-web") // Web MVC
+    implementation("org.springframework.boot:spring-boot-starter-websocket") // WebSocket
+    implementation("org.springframework.boot:spring-boot-starter-security") // Security
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server") // OAuth2 Resource Server
+    implementation("org.springframework.boot:spring-boot-starter-actuator") // Actuator
+    implementation("org.springframework.boot:spring-boot-starter-webflux") // Reactive Web (WebFlux)
+
+
+    implementation("com.azure.spring:spring-cloud-azure-starter-actuator")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.security:spring-security-test")
     compileOnly("org.projectlombok:lombok")

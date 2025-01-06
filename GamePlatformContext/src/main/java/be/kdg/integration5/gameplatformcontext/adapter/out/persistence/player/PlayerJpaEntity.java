@@ -1,9 +1,7 @@
 package be.kdg.integration5.gameplatformcontext.adapter.out.persistence.player;
 
-import be.kdg.integration5.gameplatformcontext.adapter.out.achievement.AchievementJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.lobby.LobbyJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.lobby_player.LobbyPlayerJpaEntity;
-import be.kdg.integration5.gameplatformcontext.domain.Achievement;
 import be.kdg.integration5.gameplatformcontext.domain.Player;
 import be.kdg.integration5.gameplatformcontext.domain.PlayerId;
 import jakarta.persistence.*;

@@ -28,7 +28,7 @@ public class CollectPlayerStatisticsCsvIntegrationTest {
     @Test
     @WithMockUser(roles = "admin")
     void testExportSessionStatisticsCsv() throws Exception {
-        mockMvc.perform(get("/api/players/export/csv"))
+        mockMvc.perform(get("/api/v1/players/csv"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/csv"))
                 .andExpect(header().string("Content-Disposition", containsString("attachment; filename=")))
