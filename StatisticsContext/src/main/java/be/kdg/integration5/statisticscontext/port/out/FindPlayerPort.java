@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface FindPlayerPort {
     List<Player> findPlayersByIds(List<PlayerId> playerIds);
+    List<Player> findAllFetched();
 }

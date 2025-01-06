@@ -1,14 +1,12 @@
 package be.kdg.integration5.statisticscontext.domain;
 
 
-import be.kdg.integration5.statisticscontext.domain.exception.NoMovesInPlayerActivityException;
-import be.kdg.integration5.statisticscontext.domain.exception.NotFirstPlayerException;
-import be.kdg.integration5.statisticscontext.domain.exception.PlayerNotPartOfSessionException;
-import be.kdg.integration5.statisticscontext.domain.exception.SessionResultConflictException;
+import be.kdg.integration5.statisticscontext.domain.exception.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -95,7 +93,7 @@ public class Session {
 
     }
 
-    private Player getFirstPlayer() {
+    public Player getFirstPlayer() {
         return activities.stream()
                 .filter(activity -> !activity.getMoves().isEmpty())
                 .min(Comparator.comparing(activity -> activity.getFirstMove().getStartTime()))
@@ -105,5 +103,12 @@ public class Session {
 
     public List<Player> getPlayers() {
         return activities.stream().map(PlayerActivity::getPlayer).collect(Collectors.toList());
+    }
+
+    public double getDurationSeconds() {
+        if (this.getFinishTime() == null)
+            throw new SessionNotFinishedException("Session %s not finished.".formatted(this.getSessionId().uuid()));
+
+        return Duration.between(startTime, finishTime).toSeconds();
     }
 }

@@ -1,6 +1,6 @@
 package be.kdg.integration5.gameplatformcontext.adapter.config.web;
 
-import be.kdg.integration5.gameplatformcontext.adapter.out.exception.ChatbotRequestFailedException;
+import be.kdg.integration5.gameplatformcontext.adapter.out.web.exception.ChatbotRequestFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;

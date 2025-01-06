@@ -18,7 +18,6 @@ public class Player {
     private int age;
     private Gender gender;
     private List<Role> roles;
-    private List<Achievement> earnedAchievements;
     private List<Player> friends;
 
     public Player(PlayerId playerId, String username, int age, Gender gender) {

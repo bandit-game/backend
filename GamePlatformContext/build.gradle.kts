@@ -6,6 +6,7 @@ extra["snippetsDir"] = file("build/generated-snippets")
 extra["springCloudAzureVersion"] = "5.18.0"
 
 dependencies {
+    implementation(project(":common"))
     implementation("org.springframework.boot:spring-boot-starter-amqp")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")

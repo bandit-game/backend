@@ -40,22 +40,16 @@ public class PlayerActivity {
     }
 
     public void updateMetrics(boolean isWinner, boolean isDraw, boolean isFirstMove, LocalDateTime startTime, LocalDateTime finishTime) {
-        Move lastMove = this.getLastMove();
-
-        // Calculate game duration
         double gameDuration = Duration.between(startTime, finishTime).toSeconds();
 
-        // Calculate average move duration
         double avgMoveDuration = moves.stream()
                 .filter(move -> move.getEndTime() != null)
                 .mapToDouble(move -> Duration.between(move.getStartTime(), move.getEndTime()).toSeconds())
                 .average()
                 .orElse(0);
 
-        // Calculate total moves
         double totalMoves = moves.size();
 
-        // Update player metrics
         Metrics metrics = player.getMetrics();
         metrics.updateValues(isWinner, isDraw, isFirstMove, gameDuration, avgMoveDuration, totalMoves, startTime);
     }
