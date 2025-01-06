@@ -1,7 +1,7 @@
 package be.kdg.integration5.checkerscontext.core;
 
 import be.kdg.integration5.checkerscontext.adapter.in.dto.GetMovesRequestDto;
-import be.kdg.integration5.checkerscontext.adapter.out.dto.PossibleMovesForPlayerResponseDto;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.dto.PossibleMovesForPlayerResponseDto;
 
 import java.lang.reflect.Type;
 

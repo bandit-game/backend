@@ -1,4 +1,4 @@
-package be.kdg.integration5.checkerscontext.adapter.out.exception;
+package be.kdg.integration5.checkerscontext.adapter.out.persistence.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 

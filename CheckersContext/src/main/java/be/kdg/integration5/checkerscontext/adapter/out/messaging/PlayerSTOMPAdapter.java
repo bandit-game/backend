@@ -1,8 +1,8 @@
-package be.kdg.integration5.checkerscontext.adapter.out.player;
+package be.kdg.integration5.checkerscontext.adapter.out.messaging;
 
-import be.kdg.integration5.checkerscontext.adapter.out.dto.GameStateResponseDto;
-import be.kdg.integration5.checkerscontext.adapter.out.dto.MoveGetDto;
-import be.kdg.integration5.checkerscontext.adapter.out.dto.PossibleMovesForPlayerResponseDto;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.dto.GameStateResponseDto;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.dto.MoveGetDto;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.dto.PossibleMovesForPlayerResponseDto;
 import be.kdg.integration5.checkerscontext.domain.Game;
 import be.kdg.integration5.checkerscontext.domain.Move;
 import be.kdg.integration5.checkerscontext.domain.Player;

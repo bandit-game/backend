@@ -1,4 +1,4 @@
-package be.kdg.integration5.checkerscontext.adapter.out.dto;
+package be.kdg.integration5.checkerscontext.adapter.out.persistence.dto;
 
 import be.kdg.integration5.checkerscontext.adapter.in.dto.PiecePositionGetDto;
 import be.kdg.integration5.checkerscontext.domain.Move;

@@ -1,4 +1,4 @@
-package be.kdg.integration5.checkerscontext.adapter.out.game;
+package be.kdg.integration5.checkerscontext.adapter.out.persistence.game;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
