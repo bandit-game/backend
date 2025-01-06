@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { GamePlatformContextApplication.class })
 @SpringBootTest
-public class LobbyAdapterTest {
+public class LobbyAdapterUnitTest {
 
     @Autowired
     private GameJpaRepository gameJpaRepository;

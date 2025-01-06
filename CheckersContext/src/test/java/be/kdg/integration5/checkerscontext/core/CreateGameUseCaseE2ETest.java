@@ -31,7 +31,7 @@ import static org.awaitility.Awaitility.await;
 @ActiveProfiles("test")
 @SpringBootTest
 @Testcontainers
-public class CreateGameUseCaseIntegrationTest {
+public class CreateGameUseCaseE2ETest {
     private static final String LOBBY_QUEUE = "lobby_queue";
     private static RabbitMQContainer rabbitMQContainer;
 

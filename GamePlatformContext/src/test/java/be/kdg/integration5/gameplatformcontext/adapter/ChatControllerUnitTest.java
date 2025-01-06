@@ -1,4 +1,4 @@
-package be.kdg.integration5.gameplatformcontext.core;
+package be.kdg.integration5.gameplatformcontext.adapter;
 import be.kdg.integration5.gameplatformcontext.GamePlatformContextApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = { GamePlatformContextApplication.class })
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ChatControllerTest {
+public class ChatControllerUnitTest {
     @Autowired
     private MockMvc mockMvc;
 
