@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 public class MQTopology {
 
     private static final String STATISTICS_EXCHANGE = "statistics_events";
-    private static final String NEW_PLAYER_QUEUE = "game_start_queue";
-    private static final String NEW_GAME_QUEUE = "game_end_queue";
+    private static final String NEW_PLAYER_QUEUE = "new_player_queue";
+    private static final String NEW_GAME_QUEUE = "new_game_queue";
 
     private static final String LOBBY_EVENTS_EXCHANGE = "lobby_events";
     private static final String LOBBY_QUEUE = "lobby_queue";
@@ -26,6 +26,17 @@ public class MQTopology {
     @Bean
     Queue newPlayerQueue() {
         return new Queue(NEW_PLAYER_QUEUE, true);
+    }
+
+    @Bean
+    Queue newGameQueue() {return new Queue(NEW_GAME_QUEUE, true);}
+
+    @Bean
+    Binding newGameBinding(TopicExchange statisticsEventsExchange, Queue newGameQueue) {
+        return BindingBuilder
+                .bind(newGameQueue)
+                .to(statisticsEventsExchange)
+                .with("game.#.registered");
     }
 
     @Bean

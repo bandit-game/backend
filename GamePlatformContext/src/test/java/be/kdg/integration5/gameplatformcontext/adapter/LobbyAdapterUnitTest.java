@@ -2,12 +2,12 @@ package be.kdg.integration5.gameplatformcontext.adapter;
 
 
 import be.kdg.integration5.gameplatformcontext.GamePlatformContextApplication;
-import be.kdg.integration5.gameplatformcontext.adapter.out.game.GameJpaEntity;
-import be.kdg.integration5.gameplatformcontext.adapter.out.game.GameJpaRepository;
-import be.kdg.integration5.gameplatformcontext.adapter.out.lobby.LobbyDatabaseAdapter;
-import be.kdg.integration5.gameplatformcontext.adapter.out.lobby.LobbyJpaRepository;
-import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaEntity;
-import be.kdg.integration5.gameplatformcontext.adapter.out.player.PlayerJpaRepository;
+import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.game.GameJpaEntity;
+import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.game.GameJpaRepository;
+import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.lobby.LobbyDatabaseAdapter;
+import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.lobby.LobbyJpaRepository;
+import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.player.PlayerJpaEntity;
+import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.player.PlayerJpaRepository;
 import be.kdg.integration5.gameplatformcontext.domain.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
