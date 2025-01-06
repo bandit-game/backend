@@ -53,7 +53,6 @@ public class LobbyAdapterUnitTest {
                 "http://localhost:8080/image",
                 "http://localhost:8080/backend",
                 "http://localhost:8080/frontend",
-                new ArrayList<>(),
                 new Price(100.0, Currency.getInstance("USD")),
                 2,
                 "Description"

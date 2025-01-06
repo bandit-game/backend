@@ -8,6 +8,7 @@ import be.kdg.integration5.gameplatformcontext.port.out.PersistPlayerPort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -31,6 +32,13 @@ public class PlayerDatabaseAdapter implements FindPlayerPort, PersistPlayerPort 
         Optional<PlayerJpaEntity> player = playerJpaRepository.findById(playerId.uuid());
         return player.isPresent();
 
+    }
+
+    @Override
+    public List<Player> findByUsername(String username) {
+        return playerJpaRepository.findAllByUsernameContainingIgnoreCase(username).stream()
+                .map(PlayerJpaEntity::toDomain)
+                .toList();
     }
 
     @Override
