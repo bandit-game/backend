@@ -25,7 +25,7 @@ public class CollectSessionStatisticsCsvIntegrationTest {
     private MockMvc mockMvc;
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "admin")
     void testExportSessionStatisticsCsv() throws Exception {
         mockMvc.perform(get("/api/sessions/export/csv"))
                 .andExpect(status().isOk())
