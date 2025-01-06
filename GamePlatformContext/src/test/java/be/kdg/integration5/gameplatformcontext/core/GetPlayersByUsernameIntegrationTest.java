@@ -43,7 +43,6 @@ public class GetPlayersByUsernameIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        // Initialize database with test data
         playerJpaRepository.save(new PlayerJpaEntity(UUID.randomUUID(), 25, Player.Gender.MALE, "john_doe"));
         playerJpaRepository.save(new PlayerJpaEntity(UUID.randomUUID(), 30, Player.Gender.FEMALE, "jane_doe"));
         playerJpaRepository.save(new PlayerJpaEntity(UUID.randomUUID(), 27, Player.Gender.MALE, "john_smith"));
@@ -51,7 +50,6 @@ public class GetPlayersByUsernameIntegrationTest {
 
     @AfterEach
     void tearDown() {
-        // Clean up test data
         playerJpaRepository.deleteAll();
     }
     @Test
