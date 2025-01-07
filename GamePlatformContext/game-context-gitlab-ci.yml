@@ -28,7 +28,7 @@ gameplatform-build:
   script:
     - cd GamePlatformContext
     - docker pull $GITLAB_IMAGE_CACHE_TEXT || echo "No previous image found. Proceeding with build."
-    - docker build -f GamePlatformContext/Dockerfile ../ --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $GITLAB_IMAGE_CACHE_TEXT --tag $GITLAB_IMAGE_TEXT --tag $GITLAB_IMAGE_CACHE_TEXT
+    - docker build -f Dockerfile ../ --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $GITLAB_IMAGE_CACHE_TEXT --tag $GITLAB_IMAGE_TEXT --tag $GITLAB_IMAGE_CACHE_TEXT
     - docker push $GITLAB_IMAGE_TEXT
     - docker push $GITLAB_IMAGE_CACHE_TEXT
 
