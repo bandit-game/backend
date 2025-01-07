@@ -11,7 +11,7 @@ stages:
         - 'GamePlatformContext/*'
 
 variables:
-  COMPONENT_VERSION: 0.1.1
+  COMPONENT_VERSION: 0.1.2
   LOCATION: europe-west1
   GITLAB_IMAGE_TEXT: $CI_REGISTRY_IMAGE/gameplatform-context:$CI_COMMIT_SHORT_SHA
   GITLAB_IMAGE_CACHE_TEXT: $CI_REGISTRY_IMAGE/gameplatform-context:latest
