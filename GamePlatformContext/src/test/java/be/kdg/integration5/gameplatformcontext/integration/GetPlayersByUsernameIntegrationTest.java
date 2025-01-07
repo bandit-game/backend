@@ -1,4 +1,4 @@
-package be.kdg.integration5.gameplatformcontext.core;
+package be.kdg.integration5.gameplatformcontext.integration;
 
 import be.kdg.integration5.gameplatformcontext.GamePlatformContextApplication;
 import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.player.PlayerJpaEntity;
@@ -8,9 +8,13 @@ import be.kdg.integration5.gameplatformcontext.port.in.GetPlayersByUserNameUseCa
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,7 +34,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = { GamePlatformContextApplication.class })
 @SpringBootTest
 @AutoConfigureMockMvc
+@EnableAutoConfiguration(exclude = {RabbitAutoConfiguration.class})
 public class GetPlayersByUsernameIntegrationTest {
+
+    @MockBean
+    private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private PlayerJpaRepository playerJpaRepository;

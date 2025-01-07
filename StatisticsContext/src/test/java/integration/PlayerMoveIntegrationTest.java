@@ -1,4 +1,4 @@
-package core;
+package integration;
 
 
 import be.kdg.integration5.common.events.PlayerMoveEvent;
@@ -22,8 +22,12 @@ import be.kdg.integration5.statisticscontext.port.in.PlayerMadeMoveUseCase;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,6 +42,7 @@ import java.util.stream.Collectors;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { StatisticsContextApplication.class })
 @SpringBootTest
+@EnableAutoConfiguration(exclude = {RabbitAutoConfiguration.class})
 public class PlayerMoveIntegrationTest {
 
     @Autowired

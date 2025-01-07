@@ -1,5 +1,6 @@
-package be.kdg.integration5.checkerscontext.domain;
+package be.kdg.integration5.checkerscontext.unit;
 
+import be.kdg.integration5.checkerscontext.domain.*;
 import be.kdg.integration5.checkerscontext.domain.exception.MoveNotValidException;
 import be.kdg.integration5.checkerscontext.domain.exception.NotPlayablePositionException;
 import org.junit.jupiter.api.BeforeEach;

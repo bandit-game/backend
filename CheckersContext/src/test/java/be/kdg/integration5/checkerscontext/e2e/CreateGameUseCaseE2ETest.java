@@ -1,5 +1,6 @@
-package be.kdg.integration5.checkerscontext.core;
+package be.kdg.integration5.checkerscontext.e2e;
 
+import be.kdg.integration5.checkerscontext.CheckersContextApplication;
 import be.kdg.integration5.checkerscontext.domain.Game;
 import be.kdg.integration5.checkerscontext.domain.GameId;
 import be.kdg.integration5.checkerscontext.port.out.FindGamePort;
@@ -14,8 +15,11 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.RabbitMQContainer;
@@ -31,6 +35,8 @@ import static org.awaitility.Awaitility.await;
 @ActiveProfiles("test")
 @SpringBootTest
 @Testcontainers
+@ContextConfiguration(classes = {CheckersContextApplication.class})
+//@EnableAutoConfiguration(exclude = {RabbitAutoConfiguration.class})
 public class CreateGameUseCaseE2ETest {
     private static final String LOBBY_QUEUE = "lobby_queue";
     private static RabbitMQContainer rabbitMQContainer;
