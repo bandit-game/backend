@@ -26,7 +26,7 @@ gameplatform-build:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - cd chatbot-text
+    - cd GamePlatformContext
     - docker pull $GITLAB_IMAGE_CACHE_TEXT || echo "No previous image found. Proceeding with build."
     - docker build -f GamePlatformContext/Dockerfile ../ --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $GITLAB_IMAGE_CACHE_TEXT --tag $GITLAB_IMAGE_TEXT --tag $GITLAB_IMAGE_CACHE_TEXT
     - docker push $GITLAB_IMAGE_TEXT
