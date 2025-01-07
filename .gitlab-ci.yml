@@ -1,8 +1,6 @@
 stages:
   - build
-  - unit-test
-  - integration-test
-  - e2e-test
+  - test
   - upload
   - deploy
 
