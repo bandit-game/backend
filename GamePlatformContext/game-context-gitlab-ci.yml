@@ -36,7 +36,7 @@ unit-test:
   image: docker:24.0.5
   stage: test
   extends: .gameplatform-common
-   services:
+  services:
     - docker:24.0.5-dind
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
