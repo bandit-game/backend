@@ -1,0 +1,10 @@
+stages:
+  - build
+  - unit-test
+  - integration-test
+  - e2e-test
+  - upload
+  - deploy
+
+include:
+  - local: '/GamePlatformContext/game-context-gitlab-ci.yml'  
