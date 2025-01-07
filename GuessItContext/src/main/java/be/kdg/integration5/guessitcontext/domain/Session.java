@@ -31,15 +31,22 @@ public class Session {
     @ManyToOne(fetch = FetchType.LAZY)
     private Player currentPlayer;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Player winner;
+
     private boolean isFinished;
+
+    private boolean isDraw;
 
     private int targetNumber;
 
-    public Session(Player firstPlayer, UUID sessionId, boolean isFinished) {
+    public Session(Player firstPlayer, UUID sessionId, boolean isFinished, boolean isDraw) {
         Random random = new Random();
         this.firstPlayer = firstPlayer;
         this.sessionId = sessionId;
         this.targetNumber = random.nextInt(10) + 1;
         this.isFinished = isFinished;
+        this.currentPlayer = firstPlayer;
+        this.isDraw = isDraw;
     }
 }

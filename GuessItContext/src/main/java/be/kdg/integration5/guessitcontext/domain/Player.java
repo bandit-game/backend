@@ -22,4 +22,7 @@ public class Player {
     @Column(name = "player_id")
     private UUID playerId;
 
+    @Column(nullable = false)
+    private String username;
+
 }

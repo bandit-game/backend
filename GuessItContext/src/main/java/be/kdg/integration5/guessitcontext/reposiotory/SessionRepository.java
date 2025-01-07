@@ -17,4 +17,11 @@ public interface SessionRepository extends JpaRepository<Session, UUID> {
             "left join fetch s.currentPlayer cp " +
             "where s.isFinished = :isFinished and :playerId in (select sp.playerId from s.players sp)")
     Optional<Session> findByFinishedAndPlayerCustom(boolean isFinished, UUID playerId);
+
+    @Query("select s from Session s " +
+            "left join fetch s.players p " +
+            "left join fetch s.firstPlayer fp " +
+            "left join fetch s.currentPlayer cp " +
+    "where s.sessionId = :uuid")
+    Optional<Session> findByIdFetched(UUID uuid);
 }

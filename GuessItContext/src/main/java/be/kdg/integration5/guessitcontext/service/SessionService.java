@@ -1,37 +1,20 @@
 package be.kdg.integration5.guessitcontext.service;
 
-import be.kdg.integration5.guessitcontext.domain.Player;
-import be.kdg.integration5.guessitcontext.domain.Session;
-import be.kdg.integration5.guessitcontext.reposiotory.SessionRepository;
+import be.kdg.integration5.common.events.LobbyCreatedEvent;
+import be.kdg.integration5.guessitcontext.domain.*;
 import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Service;
 
-@Service
-public class SessionService {
-    private final SessionRepository sessionRepository;
+import java.util.List;
+import java.util.UUID;
 
-    public SessionService(SessionRepository sessionRepository) {
-        this.sessionRepository = sessionRepository;
-    }
-
-    @Transactional
-    public Session updateNextPlayer(Session session) {
-        Session updatedSession = this.setNextPlayer(session);
-        return sessionRepository.save(updatedSession);
-    }
-
-
-    private Session setNextPlayer(Session session) {
-        if (session.getPlayers() == null || session.getPlayers().isEmpty()) {
-            throw new IllegalStateException("Players list is empty or null.");
-        }
-
-        Player nextPlayer = session.getPlayers().stream()
-                .filter(player -> !player.getPlayerId().equals(session.getCurrentPlayer().getPlayerId()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No eligible next player found."));
-
-        session.setCurrentPlayer(nextPlayer);
-        return session;
-    }
+public interface SessionService {
+    Session update(Session session);
+    Session setNextPlayer(Session session);
+    Session createSession(LobbyCreatedEvent event);
+    Session findNotFinishedWithPlayer(boolean isFinished, PlayerId playerId);
+    Session findById(SessionId sessionId);
+    List<UUID> getPlayerUUIDExceptFor(PlayerId playerId, Session session);
+    void sendGameSessionStartEvent(Session session);
+    void sendPlayerMoveEvent(PlayerId playerId, Session session);
+    void sendGameSessionEndEvent(Session session);
 }
