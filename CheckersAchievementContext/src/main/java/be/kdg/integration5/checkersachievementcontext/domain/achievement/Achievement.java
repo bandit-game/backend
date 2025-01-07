@@ -2,15 +2,37 @@ package be.kdg.integration5.checkersachievementcontext.domain.achievement;
 
 import be.kdg.integration5.checkersachievementcontext.domain.Game;
 import be.kdg.integration5.checkersachievementcontext.domain.PlayerId;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public abstract class Achievement {
-    private boolean achieved;
+    private final String name;
+    private String description;
+    private String imagUrl;
+
+    @Setter(AccessLevel.NONE)
+    private boolean isAchieved;
+
+    public Achievement(String name, String description, String imagUrl) {
+        this.name = name;
+        this.description = description;
+        this.imagUrl = imagUrl;
+    }
+
+    public Achievement(String name, String description, String imagUrl, boolean isAchieved) {
+        this.name = name;
+        this.description = description;
+        this.imagUrl = imagUrl;
+        this.isAchieved = isAchieved;
+    }
 
     public void open() {
-        this.achieved = true;
+        this.isAchieved = true;
     }
 
     public abstract boolean isFulfilled(Game game, PlayerId playerId);
+
 }

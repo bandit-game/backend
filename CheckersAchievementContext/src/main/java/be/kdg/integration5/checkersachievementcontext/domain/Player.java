@@ -19,6 +19,11 @@ public class Player {
         this.achievements = AchievementsProvider.ACHIEVEMENTS_SET;
     }
 
+    public Player(PlayerId playerId, Set<Achievement> achievements) {
+        this.playerId = playerId;
+        this.achievements = achievements;
+    }
+
     public void checkAchievementsFulfilled(Game game) {
         achievements.forEach(achievement -> {
             if (achievement.isFulfilled(game, playerId))

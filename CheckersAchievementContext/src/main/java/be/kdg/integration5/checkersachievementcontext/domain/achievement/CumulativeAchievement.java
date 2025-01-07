@@ -2,24 +2,33 @@ package be.kdg.integration5.checkersachievementcontext.domain.achievement;
 
 import be.kdg.integration5.checkersachievementcontext.domain.Game;
 import be.kdg.integration5.checkersachievementcontext.domain.PlayerId;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
-public abstract class CumulativeAchievement<T extends Comparable<T>> extends Achievement {
-    protected final T desiredAmount;
-    protected T counter;
+public abstract class CumulativeAchievement<GoalClass, CounterClass> extends Achievement {
+    protected final GoalClass goal;
+    protected CounterClass counter;
 
-    public abstract void increment();
+    public CumulativeAchievement(String name, String description, String imagUrl, GoalClass goal, CounterClass counter) {
+        super(name, description, imagUrl);
+        this.goal = goal;
+        this.counter = counter;
+    }
 
-    public abstract boolean conditionToIncrementIsMet(Game game, PlayerId playerId);
+    public CumulativeAchievement(String name, String description, String imagUrl, boolean isAchieved, GoalClass goal, CounterClass counter) {
+        super(name, description, imagUrl, isAchieved);
+        this.goal = goal;
+        this.counter = counter;
+    }
+
+    public abstract boolean compare(GoalClass goal, CounterClass counter);
+
+    public abstract void checkConditionAndHandle(Game game, PlayerId playerId);
 
     @Override
     public boolean isFulfilled(Game game, PlayerId playerId) {
-        if (conditionToIncrementIsMet(game, playerId))
-            increment();
+        checkConditionAndHandle(game, playerId);
 
-        return counter.compareTo(desiredAmount) >= 0;
+        return compare(goal, counter);
     }
 }

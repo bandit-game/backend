@@ -53,7 +53,7 @@ public class GameDatabaseAdapter implements PersistGamePort, FindGamePort {
 //        referencedGame.setPlayers(gameJpaEntity.getPlayers());
 //
 //        return gameJpaConverter.toDomain(referencedGame);
-//    }/
+//    }
 
 
     @Override
