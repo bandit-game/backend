@@ -18,6 +18,27 @@ public class MQTopology {
     private static final String GAME_END_QUEUE = "game_end_queue";
     private static final String PLAYER_MOVE_QUEUE = "player_move_queue";
 
+    private static final String CHECKERS_EVENTS_EXCHANGE = "checkers_events";
+    private static final String CHECKERS_MOVES_QUEUE = "moves_queue";
+
+    @Bean
+    TopicExchange checkersEventsExchange() {
+        return new TopicExchange(CHECKERS_EVENTS_EXCHANGE);
+    }
+
+    @Bean
+    Queue checkersMovesQueue() {
+        return new Queue(CHECKERS_MOVES_QUEUE, true);
+    }
+
+    @Bean
+    Binding checkersMoveMadeBinding(TopicExchange checkersEventsExchange, Queue checkersMovesQueue) {
+        return BindingBuilder
+                .bind(checkersMovesQueue)
+                .to(checkersEventsExchange)
+                .with("checkers.#.move.made");
+    }
+
     @Bean
     TopicExchange lobbyEventsExchange() {
         return new TopicExchange(LOBBY_EVENTS_EXCHANGE);
@@ -29,7 +50,7 @@ public class MQTopology {
     }
 
     @Bean
-    Binding warehosueDumpBinding(TopicExchange lobbyEventsExchange, Queue lobbyQueue) {
+    Binding lobbyCreatedBinding(TopicExchange lobbyEventsExchange, Queue lobbyQueue) {
         return BindingBuilder
                 .bind(lobbyQueue)
                 .to(lobbyEventsExchange)
