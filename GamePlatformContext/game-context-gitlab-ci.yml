@@ -13,8 +13,8 @@ stages:
 variables:
   COMPONENT_VERSION: 0.1.2
   LOCATION: europe-west1
-  GITLAB_IMAGE_TEXT: $CI_REGISTRY_IMAGE/gameplatform-context:$CI_COMMIT_SHORT_SHA
-  GITLAB_IMAGE_CACHE_TEXT: $CI_REGISTRY_IMAGE/gameplatform-context:latest
+  GITLAB_GAMEPLATFORM_CONTEXT: $CI_REGISTRY_IMAGE/gameplatform-context:$CI_COMMIT_SHORT_SHA
+  GITLAB_GAMEPLATFORM_CACHE_CONTEXT: $CI_REGISTRY_IMAGE/gameplatform-context:latest
   AR_IMAGE_TEXT: $GOOGLE_ARTIFACT_REGISTRY_REPOSITORY_LOCATION-docker.pkg.dev/$GOOGLE_ARTIFACT_REGISTRY_PROJECT_ID/$GOOGLE_ARTIFACT_REGISTRY_REPOSITORY_NAME/gameplatform-context:$CI_COMMIT_SHORT_SHA
 
 gameplatform-build:
@@ -27,10 +27,10 @@ gameplatform-build:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - cd GamePlatformContext
-    - docker pull $GITLAB_IMAGE_CACHE_TEXT || echo "No previous image found. Proceeding with build."
-    - docker build -f Dockerfile ../ --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $GITLAB_IMAGE_CACHE_TEXT --tag $GITLAB_IMAGE_TEXT --tag $GITLAB_IMAGE_CACHE_TEXT
-    - docker push $GITLAB_IMAGE_TEXT
-    - docker push $GITLAB_IMAGE_CACHE_TEXT
+    - docker pull $GITLAB_GAMEPLATFORM_CACHE_CONTEXT || echo "No previous image found. Proceeding with build."
+    - docker build -f Dockerfile ../ --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $GITLAB_GAMEPLATFORM_CACHE_CONTEXT --tag $GITLAB_GAMEPLATFORM_CONTEXT --tag $GITLAB_GAMEPLATFORM_CACHE_CONTEXT
+    - docker push $GITLAB_GAMEPLATFORM_CONTEXT
+    - docker push $GITLAB_GAMEPLATFORM_CACHE_CONTEXT
 
 unit-test:
   image: docker:24.0.5
@@ -41,8 +41,8 @@ unit-test:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - docker pull $PRE_BUILT_IMAGE
-    - docker run --rm $PRE_BUILT_IMAGE gradle :GamePlatformContext:test --no-daemon
+    - docker pull $GITLAB_GAMEPLATFORM_CONTEXT
+    - docker run --rm $GITLAB_GAMEPLATFORM_CONTEXT gradle :GamePlatformContext:test --no-daemon
   artifacts:
     when: always
     reports:
@@ -63,13 +63,13 @@ integration-test:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - docker pull $PRE_BUILT_IMAGE
+    - docker pull $GITLAB_GAMEPLATFORM_CONTEXT
     - docker run --rm \
       -e POSTGRES_DB=$POSTGRES_DB \
       -e POSTGRES_USER=$POSTGRES_USER \
       -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-      -e CI_DB_HOST_PORt=$CI_DB_HOST_PORT \
-      $PRE_BUILT_IMAGE gradle :GamePlatformContext:integrationTest --no-daemon
+      -e CI_DB_HOST_PORT=$CI_DB_HOST_PORT \
+      $GITLAB_GAMEPLATFORM_CONTEXT gradle :GamePlatformContext:integrationTest --no-daemon
   artifacts:
     when: always
     reports:
