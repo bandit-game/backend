@@ -11,6 +11,6 @@ public class MovePieceAchievement extends GameStateAchievement {
     @Override
     public boolean isFulfilled(Game game, PlayerId playerId) {
         List<Move> movesHistory = game.getBoard().movesHistory();
-        return movesHistory.stream().anyMatch(move -> move.moverId().equals(playerId));
+        return movesHistory.stream().anyMatch(move -> move.mover().getPlayerId().equals(playerId));
     }
 }

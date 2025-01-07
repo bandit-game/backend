@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public record Move(
-        PlayerId moverId,
+        Player mover,
         PiecePosition oldPosition,
         PiecePosition newPosition,
         LocalDateTime madeAt
 ){
     public Move {
-        Objects.requireNonNull(moverId);
+        Objects.requireNonNull(mover);
         Objects.requireNonNull(oldPosition);
         Objects.requireNonNull(newPosition);
         Objects.requireNonNull(madeAt);

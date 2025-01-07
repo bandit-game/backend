@@ -19,7 +19,7 @@ public class MQTopology {
     private static final String PLAYER_MOVE_QUEUE = "player_move_queue";
 
     private static final String CHECKERS_EVENTS_EXCHANGE = "checkers_events";
-    private static final String CHECKERS_MOVES_QUEUE = "moves_queue";
+    private static final String CHECKERS_MOVE_MADE_QUEUE = "checkers_move_made_queue";
 
     @Bean
     TopicExchange checkersEventsExchange() {
@@ -28,7 +28,7 @@ public class MQTopology {
 
     @Bean
     Queue checkersMovesQueue() {
-        return new Queue(CHECKERS_MOVES_QUEUE, true);
+        return new Queue(CHECKERS_MOVE_MADE_QUEUE, true);
     }
 
     @Bean

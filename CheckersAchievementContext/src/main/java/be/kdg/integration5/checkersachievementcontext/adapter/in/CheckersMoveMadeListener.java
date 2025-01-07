@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CheckersMoveMadeListener {
-    private static final String CHECKERS_MOVE_MADE = "checkers_move_made";
+    private static final String CHECKERS_MOVE_MADE = "checkers_move_made_queue";
     private final Logger logger = LoggerFactory.getLogger(CheckersMoveMadeListener.class);
 
     private final HandleCheckersMoveMadeUseCase handleCheckersMoveMadeUseCase;

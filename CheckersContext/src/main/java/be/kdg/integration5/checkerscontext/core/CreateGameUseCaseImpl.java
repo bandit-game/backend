@@ -16,7 +16,6 @@ import java.util.List;
 @Service
 @Transactional
 public class CreateGameUseCaseImpl implements CreateGameUseCase {
-
     private final PersistGamePort persistGamePort;
     private final PersistPlayerPort persistPlayerPort;
 

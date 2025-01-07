@@ -5,5 +5,5 @@ import be.kdg.integration5.checkersachievementcontext.domain.Player;
 import java.util.List;
 
 public interface PersistPlayerPort {
-    List<Player> updateAll(List<Player> players);
+    List<Player> saveAll(List<Player> players);
 }
