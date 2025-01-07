@@ -4,5 +4,34 @@ stages:
   - upload
   - deploy
 
-include:
-  - local: '/GamePlatformContext/game-context-gitlab-ci.yml'  
+build:
+  stage: build
+  script:
+    - echo "Building the application..."
+  rules:
+    - if: '$CI_COMMIT_BRANCH'
+      when: always
+    - when: never
+
+test:
+  stage: test
+  script:
+    - echo "Running tests..."
+  needs:
+    - build
+
+upload:
+  stage: upload
+  script:
+    - echo "Uploading artifacts..."
+  needs:
+    - build
+    - test
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying application..."
+  needs:
+    - build
+    - upload
