@@ -51,6 +51,7 @@ public class SessionServiceImpl implements SessionService {
 
 
     @Override
+    @Transactional
     public Session createSession(LobbyCreatedEvent event) {
         List<Player> players = event.players()
                 .stream()
@@ -68,6 +69,7 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    @Transactional
     public Session findNotFinishedWithPlayer(boolean isFinished, PlayerId playerId) {
         return sessionRepository.findByFinishedAndPlayerCustom(false, playerId.uuid())
                 .orElseThrow(() -> new SessionNotFoundException("Session for player %s not found.".formatted(playerId.uuid())));
@@ -75,12 +77,14 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    @Transactional
     public Session findById(SessionId sessionId) {
         return  sessionRepository.findByIdFetched(sessionId.uuid())
                 .orElseThrow(() -> new SessionNotFoundException("Session %s not found.".formatted(sessionId.uuid())));
     }
 
     @Override
+    @Transactional
     public List<UUID> getPlayerUUIDExceptFor(PlayerId playerId, Session session) {
         return session.getPlayers().stream().map(Player::getPlayerId).filter(id -> id != playerId.uuid()).toList();
     }
