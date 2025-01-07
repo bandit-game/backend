@@ -1,15 +1,18 @@
 package be.kdg.integration5.checkersachievementcontext.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
-@AllArgsConstructor
-public class Board {
+public record Board(List<Move> movesHistory) {
+    public Board(List<Move> movesHistory) {
+        this.movesHistory = new ArrayList<>(movesHistory);
+    }
 
-    private List<Move> movesHistory;
+    public void addMove(Move madeMove) {
+        if (!movesHistory.contains(madeMove))
+            movesHistory.add(madeMove);
+    }
 }
