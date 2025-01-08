@@ -7,10 +7,11 @@ stages:
 
 .gameplatform-common:
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: never
     - changes:
         - 'GamePlatformContext/*'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - when: manual
 
 # before_script:
 #   - GRADLE_USER_HOME="$(pwd)/.gradle"
