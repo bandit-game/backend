@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -36,12 +38,14 @@ import static org.awaitility.Awaitility.await;
 @SpringBootTest
 @Testcontainers
 @ContextConfiguration(classes = {CheckersContextApplication.class})
-//@EnableAutoConfiguration(exclude = {RabbitAutoConfiguration.class})
 public class CreateGameUseCaseE2ETest {
     private static final String LOBBY_QUEUE = "lobby_queue";
     private static RabbitMQContainer rabbitMQContainer;
 
     private static RabbitTemplate rabbitTemplate;
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
 
     @Autowired
     private FindGamePort findGamePort;

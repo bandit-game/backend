@@ -38,6 +38,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:rabbitmq")
     testImplementation("org.testcontainers:postgresql")
+    testImplementation("com.github.dasniko:testcontainers-keycloak:3.5.1")
 }
 
 subprojects {

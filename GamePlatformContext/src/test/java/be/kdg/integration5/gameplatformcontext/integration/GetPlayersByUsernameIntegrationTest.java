@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,8 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = { GamePlatformContextApplication.class })
 @SpringBootTest
 @AutoConfigureMockMvc
-@EnableAutoConfiguration(exclude = {RabbitAutoConfiguration.class})
-public class GetPlayersByUsernameIntegrationTest {
+public class GetPlayersByUsernameIntegrationTest extends KeycloakTestContainers{
 
     @MockBean
     private RabbitTemplate rabbitTemplate;
@@ -61,7 +61,6 @@ public class GetPlayersByUsernameIntegrationTest {
         playerJpaRepository.deleteAll();
     }
     @Test
-    @WithMockUser(roles = "player")
     void testGetPlayersByUsernameUseCase() {
         // Act
         List<Player> players = getPlayersByUserNameUseCase.getPlayers("john");
@@ -75,10 +74,13 @@ public class GetPlayersByUsernameIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "player")
     void testGetPlayersByUsernameApi() throws Exception {
+        // Arrange
+        String adminToken = getAdminBearer();
+
         // Act and Assert
         mockMvc.perform(get("/api/v1/players")
+                        .header("Authorization", adminToken)
                         .param("username", "john"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -86,10 +88,11 @@ public class GetPlayersByUsernameIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "player")
     void testGetPlayersByUsernameApi_NoResults() throws Exception {
+        String adminToken = getAdminBearer();
         // Act and Assert
         mockMvc.perform(get("/api/v1/players")
+                        .header("Authorization", adminToken)
                         .param("username", "nonexistent"))
                 .andExpect(status().isNoContent());
     }

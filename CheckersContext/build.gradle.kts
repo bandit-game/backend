@@ -12,6 +12,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	testImplementation("io.projectreactor:reactor-test")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")
@@ -24,6 +26,7 @@ dependencies {
 	testImplementation("org.testcontainers:rabbitmq")
 	testImplementation("org.testcontainers:postgresql")
 	testImplementation("org.springframework.amqp:spring-rabbit-test")
+	testImplementation("com.github.dasniko:testcontainers-keycloak:3.5.1")
 }
 
 subprojects {

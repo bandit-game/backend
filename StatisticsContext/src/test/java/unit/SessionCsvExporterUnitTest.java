@@ -12,10 +12,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -32,8 +35,13 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { StatisticsContextApplication.class })
 @SpringBootTest
-@EnableAutoConfiguration(exclude = {RabbitAutoConfiguration.class})
 public class SessionCsvExporterUnitTest {
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
+
+    @MockBean
+    private RabbitTemplate rabbitTemplate;
 
     @Mock
     private SessionCsvConverter sessionCsvConverter;

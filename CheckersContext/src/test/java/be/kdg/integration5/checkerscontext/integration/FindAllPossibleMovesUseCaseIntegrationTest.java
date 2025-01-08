@@ -17,6 +17,7 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
@@ -35,6 +36,9 @@ public class FindAllPossibleMovesUseCaseIntegrationTest {
 
     @MockBean
     private RabbitTemplate rabbitTemplate;
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
 
     private WebSocketStompClient stompClient;
 
