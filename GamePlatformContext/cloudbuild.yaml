@@ -43,7 +43,7 @@ substitutions:
   _PROJECT_ID: 'checkers-integration5' 
   _REPO_NAME: 'checkers-repo'                
   _SERVICE_NAME: 'gameplatform-service'      
-  _LOCATION: 'europe-west1',
+  _LOCATION: 'europe-west1'
   _TAG_NAME: 'latest'                         
 
 images: ['gcr.io/$PROJECT_ID/[IMAGE_NAME]:latest']                 
