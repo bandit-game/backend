@@ -81,5 +81,5 @@ trigger-gcb:
   identity: google_cloud
   script:
     - gcloud config set project $GCLOUD_PROJECT
-    - gcloud builds triggers run gameplatform-context
+    - gcloud builds triggers run gameplatform-context --region europe-west1
   
