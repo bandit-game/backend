@@ -2,7 +2,7 @@ image: gradle:8.6-jdk21-alpine
 
 stages:
   # - build
-  # - test
+  # - test test
   - deploy
 
 .gameplatform-common:
@@ -72,7 +72,7 @@ stages:
 #     policy: pull
 #     paths:
 #       - build
-#       - .gradle
+#       - .gradle 
 
 trigger-gcb:
   image: google/cloud-sdk:latest
