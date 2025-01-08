@@ -1,6 +1,5 @@
 image: gradle:8.6-jdk21-alpine
 
-
 stages:
   - build
   - test
