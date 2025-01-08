@@ -49,11 +49,7 @@ public class HandleCheckersMoveMadeUseCaseImpl implements HandleCheckersMoveMade
         for (Player player : players)
             player.checkAchievementsFulfilled(game);
 
-
-        // TODO
-        //  Remove? No
         persistPlayerPort.saveAll(players);
-
         persistGamePort.save(game);
     }
 }
