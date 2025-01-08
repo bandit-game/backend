@@ -4,7 +4,7 @@ stages:
   - build
   - unit-test
   - integration-test
-  # - deploy-gcb
+  # - deploy-gcb test
 
 .gameplatform-common:
   rules:
