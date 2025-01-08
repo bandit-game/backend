@@ -58,6 +58,9 @@ integration-test:
     - docker:24.0.5-dind
     - postgres:16.1-alpine
   variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
     POSTGRES_DB: 'demo-test'
     POSTGRES_USER: 'admin'
     POSTGRES_PASSWORD: 'test'
