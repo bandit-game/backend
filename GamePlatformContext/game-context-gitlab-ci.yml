@@ -41,6 +41,11 @@ unit-test:
   services:
     - docker:24.0.5-dind
     - postgres:16.1-alpine
+  variables:
+    POSTGRES_DB: 'demo-integration'
+    POSTGRES_USER: 'admin'
+    POSTGRES_PASSWORD: 'test'
+    CI_DB_HOST_PORT: 'postgres:5432'
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
@@ -67,7 +72,7 @@ integration-test:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - docker pull $GITLAB_GAMEPLATFORM_CONTEXT
-     - docker run --rm -e POSTGRES_DB="$POSTGRES_DB" -e POSTGRES_USER="$POSTGRES_USER" -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" -e CI_DB_HOST_PORT="$CI_DB_HOST_PORT" "$GITLAB_GAMEPLATFORM_CONTEXT" gradle :GamePlatformContext:integrationTest --no-daemon
+    - docker run --rm -e POSTGRES_DB="$POSTGRES_DB" -e POSTGRES_USER="$POSTGRES_USER" -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" -e CI_DB_HOST_PORT="$CI_DB_HOST_PORT" "$GITLAB_GAMEPLATFORM_CONTEXT" gradle :GamePlatformContext:integrationTest --no-daemon
 
   artifacts:
     when: always
