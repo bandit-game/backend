@@ -21,12 +21,20 @@ dependencies {
 
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers") // For integration tests with Testcontainers
+    testImplementation("org.testcontainers:rabbitmq")
+    testImplementation("org.testcontainers:postgresql")
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.projectlombok:lombok")
+    testImplementation("com.github.dasniko:testcontainers-keycloak:3.5.1")
+
+
+    testImplementation("org.springframework.security:spring-security-test")
+
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") // Includes JUnit 5
-    testImplementation("org.springframework.boot:spring-boot-testcontainers") // For integration tests with Testcontainers
 }
 
 dependencyManagement {

@@ -12,8 +12,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa") // JPA
     implementation("org.springframework.boot:spring-boot-starter-jdbc") // JDBC
     implementation("org.springframework.boot:spring-boot-starter-web") // Web MVC
-    implementation("com.azure.spring:spring-cloud-azure-starter")
-    implementation("com.azure.spring:spring-cloud-azure-starter-storage")
     implementation("org.springframework.boot:spring-boot-starter-webflux") // WebFlux
     implementation("org.springframework.boot:spring-boot-starter-security") // Security
     implementation("org.springframework.boot:spring-boot-starter-websocket") // WebSocket

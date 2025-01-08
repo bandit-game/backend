@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -32,8 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { GamePlatformContextApplication.class })
 @SpringBootTest
-@EnableAutoConfiguration(exclude = {RabbitAutoConfiguration.class})
 public class LobbyAdapterUnitTest {
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
 
     @MockBean
     private RabbitTemplate rabbitTemplate;

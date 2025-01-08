@@ -19,6 +19,12 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
@@ -46,7 +52,19 @@ public class SecurityConfig {
 
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
-        return new JwtAuthenticationConverter();
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            Map<String, Object> realmAccess = jwt.getClaim("realm_access");
+            if (realmAccess != null) {
+                List<String> roles = (List<String>) realmAccess.get("roles");
+                return roles.stream()
+                        .map(role -> "ROLE_" + role) // Add the "ROLE_" prefix required by hasRole
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toSet());
+            }
+            return Collections.emptySet();
+        });
+        return converter;
     }
 
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
