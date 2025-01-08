@@ -1,9 +1,10 @@
+image: openjdk:21-jdk
+
 stages:
   - build
   - unit-test
   - integration-test
-  # - upload
-  # - deploy
+  # - deploy-gcb
 
 .gameplatform-common:
   rules:
@@ -12,93 +13,61 @@ stages:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: never
 
-variables:
-  COMPONENT_VERSION: 0.1.2
-  LOCATION: europe-west1
-  GITLAB_GAMEPLATFORM_CONTEXT: $CI_REGISTRY_IMAGE/gameplatform-context:$CI_COMMIT_SHORT_SHA
-  GITLAB_GAMEPLATFORM_CACHE_CONTEXT: $CI_REGISTRY_IMAGE/gameplatform-context:latest
-  AR_IMAGE_TEXT: $GOOGLE_ARTIFACT_REGISTRY_REPOSITORY_LOCATION-docker.pkg.dev/$GOOGLE_ARTIFACT_REGISTRY_PROJECT_ID/$GOOGLE_ARTIFACT_REGISTRY_REPOSITORY_NAME/gameplatform-context:$CI_COMMIT_SHORT_SHA
 
-gameplatform-build:
-  image: docker:24.0.5
+.variables:
+  POSTGRES_DB: 'demo-db'
+  POSTGRES_USER: 'admin'
+  POSTGRES_PASSWORD: 'test'
+  CI_DB_HOST_PORT: 'postgres:5432'
+
+before_script:
+  - GRADLE_USER_HOME="$(pwd)/.gradle"
+  - export GRADLE_USER_HOME
+
+build:
   stage: build
   extends: .gameplatform-common
-  services:
-    - docker:24.0.5-dind
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - cd GamePlatformContext
-    - docker pull $GITLAB_GAMEPLATFORM_CACHE_CONTEXT || echo "No previous image found. Proceeding with build."
-    - docker build -f Dockerfile ../ --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $GITLAB_GAMEPLATFORM_CACHE_CONTEXT --tag $GITLAB_GAMEPLATFORM_CONTEXT --tag $GITLAB_GAMEPLATFORM_CACHE_CONTEXT
-    - docker push $GITLAB_GAMEPLATFORM_CONTEXT
-    - docker push $GITLAB_GAMEPLATFORM_CACHE_CONTEXT
+    - gradle --build-cache assemble
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+    paths:
+      - build
+      - .gradle
 
 unit-test:
-  image: docker:24.0.5
-  stage: test
+  stage: unit-test
   extends: .gameplatform-common
   services:
-    - docker:24.0.5-dind
     - postgres:16.1-alpine
-  variables:
-    POSTGRES_DB: 'demo-integration'
-    POSTGRES_USER: 'admin'
-    POSTGRES_PASSWORD: 'test'
-    CI_DB_HOST_PORT: 'postgres:5432'
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - docker pull $GITLAB_GAMEPLATFORM_CONTEXT
-    - docker run --rm -e POSTGRES_DB="$POSTGRES_DB" -e POSTGRES_USER="$POSTGRES_USER" -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" -e CI_DB_HOST_PORT="$CI_DB_HOST_PORT" "$GITLAB_GAMEPLATFORM_CONTEXT" gradle :GamePlatformContext:unitTest --no-daemon
+    - gradle :GamePlatformContext:unitTest --no-daemon
   artifacts:
     when: always
     reports:
       junit: build/test-results/test/**/TEST-*.xml
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: pull
+    paths:
+      - build
+      - .gradle
 
 integration-test:
-  image: docker:24.0.5
-  stage: test
+  stage: integration-test
   extends: .gameplatform-common
   services:
-    - docker:24.0.5-dind
     - postgres:16.1-alpine
-  variables:
-    POSTGRES_DB: 'demo-integration'
-    POSTGRES_USER: 'admin'
-    POSTGRES_PASSWORD: 'test'
-    CI_DB_HOST_PORT: 'postgres:5432'
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - docker pull $GITLAB_GAMEPLATFORM_CONTEXT
-    - docker run --rm -e POSTGRES_DB="$POSTGRES_DB" -e POSTGRES_USER="$POSTGRES_USER" -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" -e CI_DB_HOST_PORT="$CI_DB_HOST_PORT" "$GITLAB_GAMEPLATFORM_CONTEXT" gradle :GamePlatformContext:integrationTest --no-daemon
-
+    - gradle :GamePlatformContext:integrationTest --no-daemon
   artifacts:
     when: always
     reports:
       junit: build/test-results/test/**/TEST-*.xml
-
-
-# text-upload:
-#   image: us-docker.pkg.dev/gcb-catalog-release/preview/gar-upload@sha256:468bec8ae7097469ffdc41f702936c4d92edeaa72719f52009367c27b5b6788a
-#   stage: upload
-#   extends: .text-common
-#   identity: google_cloud
-#   script:
-#     - gar-upload --source $GITLAB_IMAGE_TEXT --target $AR_IMAGE_TEXT --version $COMPONENT_VERSION
-
-# text-deploy:
-#   image: google/cloud-sdk:latest
-#   stage: deploy
-#   extends: .text-common
-#   identity: google_cloud
-#   script:
-#     - gcloud config set project $GCLOUD_PROJECT
-#     - gcloud run deploy chatbot-text-generate \
-#       --image $AR_IMAGE_TEXT \
-#       --region $LOCATION \
-#       --port 3000 \
-#       --vpc-connector my-vpc-connector \
-#       --ingress internal \
-#       --allow-unauthenticated
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: pull
+    paths:
+      - build
+      - .gradle
