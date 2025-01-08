@@ -40,11 +40,18 @@ unit-test:
   extends: .gameplatform-common
   services:
     - docker:24.0.5-dind
+    - postgres:16.1-alpine
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - docker pull $GITLAB_GAMEPLATFORM_CONTEXT
-    - docker run --rm $GITLAB_GAMEPLATFORM_CONTEXT gradle :GamePlatformContext:test --no-daemon
+    - docker run --rm \
+        -e POSTGRES_DB="$POSTGRES_DB" \
+        -e POSTGRES_USER="$POSTGRES_USER" \
+        -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+        -e CI_DB_HOST_PORT="$CI_DB_HOST_PORT" \
+        "$GITLAB_GAMEPLATFORM_CONTEXT" \
+        gradle :GamePlatformContext:unitTest --no-daemon
   artifacts:
     when: always
     reports:
@@ -66,12 +73,13 @@ integration-test:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - docker pull $GITLAB_GAMEPLATFORM_CONTEXT
-    - docker run --rm \
-      -e POSTGRES_DB=$POSTGRES_DB \
-      -e POSTGRES_USER=$POSTGRES_USER \
-      -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-      -e CI_DB_HOST_PORT=$CI_DB_HOST_PORT \
-      $GITLAB_GAMEPLATFORM_CONTEXT gradle :GamePlatformContext:integrationTest --no-daemon
+     - docker run --rm \
+        -e POSTGRES_DB="$POSTGRES_DB" \
+        -e POSTGRES_USER="$POSTGRES_USER" \
+        -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+        -e CI_DB_HOST_PORT="$CI_DB_HOST_PORT" \
+        "$GITLAB_GAMEPLATFORM_CONTEXT" \
+        gradle :GamePlatformContext:integrationTest --no-daemon
   artifacts:
     when: always
     reports:
