@@ -9,7 +9,7 @@ stages:
   rules:
     - changes:
         - 'GamePlatformContext/*'
-      if: '$CI_COMMIT_BRANCH'
+      if: '$CI_COMMIT_BRANCH && !$CI_MERGE_REQUEST_ID'
 
 variables:
   COMPONENT_VERSION: 0.1.2
