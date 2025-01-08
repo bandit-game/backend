@@ -44,7 +44,6 @@ substitutions:
 
 options:
   automapSubstitutions: true
-  dynamicSubstitutions: true
   logging: CLOUD_LOGGING_ONLY
 
 images:
