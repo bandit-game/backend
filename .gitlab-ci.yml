@@ -20,18 +20,18 @@ merge-test:
 include:
   - local: '/GamePlatformContext/game-context-gitlab-ci.yml'
     rules:
+      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
       - changes:
         - 'GamePlatformContext/*'
-      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
   
   - local: '/CheckersContext/checkers-context-gitlab-ci.yml'
     rules:
+      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
       - changes:
         - 'CheckersContext/*'
-      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
   
   - local: '/StatisticsContext/statistics-context-gitlab-ci.yml'
     rules:
+      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
       - changes:
         - 'StatisticsContext/*'
-      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
