@@ -26,7 +26,7 @@ checkers-build:
       - build
       - .gradle
 
-unit-test:
+checkers-unit-test:
   stage: test
   extends: .checkers-common
   services:
@@ -50,7 +50,7 @@ unit-test:
       - build
       - .gradle
 
-integration-test:
+checkers-integration-test:
   stage: test
   extends: .checkers-common
   services:
@@ -75,7 +75,7 @@ integration-test:
       - build
       - .gradle 
 
-end-2-end-test:
+checkers-end-2-end-test:
   stage: test
   extends: .checkers-common
   services:
@@ -100,6 +100,12 @@ end-2-end-test:
       - build
       - .gradle 
 
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Dependency-Scanning.gitlab-ci.yml
+  - template: Container-Scanning.gitlab-ci.yml
+  
 checkers-trigger-gcb:
   image: google/cloud-sdk:latest
   stage: deploy

@@ -26,7 +26,7 @@ gameplatform-build:
       - build
       - .gradle
 
-unit-test:
+gameplatform-unit-test:
   stage: test
   extends: .gameplatform-common
   services:
@@ -50,7 +50,7 @@ unit-test:
       - build
       - .gradle
 
-integration-test:
+gameplatform-integration-test:
   stage: test
   extends: .gameplatform-common
   services:
@@ -74,6 +74,12 @@ integration-test:
     paths:
       - build
       - .gradle 
+
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Dependency-Scanning.gitlab-ci.yml
+  - template: Container-Scanning.gitlab-ci.yml
 
 gameplatform-trigger-gcb:
   image: google/cloud-sdk:latest
