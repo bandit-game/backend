@@ -10,6 +10,7 @@ stages:
     - changes:
         - 'CheckersContext/*'
 
+#Comment
 before_script:
   - GRADLE_USER_HOME="$(pwd)/.gradle"
   - export GRADLE_USER_HOME
