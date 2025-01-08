@@ -28,7 +28,7 @@ build:
   stage: build
   extends: .gameplatform-common
   script:
-    - gradle --build-cache assemble
+    - gradle --build-cache :GamePlatformContext:assemble
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
