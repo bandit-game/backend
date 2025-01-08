@@ -2,8 +2,7 @@ image: gradle:8.6-jdk21-alpine
 
 stages:
   - build
-  - unit-test
-  - integration-test
+  - test
   # - deploy-gcb test
 
 .gameplatform-common:
@@ -12,13 +11,6 @@ stages:
         - 'GamePlatformContext/*'
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: never
-
-
-.variables:
-  POSTGRES_DB: 'demo-db'
-  POSTGRES_USER: 'admin'
-  POSTGRES_PASSWORD: 'test'
-  CI_DB_HOST_PORT: 'postgres:5432'
 
 before_script:
   - GRADLE_USER_HOME="$(pwd)/.gradle"
@@ -37,10 +29,15 @@ build:
       - .gradle
 
 unit-test:
-  stage: unit-test
+  stage: test
   extends: .gameplatform-common
   services:
     - postgres:16.1-alpine
+  variables:
+    POSTGRES_DB: 'demo-test'
+    POSTGRES_USER: 'admin'
+    POSTGRES_PASSWORD: 'test'
+    CI_DB_HOST_PORT: 'postgres:5432'
   script:
     - gradle :GamePlatformContext:unitTest --no-daemon
   artifacts:
@@ -55,10 +52,15 @@ unit-test:
       - .gradle
 
 integration-test:
-  stage: integration-test
+  stage: test
   extends: .gameplatform-common
   services:
     - postgres:16.1-alpine
+  variables:
+    POSTGRES_DB: 'demo-test'
+    POSTGRES_USER: 'admin'
+    POSTGRES_PASSWORD: 'test'
+    CI_DB_HOST_PORT: 'postgres:5432'
   script:
     - gradle :GamePlatformContext:integrationTest --no-daemon
   artifacts:
