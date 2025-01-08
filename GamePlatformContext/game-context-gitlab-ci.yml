@@ -3,6 +3,7 @@ image: gradle:8.6-jdk21-alpine
 stages:
   - build
   - test
+  - security-test
   - deploy
 
 .gameplatform-common:
@@ -80,12 +81,17 @@ include:
   - template: Security/Secret-Detection.gitlab-ci.yml
   - template: Dependency-Scanning.gitlab-ci.yml
 
-sast:
-  stage: gameplatform-security-application
-secret_detection:
-  stage: gameplatform-secret-detection
-dependency_scanning:
-  stage: gameplatform-security-dependency
+gamecontext-sast:
+  extends: .sast
+  stage: security-test
+
+gamecontext-secret_detection:
+  extends: .secret-detection
+  stage: security-test
+
+gamecontext-dependency_scanning:
+  extends: .dependency-scanning
+  stage: security-test
 
 gameplatform-trigger-gcb:
   image: google/cloud-sdk:latest
