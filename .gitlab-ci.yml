@@ -11,7 +11,7 @@ include:
       - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_COMMIT_BRANCH != "main"
         when: never
       - changes:
-        - 'CheckersContext/*'
+        - 'GamePlatformContext/*'
   
   - local: '/CheckersContext/checkers-context-gitlab-ci.yml'
     rules:
