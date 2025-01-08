@@ -18,7 +18,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push',
-      'europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME:$TAG_NAME'
+      '$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME:$TAG_NAME'
     ]
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -27,7 +27,7 @@ steps:
       'deploy',
       '$SERVICE_NAME',
       '--image',
-      'europe-west1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME:$TAG_NAME',
+      '$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$SERVICE_NAME:$TAG_NAME',
       '--region',
       '$LOCATION',
       '--port',
@@ -40,13 +40,12 @@ steps:
     ]
 
 substitutions:
-  _PROJECT_ID: 'checkers-integration5' 
   _REPO_NAME: 'checkers-repo'                
   _SERVICE_NAME: 'gameplatform-service'      
-  _LOCATION: 'europe-west1'
   _TAG_NAME: 'latest'
 
 options:
-  logging: CLOUD_LOGGING_ONLY                         
+  automapSubstitutions: true
+  logging: CLOUD_LOGGING_ONLY                       
 
 images: ['gcr.io/$PROJECT_ID/[IMAGE_NAME]:latest']                 
