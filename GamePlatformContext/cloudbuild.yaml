@@ -25,7 +25,7 @@ steps:
     args: [
       'run',
       'deploy',
-      '$SERVICE_NAME',
+      '$_SERVICE_NAME',
       '--image',
       '$LOCATION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/$_SERVICE_NAME:$_TAG_NAME',
       '--region',
