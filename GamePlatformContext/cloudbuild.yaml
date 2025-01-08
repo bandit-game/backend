@@ -3,14 +3,14 @@ steps:
     entrypoint: 'bash'
     args: [
       '-c',
-      'docker pull gcr.io/$PROJECT_ID/$TRIGGER_NAME:latest || exit 0'
+      'docker pull $_DOCKER_IMAGE_PATH || exit 0'
     ]
 
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
-      '-t', 'gcr.io/$PROJECT_ID/$TRIGGER_NAME:$_TAG_NAME',
-      '--cache-from', 'gcr.io/$PROJECT_ID/$TRIGGER_NAME:latest',
+      '-t', '$_DOCKER_IMAGE_PATH',
+      '--cache-from', '$_DOCKER_IMAGE_PATH',
       '-f', 'GamePlatformContext/Dockerfile',
       '.'
     ]
@@ -18,7 +18,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push',
-      '$LOCATION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/$_SERVICE_NAME:$_TAG_NAME'
+      '$_DOCKER_IMAGE_PATH'
     ]
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -27,9 +27,9 @@ steps:
       'deploy',
       '$_SERVICE_NAME',
       '--image',
-      '$LOCATION-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/$_SERVICE_NAME:$_TAG_NAME',
+      '$_DOCKER_IMAGE_PATH',
       '--region',
-      '$LOCATION',
+      '$_LOCATION',
       '--port',
       '3000',
       '--vpc-connector',
@@ -40,12 +40,12 @@ steps:
     ]
 
 substitutions:
-  _REPO_NAME: 'checkers-repo'                
-  _SERVICE_NAME: 'gameplatform-service'      
-  _TAG_NAME: 'latest'
+  _DOCKER_IMAGE_PATH: 'europe-west1-docker.pkg.dev/checkers-integration5/checkers-repo/gameplatform-service:latest'
 
 options:
   automapSubstitutions: true
-  logging: CLOUD_LOGGING_ONLY                                 
+  dynamicSubstitutions: true
+  logging: CLOUD_LOGGING_ONLY
 
-images: ['gcr.io/$PROJECT_ID/$TRIGGER_NAME:latest']     
+images:
+  - '$_DOCKER_IMAGE_PATH'
