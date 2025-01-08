@@ -34,7 +34,7 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
 
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test") // Includes JUnit 5
+    testImplementation("org.springframework.boot:spring-boot-starter-test") // Includes JUnit5
 }
 
 dependencyManagement {
