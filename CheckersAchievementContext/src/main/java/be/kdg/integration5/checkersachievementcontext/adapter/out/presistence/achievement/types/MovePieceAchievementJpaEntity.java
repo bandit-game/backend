@@ -10,7 +10,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@DiscriminatorValue("PLAYNGAMES")
+@DiscriminatorValue("MOVEPIECE")
 public class MovePieceAchievementJpaEntity extends AchievementJpaEntity {
     public MovePieceAchievementJpaEntity() {
     }

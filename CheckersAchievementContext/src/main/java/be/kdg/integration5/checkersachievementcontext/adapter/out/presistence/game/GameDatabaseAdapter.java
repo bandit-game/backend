@@ -18,13 +18,11 @@ public class GameDatabaseAdapter implements PersistGamePort, FindGamePort {
     private final GameJpaRepository gameJpaRepository;
     private final GameJpaConverter gameJpaConverter;
 
-    private final PlayerJpaRepository playerJpaRepository;
     private final MoveJpaRepository moveJpaRepository;
 
-    public GameDatabaseAdapter(GameJpaRepository gameJpaRepository, GameJpaConverter gameJpaConverter, PlayerJpaRepository playerJpaRepository, MoveJpaRepository moveJpaRepository) {
+    public GameDatabaseAdapter(GameJpaRepository gameJpaRepository, GameJpaConverter gameJpaConverter, MoveJpaRepository moveJpaRepository) {
         this.gameJpaRepository = gameJpaRepository;
         this.gameJpaConverter = gameJpaConverter;
-        this.playerJpaRepository = playerJpaRepository;
         this.moveJpaRepository = moveJpaRepository;
     }
 
@@ -32,8 +30,6 @@ public class GameDatabaseAdapter implements PersistGamePort, FindGamePort {
     public Game save(Game game) {
         GameJpaEntity gameJpaEntity = gameJpaConverter.toJpa(game);
         List<MoveJpaEntity> moves = gameJpaEntity.getMoves();
-
-        playerJpaRepository.saveAll(gameJpaEntity.getPlayers());
 
         gameJpaEntity.setMoves(null);
         GameJpaEntity savedGameJpaEntity = gameJpaRepository.save(gameJpaEntity);
