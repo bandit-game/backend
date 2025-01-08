@@ -21,6 +21,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/CheckersContext" />
             <option value="$PROJECT_DIR$/GamePlatformContext" />
+            <option value="$PROJECT_DIR$/GuessItContext" />
             <option value="$PROJECT_DIR$/StatisticsContext" />
             <option value="$PROJECT_DIR$/application" />
             <option value="$PROJECT_DIR$/buildSrc" />

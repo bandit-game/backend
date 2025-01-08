@@ -5,4 +5,4 @@ stages:
   - deploy
 
 include:
-  - local: '/GamePlatformContext/game-context-gitlab-ci.yml'  
+  - local: '/GamePlatformContext/game-context-gitlab-ci.yml'
