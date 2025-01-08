@@ -79,7 +79,13 @@ include:
   - template: Security/SAST.gitlab-ci.yml
   - template: Security/Secret-Detection.gitlab-ci.yml
   - template: Dependency-Scanning.gitlab-ci.yml
-  - template: Container-Scanning.gitlab-ci.yml
+
+sast:
+  stage: gameplatform-security-application
+secret_detection:
+  stage: gameplatform-secret-detection
+dependency_scanning:
+  stage: gameplatform-security-dependency
 
 gameplatform-trigger-gcb:
   image: google/cloud-sdk:latest

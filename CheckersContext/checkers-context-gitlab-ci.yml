@@ -104,8 +104,15 @@ include:
   - template: Security/SAST.gitlab-ci.yml
   - template: Security/Secret-Detection.gitlab-ci.yml
   - template: Dependency-Scanning.gitlab-ci.yml
-  - template: Container-Scanning.gitlab-ci.yml
-  
+
+sast:
+  stage: checkers-security-application
+secret_detection:
+  stage: checkers-secret-detection
+dependency_scanning:
+  stage: checkers-security-dependency
+
+
 checkers-trigger-gcb:
   image: google/cloud-sdk:latest
   stage: deploy
