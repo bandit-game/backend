@@ -12,7 +12,7 @@ steps:
       '-t', 'gcr.io/$PROJECT_ID/$TRIGGER_NAME:$_TAG_NAME',
       '--cache-from', 'gcr.io/$PROJECT_ID/$TRIGGER_NAME:latest',
       '-f', 'GamePlatformContext/Dockerfile',
-      '../'
+      '.'
     ]
 
   - name: 'gcr.io/cloud-builders/docker'

@@ -1,6 +1,6 @@
 FROM gradle:8.8-jdk21 as build
 WORKDIR /app
-COPY --chown=gradle:gradle ../ /app
+COPY --chown=gradle:gradle . /app
 RUN gradle :GamePlatformContext:clean :GamePlatformContext:build -x check --no-daemon
 
 FROM openjdk:21-slim as builder
