@@ -1,8 +1,8 @@
 image: gradle:8.6-jdk21-alpine
 
 stages:
-  # - build
-  # - test
+  - build
+  - test
   - deploy
 
 .gameplatform-common:
@@ -10,67 +10,69 @@ stages:
     - changes:
         - 'GamePlatformContext/*'
 
-# before_script:
-#   - GRADLE_USER_HOME="$(pwd)/.gradle"
-#   - export GRADLE_USER_HOME
+before_script:
+  - GRADLE_USER_HOME="$(pwd)/.gradle"
+  - export GRADLE_USER_HOME
 
-# build:
-#   stage: build
-#   extends: .gameplatform-common
-#   script:
-#     - gradle --build-cache :GamePlatformContext:assemble
-#   cache:
-#     key: "$CI_COMMIT_REF_NAME"
-#     policy: push
-#     paths:
-#       - build
-#       - .gradle
+build:
+  stage: build
+  extends: .gameplatform-common
+  script:
+    - gradle --build-cache :GamePlatformContext:assemble
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+    paths:
+      - build
+      - .gradle
 
-# unit-test:
-#   stage: test
-#   extends: .gameplatform-common
-#   services:
-#     - postgres:16.1-alpine
-#   variables:
-#     POSTGRES_DB: 'demo-test'
-#     POSTGRES_USER: 'admin'
-#     POSTGRES_PASSWORD: 'test'
-#     CI_DB_HOST_PORT: 'postgres:5432'
-#   script:
-#     - gradle :GamePlatformContext:unitTest --no-daemon
-#   artifacts:
-#     when: always
-#     reports:
-#       junit: build/test-results/test/**/TEST-*.xml
-#   cache:
-#     key: "$CI_COMMIT_REF_NAME"
-#     policy: pull
-#     paths:
-#       - build
-#       - .gradle
+unit-test:
+  stage: test
+  extends: .gameplatform-common
+  services:
+    - docker:20.10.24
+    - postgres:16.1-alpine
+  variables:
+    POSTGRES_DB: 'demo-test'
+    POSTGRES_USER: 'admin'
+    POSTGRES_PASSWORD: 'test'
+    CI_DB_HOST_PORT: 'postgres:5432'
+  script:
+    - gradle :GamePlatformContext:unitTest --no-daemon
+  artifacts:
+    when: always
+    reports:
+      junit: build/test-results/test/**/TEST-*.xml
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: pull
+    paths:
+      - build
+      - .gradle
 
-# integration-test:
-#   stage: test
-#   extends: .gameplatform-common
-#   services:
-#     - postgres:16.1-alpine
-#   variables:
-#     POSTGRES_DB: 'demo-test'
-#     POSTGRES_USER: 'admin'
-#     POSTGRES_PASSWORD: 'test'
-#     CI_DB_HOST_PORT: 'postgres:5432'
-#   script:
-#     - gradle :GamePlatformContext:integrationTest --no-daemon
-#   artifacts:
-#     when: always
-#     reports:
-#       junit: build/test-results/test/**/TEST-*.xml
-#   cache:
-#     key: "$CI_COMMIT_REF_NAME"
-#     policy: pull
-#     paths:
-#       - build
-#       - .gradle 
+integration-test:
+  stage: test
+  extends: .gameplatform-common
+  services:
+    - docker:20.10.24
+    - postgres:16.1-alpine
+  variables:
+    POSTGRES_DB: 'demo-test'
+    POSTGRES_USER: 'admin'
+    POSTGRES_PASSWORD: 'test'
+    CI_DB_HOST_PORT: 'postgres:5432'
+  script:
+    - gradle :GamePlatformContext:integrationTest --no-daemon
+  artifacts:
+    when: always
+    reports:
+      junit: build/test-results/test/**/TEST-*.xml
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: pull
+    paths:
+      - build
+      - .gradle 
 
 trigger-gcb:
   image: google/cloud-sdk:latest
