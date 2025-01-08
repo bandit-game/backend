@@ -4,9 +4,8 @@ stages:
   - upload
   - deploy
 
-workflow:
- rules:
-    - if: $CI_PIPELINE_SOURCE != "merge_request_event" && $CI_COMMIT_REF_NAME == "main"
-
 include:
   - local: '/GamePlatformContext/game-context-gitlab-ci.yml'
+    rules: 
+      - if: $CI_PIPELINE_SOURCE != "merge_request_event" && $CI_COMMIT_REF_NAME == "main"
+
