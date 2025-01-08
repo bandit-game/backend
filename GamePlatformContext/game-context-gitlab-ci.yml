@@ -30,7 +30,7 @@ unit-test:
   stage: test
   extends: .gameplatform-common
   services:
-    - docker:20.10.24
+    - docker:20.10.8
     - postgres:16.1-alpine
   variables:
     POSTGRES_DB: 'demo-test'
@@ -54,7 +54,7 @@ integration-test:
   stage: test
   extends: .gameplatform-common
   services:
-    - docker:20.10.24
+    - docker:20.10.8
     - postgres:16.1-alpine
   variables:
     POSTGRES_DB: 'demo-test'
