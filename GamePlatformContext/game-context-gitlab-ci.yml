@@ -2,21 +2,13 @@ image: gradle:8.6-jdk21-alpine
 
 stages:
   # - build
-  - test
+  # - test
   - deploy
 
 .gameplatform-common:
   rules:
     - changes:
         - 'GamePlatformContext/*'
-
-
-.debug-job:
-  stage: test
-  script:
-    - echo "Pipeline source: $CI_PIPELINE_SOURCE"
-    - echo "Branch: $CI_COMMIT_BRANCH"
-
 
 # before_script:
 #   - GRADLE_USER_HOME="$(pwd)/.gradle"
