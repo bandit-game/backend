@@ -2,7 +2,7 @@ image: gradle:8.6-jdk21-alpine
 
 stages:
   # - build
-  # - test test
+  - test
   - deploy
 
 .gameplatform-common:
@@ -11,6 +11,14 @@ stages:
         - 'GamePlatformContext/*'
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: never
+
+
+.debug-job:
+  stage: test
+  script:
+    - echo "Pipeline source: $CI_PIPELINE_SOURCE"
+    - echo "Branch: $CI_COMMIT_BRANCH"
+
 
 # before_script:
 #   - GRADLE_USER_HOME="$(pwd)/.gradle"
