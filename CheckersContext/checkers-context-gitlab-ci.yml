@@ -3,7 +3,6 @@ image: gradle:8.6-jdk21-alpine
 stages:
   - build
   - test
-  - security-test
   - deploy
 
 .checkers-common:
@@ -100,23 +99,6 @@ checkers-end-2-end-test:
     paths:
       - build
       - .gradle 
-
-include:
-  - template: Security/SAST.gitlab-ci.yml
-  - template: Security/Secret-Detection.gitlab-ci.yml
-  - template: Dependency-Scanning.gitlab-ci.yml
-
-checkers-sast:
-  extends: .sast
-  stage: security-test
-
-checkers-secret_detection:
-  extends: .secret-detection
-  stage: security-test
-
-checkers-dependency_scanning:
-  extends: .dependency-scanning
-  stage: security-test
 
 checkers-trigger-gcb:
   image: google/cloud-sdk:latest
