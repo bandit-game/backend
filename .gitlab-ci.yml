@@ -11,7 +11,7 @@ include:
         when: always
 
 
-test:
+merge-test:
   stage: test
   script:
     - exit 0
