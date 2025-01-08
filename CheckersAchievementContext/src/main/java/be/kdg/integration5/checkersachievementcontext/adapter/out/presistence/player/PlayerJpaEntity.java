@@ -1,9 +1,6 @@
 package be.kdg.integration5.checkersachievementcontext.adapter.out.presistence.player;
 
 import be.kdg.integration5.checkersachievementcontext.adapter.out.presistence.achievement.AchievementJpaEntity;
-import be.kdg.integration5.checkersachievementcontext.adapter.out.presistence.game.GameJpaEntity;
-import be.kdg.integration5.checkersachievementcontext.domain.Player;
-import be.kdg.integration5.checkersachievementcontext.domain.PlayerId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

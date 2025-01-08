@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class GameJpaConverter {
@@ -23,7 +24,7 @@ public class GameJpaConverter {
         UUID gameId = game.getGameId().uuid();
         GameJpaEntity gameJpaEntity = new GameJpaEntity(
                 gameId,
-                game.getPlayers().stream().map(player -> new PlayerJpaEntity(player.getPlayerId().uuid())).toList()
+                game.getPlayers().stream().map(playerJpaConverter::toJpa).collect(Collectors.toSet())
         );
         gameJpaEntity.setMoves(game.getBoard().movesHistory().stream().map(move -> {
             Player mover = move.mover();

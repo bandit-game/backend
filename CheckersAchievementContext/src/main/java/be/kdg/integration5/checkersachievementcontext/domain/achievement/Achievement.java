@@ -5,9 +5,11 @@ import be.kdg.integration5.checkersachievementcontext.domain.PlayerId;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public abstract class Achievement {
     private final String name;
     private String description;

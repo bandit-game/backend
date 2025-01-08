@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -26,12 +27,12 @@ public class GameJpaEntity {
             joinColumns = @JoinColumn(name = "game_id", referencedColumnName = "game_id"),
             inverseJoinColumns = @JoinColumn(name = "player_id", referencedColumnName = "player_id")
     )
-    private List<PlayerJpaEntity> players;
+    private Set<PlayerJpaEntity> players;
 
     @OneToMany(mappedBy = "game")
     private List<MoveJpaEntity> moves;
 
-    public GameJpaEntity(UUID gameId, List<PlayerJpaEntity> players) {
+    public GameJpaEntity(UUID gameId, Set<PlayerJpaEntity> players) {
         this.gameId = gameId;
         this.players = players;
     }

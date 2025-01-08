@@ -4,12 +4,14 @@ import be.kdg.integration5.checkersachievementcontext.domain.achievement.Achieve
 import be.kdg.integration5.checkersachievementcontext.domain.achievement.AchievementsProvider;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Set;
 
 
 @Getter
 @Setter
+@ToString(exclude = "achievements")
 public class Player {
     private PlayerId playerId;
     private Set<Achievement> achievements;

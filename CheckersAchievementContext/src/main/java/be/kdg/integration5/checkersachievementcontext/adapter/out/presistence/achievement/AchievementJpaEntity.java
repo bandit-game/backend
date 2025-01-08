@@ -16,9 +16,8 @@ import lombok.Setter;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
 public abstract class AchievementJpaEntity {
-    @Id
-    @Column(nullable = false, unique = true, updatable = false)
-    private String name;
+    @EmbeddedId
+    private AchievementJpaEntityId achievementId;
 
     @Column(nullable = false)
     private String description;
@@ -31,5 +30,14 @@ public abstract class AchievementJpaEntity {
 
     @ManyToOne
     @JoinColumn(name = "performer_id")
+    @MapsId("performer_id")
     private PlayerJpaEntity performer;
+
+    public AchievementJpaEntity(String name, String description, String imageUrl, boolean isAchieved, PlayerJpaEntity performer) {
+        this.achievementId = new AchievementJpaEntityId(name, performer.getPlayerId());
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.isAchieved = isAchieved;
+        this.performer = performer;
+    }
 }
