@@ -8,19 +8,19 @@ stages:
 include:
   - local: '/GamePlatformContext/game-context-gitlab-ci.yml'
     rules:
-      - if: $CI_PIPELINE_SOURCE != "merge_request_event" && $CI_COMMIT_BRANCH == "main"
+      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
         changes:
            - 'GamePlatformContext/*'
   
   - local: '/CheckersContext/checkers-context-gitlab-ci.yml'
     rules:
-      - if: $CI_PIPELINE_SOURCE != "merge_request_event" && $CI_COMMIT_BRANCH == "main"
+      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
         changes:
            - 'CheckersContext/*'
   
   - local: '/StatisticsContext/statistics-context-gitlab-ci.yml'
     rules:
-      - if: $CI_PIPELINE_SOURCE != "merge_request_event" && $CI_COMMIT_BRANCH == "main"
+      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
         changes:
            - 'StatisticsContext/*'
 
@@ -31,5 +31,3 @@ merge-test:
     - exit 0
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: always
-    - when: never
