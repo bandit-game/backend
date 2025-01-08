@@ -33,6 +33,7 @@ unit-test:
     - docker:20.10.8
     - postgres:16.1-alpine
   variables:
+    DOCKER_DRIVER: "overlay2"
     POSTGRES_DB: 'demo-test'
     POSTGRES_USER: 'admin'
     POSTGRES_PASSWORD: 'test'
@@ -57,6 +58,7 @@ integration-test:
     - docker:20.10.8
     - postgres:16.1-alpine
   variables:
+    DOCKER_DRIVER: "overlay2"
     POSTGRES_DB: 'demo-test'
     POSTGRES_USER: 'admin'
     POSTGRES_PASSWORD: 'test'
