@@ -4,9 +4,6 @@ stages:
   - security-test
   - deploy
 
-
-
-
 merge-test:
   stage: test
   script:
