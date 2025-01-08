@@ -9,7 +9,8 @@ stages:
   rules:
     - changes:
         - 'GamePlatformContext/*'
-      if: '$CI_PIPELINE_SOURCE != "merge_request_event"'
+      if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
 
 variables:
   COMPONENT_VERSION: 0.1.2
