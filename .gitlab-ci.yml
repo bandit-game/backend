@@ -7,5 +7,8 @@ stages:
 include:
   - local: '/GamePlatformContext/game-context-gitlab-ci.yml'
     rules: 
-      - if: $CI_PIPELINE_SOURCE != "merge_request_event" && $CI_COMMIT_REF_NAME == "main"
+      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
 
+test:
+  stage: test
+  script: exit 0
