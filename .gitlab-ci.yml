@@ -3,20 +3,8 @@ stages:
   - test
   - security-test
   - deploy
-  
 
-include:
-  - local: '/GamePlatformContext/game-context-gitlab-ci.yml'
-    rules: 
-      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
-  
-  - local: '/CheckersContext/checkers-context-gitlab-ci.yml'
-    rules: 
-      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
-  
-  - local: '/StatisticsContext/statistics-context-gitlab-ci.yml'
-    rules: 
-      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
+
 
 
 merge-test:
@@ -27,3 +15,23 @@ merge-test:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: always
     - when: never
+  
+
+include:
+  - local: '/GamePlatformContext/game-context-gitlab-ci.yml'
+    rules:
+      - changes:
+        - 'GamePlatformContext/*'
+      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
+  
+  - local: '/CheckersContext/checkers-context-gitlab-ci.yml'
+    rules:
+      - changes:
+        - 'CheckersContext/*'
+      - if: $CI_PIPELINE_SOURCE != "merge_request_event"
+  
+  - local: '/StatisticsContext/statistics-context-gitlab-ci.yml'
+    rules:
+      - changes:
+        - 'StatisticsContext/*'
+      - if: $CI_PIPELINE_SOURCE != "merge_request_event"

@@ -5,19 +5,12 @@ stages:
   - test
   - deploy
 
-.checkers-common:
-  rules:
-    - changes:
-        - 'CheckersContext/*'
-
-#Comment
 before_script:
   - GRADLE_USER_HOME="$(pwd)/.gradle"
   - export GRADLE_USER_HOME
 
 checkers-build:
   stage: build
-  extends: .checkers-common
   script:
     - gradle --build-cache :CheckersContext:assemble
   cache:
@@ -29,7 +22,6 @@ checkers-build:
 
 checkers-unit-test:
   stage: test
-  extends: .checkers-common
   services:
     - docker:24.0.5-dind
     - postgres:16.1-alpine
@@ -53,7 +45,6 @@ checkers-unit-test:
 
 checkers-integration-test:
   stage: test
-  extends: .checkers-common
   services:
     - docker:24.0.5-dind
     - postgres:16.1-alpine
@@ -78,7 +69,6 @@ checkers-integration-test:
 
 checkers-end-2-end-test:
   stage: test
-  extends: .checkers-common
   services:
     - docker:24.0.5-dind
     - postgres:16.1-alpine
@@ -104,7 +94,6 @@ checkers-end-2-end-test:
 checkers-trigger-gcb:
   image: google/cloud-sdk:latest
   stage: deploy
-  extends: .checkers-common
   identity: google_cloud
   script:
     - gcloud config set project $GCLOUD_PROJECT

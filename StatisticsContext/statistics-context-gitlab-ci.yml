@@ -5,18 +5,12 @@ stages:
   - test
   - deploy
 
-.statistics-common:
-  rules:
-    - changes:
-        - 'StatisticsContext/*'
-
 before_script:
   - GRADLE_USER_HOME="$(pwd)/.gradle"
   - export GRADLE_USER_HOME
 
 statistics-build:
   stage: build
-  extends: .statistics-common
   script:
     - gradle --build-cache :StatisticsContext:assemble
   cache:
@@ -28,7 +22,6 @@ statistics-build:
 
 statistics-unit-test:
   stage: test
-  extends: .statistics-common
   services:
     - docker:24.0.5-dind
     - postgres:16.1-alpine
@@ -52,7 +45,6 @@ statistics-unit-test:
 
 statistics-integration-test:
   stage: test
-  extends: .statistics-common
   services:
     - docker:24.0.5-dind
     - postgres:16.1-alpine
@@ -78,7 +70,6 @@ statistics-integration-test:
 statistics-trigger-gcb:
   image: google/cloud-sdk:latest
   stage: deploy
-  extends: .statistics-common
   identity: google_cloud
   script:
     - gcloud config set project $GCLOUD_PROJECT

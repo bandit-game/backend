@@ -5,18 +5,12 @@ stages:
   - test
   - deploy
 
-.gameplatform-common:
-  rules:
-    - changes:
-        - 'GamePlatformContext/*'
-
 before_script:
   - GRADLE_USER_HOME="$(pwd)/.gradle"
   - export GRADLE_USER_HOME
 
 gameplatform-build:
   stage: build
-  extends: .gameplatform-common
   script:
     - gradle --build-cache :GamePlatformContext:assemble
   cache:
@@ -28,7 +22,6 @@ gameplatform-build:
 
 gameplatform-unit-test:
   stage: test
-  extends: .gameplatform-common
   services:
     - docker:24.0.5-dind
     - postgres:16.1-alpine
@@ -52,7 +45,6 @@ gameplatform-unit-test:
 
 gameplatform-integration-test:
   stage: test
-  extends: .gameplatform-common
   services:
     - docker:24.0.5-dind
     - postgres:16.1-alpine
@@ -78,7 +70,6 @@ gameplatform-integration-test:
 gameplatform-trigger-gcb:
   image: google/cloud-sdk:latest
   stage: deploy
-  extends: .gameplatform-common
   identity: google_cloud
   script:
     - gcloud config set project $GCLOUD_PROJECT
