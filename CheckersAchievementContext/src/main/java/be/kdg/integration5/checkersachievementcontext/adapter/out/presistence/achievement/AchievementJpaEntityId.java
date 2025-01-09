@@ -6,7 +6,6 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.UUID;
 
-
 @Embeddable
 @Getter
 @Setter
@@ -14,6 +13,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class AchievementJpaEntityId implements Serializable {
-    private String name;
-    private UUID performer_id;
+    private UUID achievementId;
+    private UUID performerId;
 }

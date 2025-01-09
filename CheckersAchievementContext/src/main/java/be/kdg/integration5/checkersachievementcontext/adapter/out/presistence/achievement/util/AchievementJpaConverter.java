@@ -7,6 +7,7 @@ import be.kdg.integration5.checkersachievementcontext.adapter.out.presistence.pl
 import be.kdg.integration5.checkersachievementcontext.domain.GameId;
 import be.kdg.integration5.checkersachievementcontext.domain.Player;
 import be.kdg.integration5.checkersachievementcontext.domain.achievement.Achievement;
+import be.kdg.integration5.checkersachievementcontext.domain.achievement.AchievementId;
 import be.kdg.integration5.checkersachievementcontext.domain.achievement.cumulativeachievement_types.PlayNGamesAchievement;
 import be.kdg.integration5.checkersachievementcontext.domain.achievement.gamestateachievement_types.MovePieceAchievement;
 import lombok.NonNull;
@@ -22,6 +23,7 @@ public class AchievementJpaConverter {
     public AchievementJpaEntity toJpa(@NonNull Achievement achievement, PlayerJpaEntity performer) {
         if (achievement instanceof PlayNGamesAchievement playNGamesAchievement) {
             return new PlayNGamesAchievementJpaEntity(
+                    playNGamesAchievement.getAchievementId().uuid(),
                     playNGamesAchievement.getName(),
                     playNGamesAchievement.getDescription(),
                     playNGamesAchievement.getImagUrl(),
@@ -32,6 +34,7 @@ public class AchievementJpaConverter {
             );
         } else if (achievement instanceof MovePieceAchievement) {
             return new MovePieceAchievementJpaEntity(
+                    achievement.getAchievementId().uuid(),
                     achievement.getName(),
                     achievement.getDescription(),
                     achievement.getImagUrl(),
@@ -49,7 +52,8 @@ public class AchievementJpaConverter {
     public Achievement toDomain(@NonNull AchievementJpaEntity achievementJpaEntity) {
         if (achievementJpaEntity instanceof PlayNGamesAchievementJpaEntity playNGamesAchievementJpaEntity) {
             return new PlayNGamesAchievement(
-                    playNGamesAchievementJpaEntity.getAchievementId().getName(),
+                    new AchievementId(playNGamesAchievementJpaEntity.getAchievementId().getAchievementId()),
+                    playNGamesAchievementJpaEntity.getName(),
                     playNGamesAchievementJpaEntity.getDescription(),
                     playNGamesAchievementJpaEntity.getImageUrl(),
                     playNGamesAchievementJpaEntity.isAchieved(),
@@ -58,7 +62,8 @@ public class AchievementJpaConverter {
             );
         } else if (achievementJpaEntity instanceof MovePieceAchievementJpaEntity) {
             return new MovePieceAchievement(
-                    achievementJpaEntity.getAchievementId().getName(),
+                    new AchievementId(achievementJpaEntity.getAchievementId().getAchievementId()),
+                    achievementJpaEntity.getName(),
                     achievementJpaEntity.getDescription(),
                     achievementJpaEntity.getImageUrl(),
                     achievementJpaEntity.isAchieved()

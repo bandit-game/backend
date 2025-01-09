@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "achievements")
 @Getter
@@ -14,10 +16,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "achievement_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class AchievementJpaEntity {
     @EmbeddedId
     private AchievementJpaEntityId achievementId;
+
+    @Column(nullable = false)
+    private String name;
 
     @Column(nullable = false)
     private String description;
@@ -30,11 +35,12 @@ public abstract class AchievementJpaEntity {
 
     @ManyToOne
     @JoinColumn(name = "performer_id")
-    @MapsId("performer_id")
+    @MapsId("performerId")
     private PlayerJpaEntity performer;
 
-    public AchievementJpaEntity(String name, String description, String imageUrl, boolean isAchieved, PlayerJpaEntity performer) {
-        this.achievementId = new AchievementJpaEntityId(name, performer.getPlayerId());
+    public AchievementJpaEntity(UUID achievementId, String name, String description, String imageUrl, boolean isAchieved, PlayerJpaEntity performer) {
+        this.achievementId = new AchievementJpaEntityId(achievementId, performer.getPlayerId());
+        this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;
         this.isAchieved = isAchieved;

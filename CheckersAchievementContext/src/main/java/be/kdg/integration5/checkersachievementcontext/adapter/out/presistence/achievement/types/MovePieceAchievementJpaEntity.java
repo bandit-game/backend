@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
@@ -15,7 +17,7 @@ public class MovePieceAchievementJpaEntity extends AchievementJpaEntity {
     public MovePieceAchievementJpaEntity() {
     }
 
-    public MovePieceAchievementJpaEntity(String name, String description, String imageUrl, boolean isAchieved, PlayerJpaEntity performer) {
-        super(name, description, imageUrl, isAchieved, performer);
+    public MovePieceAchievementJpaEntity(UUID achievementId, String name, String description, String imageUrl, boolean isAchieved, PlayerJpaEntity performer) {
+        super(achievementId, name, description, imageUrl, isAchieved, performer);
     }
 }

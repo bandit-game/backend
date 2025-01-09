@@ -11,6 +11,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public abstract class Achievement {
+    private AchievementId achievementId;
     private final String name;
     private String description;
     private String imagUrl;
@@ -18,13 +19,15 @@ public abstract class Achievement {
     @Setter(AccessLevel.NONE)
     private boolean isAchieved;
 
-    public Achievement(String name, String description, String imagUrl) {
+    public Achievement(AchievementId achievementId, String name, String description, String imagUrl) {
+        this.achievementId = achievementId;
         this.name = name;
         this.description = description;
         this.imagUrl = imagUrl;
     }
 
-    public Achievement(String name, String description, String imagUrl, boolean isAchieved) {
+    public Achievement(AchievementId achievementId, String name, String description, String imagUrl, boolean isAchieved) {
+        this.achievementId = achievementId;
         this.name = name;
         this.description = description;
         this.imagUrl = imagUrl;

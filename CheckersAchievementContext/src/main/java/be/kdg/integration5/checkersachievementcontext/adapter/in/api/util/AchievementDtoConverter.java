@@ -14,6 +14,7 @@ public class AchievementDtoConverter {
     public AchievementGetDto toDto(Achievement achievement) {
         if (achievement instanceof GameStateAchievement) {
             return new GameStateAchievementGetDto(
+                    achievement.getAchievementId().uuid(),
                     achievement.getName(),
                     achievement.getDescription(),
                     achievement.getImagUrl(),
@@ -21,6 +22,7 @@ public class AchievementDtoConverter {
             );
         } else if (achievement instanceof CumulativeAchievement<?, ?> cumulativeAchievement) {
             return new CumulativeAchievementGetDto(
+                    cumulativeAchievement.getAchievementId().uuid(),
                     cumulativeAchievement.getName(),
                     cumulativeAchievement.getDescription(),
                     cumulativeAchievement.getImagUrl(),

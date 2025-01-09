@@ -29,8 +29,8 @@ public class PlayNGamesAchievementJpaEntity extends AchievementJpaEntity {
     public PlayNGamesAchievementJpaEntity() {
     }
 
-    public PlayNGamesAchievementJpaEntity(String name, String description, String imageUrl, boolean isAchieved, PlayerJpaEntity performer, int desiredNumberOfGames, Set<UUID> gameIdsPlayed) {
-        super(name, description, imageUrl, isAchieved, performer);
+    public PlayNGamesAchievementJpaEntity(UUID achievementId, String name, String description, String imageUrl, boolean isAchieved, PlayerJpaEntity performer, int desiredNumberOfGames, Set<UUID> gameIdsPlayed) {
+        super(achievementId, name, description, imageUrl, isAchieved, performer);
         this.desiredNumberOfGames = desiredNumberOfGames;
         this.gameIdsPlayed = gameIdsPlayed;
     }

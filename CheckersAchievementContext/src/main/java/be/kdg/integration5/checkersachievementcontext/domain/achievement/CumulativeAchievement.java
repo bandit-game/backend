@@ -9,14 +9,14 @@ public abstract class CumulativeAchievement<GoalClass, CounterClass> extends Ach
     protected final GoalClass goal;
     protected CounterClass counter;
 
-    public CumulativeAchievement(String name, String description, String imagUrl, GoalClass goal, CounterClass counter) {
-        super(name, description, imagUrl);
+    public CumulativeAchievement(AchievementId achievementId, String name, String description, String imagUrl, GoalClass goal, CounterClass counter) {
+        super(achievementId, name, description, imagUrl);
         this.goal = goal;
         this.counter = counter;
     }
 
-    public CumulativeAchievement(String name, String description, String imagUrl, boolean isAchieved, GoalClass goal, CounterClass counter) {
-        super(name, description, imagUrl, isAchieved);
+    public CumulativeAchievement(AchievementId achievementId, String name, String description, String imagUrl, boolean isAchieved, GoalClass goal, CounterClass counter) {
+        super(achievementId, name, description, imagUrl, isAchieved);
         this.goal = goal;
         this.counter = counter;
     }
