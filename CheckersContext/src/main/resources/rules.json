@@ -1,0 +1,10 @@
+[
+  {
+    "rule": "No cheating",
+    "description": "Players must not use any unfair advantages."
+  },
+  {
+    "rule": "Time limit",
+    "description": "Each player has a maximum of 10 minutes per turn."
+  }
+]
