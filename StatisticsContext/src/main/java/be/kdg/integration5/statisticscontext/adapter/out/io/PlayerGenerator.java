@@ -31,6 +31,7 @@ public class PlayerGenerator implements GeneratePlayerPort {
 
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
                 String line;
+                reader.readLine();
                 while ((line = reader.readLine()) != null) {
                     String[] values = line.split(",");
                     players.add(values);

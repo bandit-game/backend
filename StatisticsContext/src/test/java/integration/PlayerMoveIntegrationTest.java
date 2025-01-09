@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { StatisticsContextApplication.class })
 @SpringBootTest
+@EnableAutoConfiguration(exclude = RabbitAutoConfiguration.class)
 public class PlayerMoveIntegrationTest {
 
     @MockBean
