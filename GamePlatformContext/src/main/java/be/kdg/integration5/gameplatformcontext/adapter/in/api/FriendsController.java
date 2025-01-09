@@ -36,9 +36,4 @@ public class FriendsController {
         return ResponseEntity.ok(requests);
     }
 
-    @GetMapping
-    public ResponseEntity<List<PlayerId>> getFriends(@RequestParam UUID playerId) {
-        List<PlayerId> friends = friendsMatchingUseCase.getFriends(new PlayerId(playerId));
-        return ResponseEntity.ok(friends);
-    }
 }

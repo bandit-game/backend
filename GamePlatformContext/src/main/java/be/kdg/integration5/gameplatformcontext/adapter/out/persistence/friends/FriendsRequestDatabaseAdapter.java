@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class FriendsDatabaseAdapter implements FriendsRequestPort {
+public class FriendsRequestDatabaseAdapter implements FriendsRequestPort {
     private final FriendsRequestJpaRepository repository;
 
-    public FriendsDatabaseAdapter(FriendsRequestJpaRepository repository) {
+    public FriendsRequestDatabaseAdapter(FriendsRequestJpaRepository repository) {
         this.repository = repository;
     }
 
@@ -24,7 +24,7 @@ public class FriendsDatabaseAdapter implements FriendsRequestPort {
 
     @Override
     public FriendRequest findFriendRequestById(UUID requestId) {
-        return repository.findById(requestId).orElseThrow(() -> new IllegalArgumentException("Request not found")).toDomain();
+        return repository.findByIdFetched(requestId).orElseThrow(() -> new IllegalArgumentException("Request not found")).toDomain();
     }
 
     @Override
