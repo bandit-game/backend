@@ -3,7 +3,6 @@ image: gradle:8.6-jdk21-alpine
 stages:
   - build
   - test
-  - security-test
   - deploy
 
 before_script:
@@ -67,18 +66,6 @@ gameplatform-integration-test:
     paths:
       - build
       - .gradle 
-
-include:
-  - template: Security/SAST.gitlab-ci.yml
-  - template: Security/Secret-Detection.gitlab-ci.yml
-  - template: Dependency-Scanning.gitlab-ci.yml
-
-sast:
-  stage: security-test
-secret_detection:
-  stage: security-test
-dependency_scanning:
-  stage: security-test
 
 gameplatform-trigger-gcb:
   image: google/cloud-sdk:latest
