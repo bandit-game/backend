@@ -18,7 +18,11 @@ dependencies {
     implementation("com.azure.spring:spring-cloud-azure-starter-jdbc-postgresql")
     implementation("com.azure.spring:spring-cloud-azure-starter-storage")
     implementation("org.springframework.boot:spring-boot-starter-webflux") // Reactive Web (WebFlux)
-    implementation("org.springframework.boot:spring-boot-starter-security") // Security
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:rabbitmq")
+    testImplementation("org.testcontainers:postgresql") // Security
 
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
