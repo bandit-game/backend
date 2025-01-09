@@ -11,11 +11,15 @@ import be.kdg.integration5.statisticscontext.domain.PlayerId;
 import be.kdg.integration5.statisticscontext.domain.Predictions;
 import be.kdg.integration5.statisticscontext.port.out.FindPlayerPort;
 import be.kdg.integration5.statisticscontext.port.out.PersistPlayerPort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -51,6 +55,25 @@ public class PlayerDatabaseAdapter implements FindPlayerPort, PersistPlayerPort 
                 .stream()
                 .map(playerJpaConverter::toDomain)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<Player> findAllFetched(Pageable pageable) {
+        Page<PlayerJpaEntity> paginatedEntities = playerJpaRepository.findAllPlayers(pageable);
+        List<PlayerJpaEntity> playerJpaEntities = paginatedEntities.getContent();
+        List<UUID> playerIds = playerJpaEntities.stream().map(PlayerJpaEntity::getPlayerId).toList();
+
+        List<PredictionsJpaEntity> predictions = predictionsJpaRepository.findPredictionsByPlayerIds(playerIds);
+        Map<UUID, PredictionsJpaEntity> predictionsMap = predictions.stream()
+                .collect(Collectors.toMap(PredictionsJpaEntity::getPlayerId, Function.identity()));
+
+        List<Player> players = playerJpaEntities.stream()
+                .map(player -> {
+                    player.setPredictions(predictionsMap.get(player.getPlayerId()));
+                    return playerJpaConverter.toDomain(player);
+                }).collect(Collectors.toList());
+
+        return new PageImpl<>(players, pageable, paginatedEntities.getTotalElements());
     }
 
     @Override
