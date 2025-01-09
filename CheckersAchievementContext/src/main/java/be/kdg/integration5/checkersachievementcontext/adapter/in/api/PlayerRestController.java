@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/player/{playerId}/achievements")
+@RequestMapping("/api/v1/players/{playerId}/achievements")
 public class PlayerRestController {
     private final GetAllOpenAchievementsForPlayerUseCase getAllOpenAchievementsForPlayerUseCase;
     private final AchievementDtoConverter achievementDtoConverter;
@@ -25,12 +25,12 @@ public class PlayerRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AchievementGetDto>> getAllOpenAchievements(@PathVariable("playerId") UUID playerId, @RequestParam(value = "open", required = false) boolean open) {
-        List<Achievement> allOpenAchievementsForPlayer = getAllOpenAchievementsForPlayerUseCase.getAllAchievementsForPlayer(new PlayerId(playerId), open);
-        if (allOpenAchievementsForPlayer.isEmpty())
+    public ResponseEntity<List<AchievementGetDto>> getAllAchievementsForPlayer(@PathVariable("playerId") UUID playerId, @RequestParam(value = "open", required = false) Boolean open) {
+        List<Achievement> allAchievementsForPlayer = getAllOpenAchievementsForPlayerUseCase.getAllAchievementsForPlayer(new PlayerId(playerId), open);
+        if (allAchievementsForPlayer.isEmpty())
             return ResponseEntity.noContent().build();
 
-        List<AchievementGetDto> achievementGetDtos = allOpenAchievementsForPlayer.stream().map(achievementDtoConverter::toDto).toList();
+        List<AchievementGetDto> achievementGetDtos = allAchievementsForPlayer.stream().map(achievementDtoConverter::toDto).toList();
         return ResponseEntity.ok(achievementGetDtos);
     }
 }

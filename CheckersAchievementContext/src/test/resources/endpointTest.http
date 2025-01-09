@@ -15,5 +15,9 @@ scope = openid
 %}
 
 ###
-GET http://localhost:8043/api/v1/player/7701935d-4efc-4f53-81f1-1010dce8a943/achievements?open=false
+GET http://localhost:8043/api/v1/players/7701935d-4efc-4f53-81f1-1010dce8a943/achievements?open=false
+Authorization: Bearer {{access_token}}
+
+###
+GET http://localhost:8043/api/v1/achievements
 Authorization: Bearer {{access_token}}

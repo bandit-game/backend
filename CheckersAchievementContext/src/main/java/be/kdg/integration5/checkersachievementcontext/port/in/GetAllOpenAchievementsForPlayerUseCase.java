@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface GetAllOpenAchievementsForPlayerUseCase {
 
-    List<Achievement> getAllAchievementsForPlayer(PlayerId playerId, boolean isAchieved);
+    List<Achievement> getAllAchievementsForPlayer(PlayerId playerId, Boolean isAchieved);
 }

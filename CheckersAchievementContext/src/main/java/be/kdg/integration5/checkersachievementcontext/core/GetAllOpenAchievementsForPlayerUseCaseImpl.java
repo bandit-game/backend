@@ -21,7 +21,10 @@ public class GetAllOpenAchievementsForPlayerUseCaseImpl implements GetAllOpenAch
     }
 
     @Override
-    public List<Achievement> getAllAchievementsForPlayer(PlayerId playerId, boolean isAchieved) {
+    public List<Achievement> getAllAchievementsForPlayer(PlayerId playerId, Boolean isAchieved) {
+        if (isAchieved == null)
+            return findAchievementsPort.findAllAchievementsForPlayer(playerId);
+
         return findAchievementsPort.findAllAchievementsForPlayerByIsAchieved(playerId, isAchieved);
     }
 }
