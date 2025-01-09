@@ -4,15 +4,14 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MQTopology {
-    private static final String LOBBY_EVENTS_EXCHANGE = "lobby_events";
-    private static final String LOBBY_QUEUE = "lobby_queue";
-
     private static final String GAME_EVENTS_EXCHANGE = "game_events";
     private static final String GAME_START_QUEUE = "game_start_queue";
     private static final String GAME_END_QUEUE = "game_end_queue";
@@ -37,24 +36,6 @@ public class MQTopology {
                 .bind(checkersMovesQueue)
                 .to(checkersEventsExchange)
                 .with("checkers.#.move.made");
-    }
-
-    @Bean
-    TopicExchange lobbyEventsExchange() {
-        return new TopicExchange(LOBBY_EVENTS_EXCHANGE);
-    }
-
-    @Bean
-    Queue lobbyQueue() {
-        return new Queue(LOBBY_QUEUE, true);
-    }
-
-    @Bean
-    Binding lobbyCreatedBinding(TopicExchange lobbyEventsExchange, Queue lobbyQueue) {
-        return BindingBuilder
-                .bind(lobbyQueue)
-                .to(lobbyEventsExchange)
-                .with("lobby.#.created");
     }
 
     @Bean
@@ -101,6 +82,13 @@ public class MQTopology {
                 .with("game.#.finished");
     }
 
+    @Bean
+    RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
+        return rabbitTemplate;
+
+    }
 
     @Bean
     public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {

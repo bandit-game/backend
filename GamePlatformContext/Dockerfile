@@ -1,7 +1,7 @@
 FROM gradle:8.8-jdk21 as build
 WORKDIR /app
-COPY --chown=gradle:gradle ../ /app
-RUN gradle :GamePlatformContext:clean :GamePlatformContext:build -x test --no-daemon
+COPY --chown=gradle:gradle . /app
+RUN gradle :GamePlatformContext:clean :GamePlatformContext:build -x check --no-daemon
 
 FROM openjdk:21-slim as builder
 WORKDIR /app
@@ -14,4 +14,4 @@ COPY --from=builder /app/dependencies/ ./
 COPY --from=builder /app/spring-boot-loader/ ./
 COPY --from=builder /app/snapshot-dependencies/ ./
 COPY --from=builder /app/application/ ./
-ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"] 

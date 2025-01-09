@@ -9,6 +9,7 @@
         </processorPath>
         <module name="GamePlatform.GamePlatformContext.main" />
         <module name="GamePlatform.CheckersAchievementContext.main" />
+        <module name="GamePlatform.GuessItContext.main" />
         <module name="GamePlatform.CheckersContext.main" />
         <module name="GamePlatform.StatisticsContext.main" />
       </profile>

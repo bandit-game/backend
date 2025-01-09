@@ -1,6 +1,6 @@
-
 plugins {
 	id("module-config")
+	id("com.adarshr.test-logger") version "4.0.0"
 }
 
 dependencies {
@@ -8,25 +8,62 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-amqp")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
-//	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	testImplementation("io.projectreactor:reactor-test")
+	compileOnly("org.projectlombok:lombok")
+	runtimeOnly("org.postgresql:postgresql")
+	annotationProcessor("org.projectlombok:lombok")
+
+	// Test Dependencies
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("org.testcontainers:rabbitmq")
 	testImplementation("org.testcontainers:postgresql")
-	compileOnly("org.projectlombok:lombok")
-	runtimeOnly("org.postgresql:postgresql")
-	annotationProcessor("org.projectlombok:lombok")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.amqp:spring-rabbit-test")
-//	testImplementation("org.springframework.security:spring-security-test")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testImplementation("com.github.dasniko:testcontainers-keycloak:3.5.1")
 }
-//
-//tasks.withType<Test> {
-//	useJUnitPlatform()
-//}
+
+subprojects {
+	apply {
+		plugin("com.adarshr.test-logger")
+	}
+}
+
+tasks.withType<Test> {
+	useJUnitPlatform()
+}
+
+// Unit Tests
+val unitTest by tasks.registering(Test::class) {
+	description = "Runs unit tests."
+	group = "verification"
+	useJUnitPlatform()
+	include("**/unit/**")
+}
+
+// Integration Tests
+val integrationTest by tasks.registering(Test::class) {
+	description = "Runs integration tests."
+	group = "verification"
+	useJUnitPlatform()
+	include("**/integration/**")
+}
+
+// End-to-End Tests
+val e2eTest by tasks.registering(Test::class) {
+	description = "Runs end-to-end tests."
+	group = "verification"
+	useJUnitPlatform()
+	include("**/e2e/**")
+}
+
+// Add all tasks to check lifecycle
+tasks.named("check") {
+	dependsOn(unitTest, integrationTest, e2eTest)
+}

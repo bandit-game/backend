@@ -1,0 +1,77 @@
+image: gradle:8.6-jdk21-alpine
+
+stages:
+  - build
+  - test
+  - deploy
+
+before_script:
+  - GRADLE_USER_HOME="$(pwd)/.gradle"
+  - export GRADLE_USER_HOME
+
+gameplatform-build:
+  stage: build
+  script:
+    - gradle --build-cache :GamePlatformContext:assemble
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+    paths:
+      - build
+      - .gradle
+
+gameplatform-unit-test:
+  stage: test
+  services:
+    - docker:24.0.5-dind
+    - postgres:16.1-alpine
+  variables:
+    POSTGRES_DB: 'demo-test'
+    POSTGRES_USER: 'admin'
+    POSTGRES_PASSWORD: 'test'
+    CI_DB_HOST_PORT: 'postgres:5432'
+  script:
+    - gradle :GamePlatformContext:unitTest --no-daemon
+  artifacts:
+    when: always
+    reports:
+      junit: GamePlatformContext/build/test-results/unitTest/**/TEST-*.xml
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: pull
+    paths:
+      - build
+      - .gradle
+
+gameplatform-integration-test:
+  stage: test
+  services:
+    - docker:24.0.5-dind
+    - postgres:16.1-alpine
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    POSTGRES_DB: 'demo-test'
+    POSTGRES_USER: 'admin'
+    POSTGRES_PASSWORD: 'test'
+    CI_DB_HOST_PORT: 'postgres:5432'
+  script:
+    - gradle :GamePlatformContext:integrationTest --no-daemon
+  artifacts:
+    when: always
+    reports:
+      junit: GamePlatformContext/build/test-results/integrationTest/**/TEST-*.xml
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: pull
+    paths:
+      - build
+      - .gradle 
+
+gameplatform-trigger-gcb:
+  image: google/cloud-sdk:latest
+  stage: deploy
+  identity: google_cloud
+  script:
+    - gcloud config set project $GCLOUD_PROJECT
+    - gcloud builds triggers run gameplatform-context --region europe-west1
+  
