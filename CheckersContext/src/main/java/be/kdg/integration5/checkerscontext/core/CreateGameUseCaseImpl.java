@@ -6,6 +6,8 @@ import be.kdg.integration5.checkerscontext.domain.Player;
 import be.kdg.integration5.checkerscontext.domain.PlayerId;
 import be.kdg.integration5.checkerscontext.port.in.CreateGameCommand;
 import be.kdg.integration5.checkerscontext.port.in.CreateGameUseCase;
+import be.kdg.integration5.checkerscontext.port.out.CheckersGameStartedCommand;
+import be.kdg.integration5.checkerscontext.port.out.NotifyCheckersGameStartedPort;
 import be.kdg.integration5.checkerscontext.port.out.PersistGamePort;
 import be.kdg.integration5.checkerscontext.port.out.PersistPlayerPort;
 import org.springframework.stereotype.Service;
@@ -18,10 +20,12 @@ import java.util.List;
 public class CreateGameUseCaseImpl implements CreateGameUseCase {
     private final PersistGamePort persistGamePort;
     private final PersistPlayerPort persistPlayerPort;
+    private final NotifyCheckersGameStartedPort notifyCheckersGameStartedPort;
 
-    public CreateGameUseCaseImpl(PersistGamePort persistGamePort, PersistPlayerPort persistPlayerPort) {
+    public CreateGameUseCaseImpl(PersistGamePort persistGamePort, PersistPlayerPort persistPlayerPort, NotifyCheckersGameStartedPort notifyCheckersGameStartedPort) {
         this.persistGamePort = persistGamePort;
         this.persistPlayerPort = persistPlayerPort;
+        this.notifyCheckersGameStartedPort = notifyCheckersGameStartedPort;
     }
 
     @Override
@@ -33,5 +37,7 @@ public class CreateGameUseCaseImpl implements CreateGameUseCase {
         Game game = new Game(new GameId(command.lobbyId()), players);
         game.start();
         persistGamePort.save(game);
+
+        notifyCheckersGameStartedPort.notifyCheckersGameStarted(new CheckersGameStartedCommand(game.getPlayedMatchId(), game.getPlayers()));
     }
 }

@@ -15,13 +15,15 @@ public class MovePieceUseCaseImpl implements MovePieceUseCase {
     private final NotifyPlayerPort notifyPlayerPort;
     private final NotifyGameEndPort notifyGameEndPort;
     private final NotifyCheckersMoveMadePort notifyCheckersMoveMadePort;
+    private final NotifyCheckersGameFinishedPort notifyCheckersGameFinishedPort;
 
-    public MovePieceUseCaseImpl(FindGamePort findGamePort, PersistGamePort persistGamePort, NotifyPlayerPort notifyPlayerPort, NotifyGameEndPort notifyGameEndPort, NotifyCheckersMoveMadePort notifyCheckersMoveMadePort) {
+    public MovePieceUseCaseImpl(FindGamePort findGamePort, PersistGamePort persistGamePort, NotifyPlayerPort notifyPlayerPort, NotifyGameEndPort notifyGameEndPort, NotifyCheckersMoveMadePort notifyCheckersMoveMadePort, NotifyCheckersGameFinishedPort notifyCheckersGameFinishedPort) {
         this.findGamePort = findGamePort;
         this.persistGamePort = persistGamePort;
         this.notifyPlayerPort = notifyPlayerPort;
         this.notifyGameEndPort = notifyGameEndPort;
         this.notifyCheckersMoveMadePort = notifyCheckersMoveMadePort;
+        this.notifyCheckersGameFinishedPort = notifyCheckersGameFinishedPort;
     }
 
     @Override
@@ -38,8 +40,10 @@ public class MovePieceUseCaseImpl implements MovePieceUseCase {
             updatedGame = persistGamePort.update(game);
 
             notifyCheckersMoveMadePort.notifyCheckersMoveMade(new CheckersMoveMadeCommand(gameId, moverId, move));
-            if (updatedGame.checkForGameOver())
+            if (updatedGame.checkForGameOver()) {
                 notifyGameEndPort.notifyGameEnd(game);
+                notifyCheckersGameFinishedPort.notifyCheckersGameFinished(new CheckersGameFinishedCommand(gameId, game.getWinner().getPlayerId(), game.isDraw()));
+            }
         }
         notifyPlayerPort.notifyAllPlayersWithGameState(updatedGame);
     }
