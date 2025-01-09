@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class ApplicationStartupRunner implements ApplicationListener<ApplicationReadyEvent> {
 
     private final NotifyGamePlatformPort notifyGamePlatformPort;
+    private boolean hasRun = false;
 
     public ApplicationStartupRunner(NotifyGamePlatformPort notifyGamePlatformPort) {
         this.notifyGamePlatformPort = notifyGamePlatformPort;
@@ -17,6 +18,9 @@ public class ApplicationStartupRunner implements ApplicationListener<Application
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        notifyGamePlatformPort.notifyGamePlatform();
+        if (!hasRun) {
+            notifyGamePlatformPort.notifyGamePlatform();
+            hasRun = true; // Mark it as executed
+        }
     }
 }

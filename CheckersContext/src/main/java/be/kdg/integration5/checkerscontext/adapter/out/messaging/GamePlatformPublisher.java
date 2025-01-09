@@ -54,20 +54,20 @@ public class GamePlatformPublisher implements NotifyGamePlatformPort {
 
     @Override
     public void notifyGamePlatform() {
-        final String ROUTING_KEY = String.format("game.%s.registered", UUID.randomUUID());
+        final String ROUTING_KEY = String.format("newgame.%s.registered", UUID.randomUUID());
         LOGGER.info("Notifying game platform that game {} is running: {}", gameName, ROUTING_KEY);
         List<GameAddedEvent.GameRule> loadedRules = rulesLoader.loadRules();
-        rabbitTemplate.convertAndSend(PLATFORM_GAME_EXCHANGE, ROUTING_KEY,
-                new GameAddedEvent(
-                    gameName,
-                        description,
-                        price,
-                        currency,
-                        maxLobbyPlayersAmount,
-                        frontendUrl,
-                        backendApiUrl,
-                        gameImageUrl,
-                        loadedRules
-                ));
+        GameAddedEvent event = new GameAddedEvent(
+                gameName,
+                description,
+                price,
+                currency,
+                maxLobbyPlayersAmount,
+                frontendUrl,
+                backendApiUrl,
+                gameImageUrl,
+                loadedRules
+        );
+        rabbitTemplate.convertAndSend(PLATFORM_GAME_EXCHANGE, ROUTING_KEY, event);
     }
 }

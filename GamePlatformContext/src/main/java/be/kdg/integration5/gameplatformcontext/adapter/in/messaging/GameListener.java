@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GameListener {
 
-    private static final String NEW_GAME_QUEUE = "new_game_queue";
+    private static final String NEW_REGISTERED_GAME_QUEUE = "new_registered_game_queue";
 
     private final RegisterNewGameUseCase registerNewGameUseCase;
 
@@ -16,7 +16,7 @@ public class GameListener {
         this.registerNewGameUseCase = registerNewGameUseCase;
     }
 
-    @RabbitListener(queues = NEW_GAME_QUEUE, messageConverter = "#{jackson2JsonMessageConverter}")
+    @RabbitListener(queues = NEW_REGISTERED_GAME_QUEUE, messageConverter = "#{jackson2JsonMessageConverter}")
     public void registerGameOnPlatform(GameAddedEvent gameAddedEvent) {
         registerNewGameUseCase.register(gameAddedEvent);
     }
