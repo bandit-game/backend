@@ -17,6 +17,55 @@ public class MQTopology {
     private static final String GAME_END_QUEUE = "game_end_queue";
     private static final String PLAYER_MOVE_QUEUE = "player_move_queue";
 
+    private static final String CHECKERS_EVENTS_EXCHANGE = "checkers_events";
+    private static final String CHECKERS_MOVE_MADE_QUEUE = "checkers_move_made_queue";
+    private static final String CHECKERS_GAME_STARTED_QUEUE = "checkers_game_started_queue";
+    private static final String CHECKERS_GAME_FINISHED_QUEUE = "checkers_game_finished_queue";
+
+    @Bean
+    TopicExchange checkersEventsExchange() {
+        return new TopicExchange(CHECKERS_EVENTS_EXCHANGE);
+    }
+
+    @Bean
+    Queue checkersMovesQueue() {
+        return new Queue(CHECKERS_MOVE_MADE_QUEUE, true);
+    }
+
+    @Bean
+    Binding checkersMoveMadeBinding(TopicExchange checkersEventsExchange, Queue checkersMovesQueue) {
+        return BindingBuilder
+                .bind(checkersMovesQueue)
+                .to(checkersEventsExchange)
+                .with("checkers.#.move.made");
+    }
+
+    @Bean
+    Queue checkersGameStartedQueue() {
+        return new Queue(CHECKERS_GAME_STARTED_QUEUE, true);
+    }
+
+    @Bean
+    Binding checkersGameStartedBinding(TopicExchange checkersEventsExchange, Queue checkersGameStartedQueue) {
+        return BindingBuilder
+                .bind(checkersGameStartedQueue)
+                .to(checkersEventsExchange)
+                .with("checkers.game.#.started");
+    }
+
+    @Bean
+    Queue checkersGameFinishedQueue() {
+        return new Queue(CHECKERS_GAME_FINISHED_QUEUE, true);
+    }
+
+    @Bean
+    Binding checkersGameFinishedBinding(TopicExchange checkersEventsExchange, Queue checkersGameFinishedQueue) {
+        return BindingBuilder
+                .bind(checkersGameFinishedQueue)
+                .to(checkersEventsExchange)
+                .with("checkers.game.#.finished");
+    }
+
     @Bean
     TopicExchange gameEventsExchange() {
         return new TopicExchange(GAME_EVENTS_EXCHANGE);
