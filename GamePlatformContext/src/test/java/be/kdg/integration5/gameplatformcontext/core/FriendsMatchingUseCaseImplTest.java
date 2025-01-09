@@ -9,6 +9,7 @@ import be.kdg.integration5.gameplatformcontext.domain.FriendRequest;
 import be.kdg.integration5.gameplatformcontext.domain.Player;
 import be.kdg.integration5.gameplatformcontext.domain.PlayerId;
 import be.kdg.integration5.gameplatformcontext.port.in.FriendsMatchingUseCase;
+import be.kdg.integration5.gameplatformcontext.port.out.FriendsRequestPort;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,9 @@ public class FriendsMatchingUseCaseImplTest {
 
     @Autowired
     private FriendsMatchingUseCase friendsMatchingUseCase;
+
+    @Autowired
+    private FriendsRequestPort friendRequestPort;
 
     @Autowired
     private MockMvc mockMvc;
@@ -106,8 +110,8 @@ public class FriendsMatchingUseCaseImplTest {
                 .andExpect(status().isOk());
 
         // Assert
-        Player sender = playerJpaRepository.findById(senderId).get().toDomain(); // Reload entity
-        Player receiver = playerJpaRepository.findById(receiverId).get().toDomain(); // Reload entity
+        Player sender = playerJpaRepository.findByPlayerIdFetchedFriends(senderId).get().toDomain(); // Reload entity
+        Player receiver = playerJpaRepository.findByPlayerIdFetchedFriends(receiverId).get().toDomain(); // Reload entity
 
         assertThat(sender.getFriends(), hasSize(1));
         assertThat(receiver.getFriends(), hasSize(1));
@@ -130,13 +134,18 @@ public class FriendsMatchingUseCaseImplTest {
                         .param("accepted", "false"))
                 .andExpect(status().isOk());
 
-        // Assert
-        Player sender = playerJpaRepository.findById(senderId).get().toDomain();
-        Player receiver = playerJpaRepository.findById(receiverId).get().toDomain();
-
+        // Assert - Check players' friends list
+        Player sender = playerJpaRepository.findByPlayerIdFetchedFriends(senderId).get().toDomain();
+        Player receiver = playerJpaRepository.findByPlayerIdFetchedFriends(receiverId).get().toDomain();
         assertThat(sender.getFriends(), hasSize(0));
         assertThat(receiver.getFriends(), hasSize(0));
+
+        // Assert - Check the updated request status
+        FriendRequest updatedRequest = friendRequestPort.findFriendRequestById(request.getRequestUUID());
+        assertThat(updatedRequest, is(notNullValue())); // Ensure the request exists
+        assertThat(updatedRequest.getStatus(), is(FriendRequest.Status.DECLINED)); // Verify the status is DECLINED
     }
+
 
     // Test 4: Get pending requests
     @Test

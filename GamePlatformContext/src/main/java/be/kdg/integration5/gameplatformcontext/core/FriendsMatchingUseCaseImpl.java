@@ -40,32 +40,36 @@ public class FriendsMatchingUseCaseImpl implements FriendsMatchingUseCase {
         }
     }
 
-//    @Override
-//    public void receiveFriendsRequest(PlayerId sender, PlayerId receiver, boolean acceptedStatus) {
-//        FriendRequest request = friendRequestPort.findFriendRequestById(sender.uuid());
-//
-//    }
-
     @Override
     public void respondToFriendRequest(UUID requestId, boolean accepted) {
         FriendRequest request = friendRequestPort.findFriendRequestById(requestId);
+        if (request == null) {
+            throw new IllegalArgumentException("Friend request not found with ID: " + requestId);
+        }
+
         if (accepted) {
             request.setStatus(FriendRequest.Status.ACCEPTED);
 
             // Add friends
             Player sender = request.getSender();
             Player receiver = request.getReceiver();
-            sender.getFriends().add(receiver);
-            receiver.getFriends().add(sender);
 
-            // Persist changes explicitly
+            if (!sender.getFriends().contains(receiver)) {
+                sender.getFriends().add(receiver);
+            }
+            if (!receiver.getFriends().contains(sender)) {
+                receiver.getFriends().add(sender);
+            }
+
+            // Persist changes
             persistPlayerPort.save(sender);
             persistPlayerPort.save(receiver);
-            friendRequestPort.saveFriends(request); // Ensure request is saved
         } else {
             request.setStatus(FriendRequest.Status.DECLINED);
-            friendRequestPort.saveFriends(request); // Ensure decline status is persisted
         }
+
+        // Save the friend request with updated status
+        friendRequestPort.saveFriends(request);
     }
 
 
