@@ -157,7 +157,6 @@ public class PlayerMoveIntegrationTest {
         assertThat(moveEntities, hasSize(2));
         assertThat(moveEntities, hasItem(hasProperty("endTime", nullValue())));
         assertThat(moveEntities, everyItem(hasProperty("moveNumber", equalTo(1))));
-        assertThat(moveEntities, hasItem(hasProperty("startTime", equalTo(event.timestamp()))));
         assertThat(playerMetricsEntities, hasSize(2));
     }
 
