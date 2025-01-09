@@ -1,7 +1,6 @@
 package be.kdg.integration5.gameplatformcontext.core;
 
 import be.kdg.integration5.gameplatformcontext.GamePlatformContextApplication;
-import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.friends.FriendsRequestJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.friends.FriendsRequestJpaRepository;
 import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.player.PlayerJpaEntity;
 import be.kdg.integration5.gameplatformcontext.adapter.out.persistence.player.PlayerJpaRepository;
@@ -168,12 +167,12 @@ public class FriendsMatchingUseCaseImplTest {
     @Transactional
     @WithMockUser(roles = "player")
     void testGetFriendsList() throws Exception {
-        // Arrange - Accept a friend request
+        // Arrange - Create a friend request and accept it
         friendsMatchingUseCase.sendFriendsRequest(new PlayerId(senderId), new PlayerId(receiverId));
         FriendRequest request = friendsMatchingUseCase.getPendingFriendRequests(new PlayerId(receiverId)).get(0);
         friendsMatchingUseCase.respondToFriendRequest(request.getRequestUUID(), true);
 
-        // Act and Assert
+        // Act and Assert - Fetch friends list
         mockMvc.perform(get("/api/v1/friends")
                         .param("playerId", senderId.toString()))
                 .andExpect(status().isOk())

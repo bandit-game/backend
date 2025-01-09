@@ -80,8 +80,7 @@ public class FriendsMatchingUseCaseImpl implements FriendsMatchingUseCase {
 
     @Override
     public List<PlayerId> getFriends(PlayerId playerId) {
-        return findPlayerPort.findPlayerById(playerId)
-                .getFriends()
+        return findPlayerPort.findFriends(playerId)
                 .stream()
                 .map(Player::getPlayerId)
                 .toList();

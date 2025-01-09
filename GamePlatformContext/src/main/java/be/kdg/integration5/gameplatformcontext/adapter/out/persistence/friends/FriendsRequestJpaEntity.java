@@ -31,10 +31,10 @@ public class FriendsRequestJpaEntity {
 
     public static FriendsRequestJpaEntity of(FriendRequest request) {
         FriendsRequestJpaEntity entity = new FriendsRequestJpaEntity();
-        entity.requestId = request.getRequestUUID();
-        entity.sender = PlayerJpaEntity.of(request.getSender());
-        entity.receiver = PlayerJpaEntity.of(request.getReceiver());
-        entity.status = request.getStatus();
+        entity.setRequestId(request.getRequestUUID());
+        entity.setSender(PlayerJpaEntity.of(request.getSender()));
+        entity.setReceiver(PlayerJpaEntity.of(request.getReceiver()));
+        entity.setStatus(request.getStatus());
         return entity;
     }
 }

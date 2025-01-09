@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface PlayerJpaRepository extends JpaRepository<PlayerJpaEntity, UUID> {
     List<PlayerJpaEntity> findAllByUsernameContainingIgnoreCase(String username);
 
-    @Query("select p from PlayerJpaEntity p join fetch p.friends where p.playerId = :playerId")
+    @Query("select p from PlayerJpaEntity p left join fetch p.friends where p.playerId = :playerId")
     Optional<PlayerJpaEntity> findByPlayerIdFetchedFriends(UUID playerId);
 
 }
