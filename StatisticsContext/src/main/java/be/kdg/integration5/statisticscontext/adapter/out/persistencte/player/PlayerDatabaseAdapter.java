@@ -16,6 +16,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 
 import org.springframework.data.domain.Pageable;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -95,6 +97,40 @@ public class PlayerDatabaseAdapter implements FindPlayerPort, PersistPlayerPort 
         savedPlayerJpaEntity.setPredictions(savedPredictions);
 
         return playerJpaConverter.toDomain(savedPlayerJpaEntity);
+    }
+
+    @Override
+    public List<Player> saveAll(List<Player> players) {
+        List<PlayerJpaEntity> savedPlayerJpaEntities = playerJpaRepository.saveAll(
+                players.stream().map(playerJpaConverter::toJpa).collect(Collectors.toList())
+        );
+        Map<UUID, PlayerJpaEntity> playerEntityMap = savedPlayerJpaEntities.stream()
+                .collect(Collectors.toMap(PlayerJpaEntity::getPlayerId, entity -> entity));
+
+        List<PlayerMetricsJpaEntity> metricsJpaEntities = players.stream()
+                .map(player -> {
+                    PlayerJpaEntity savedPlayerJpaEntity = playerEntityMap.get(player.getPlayerId().uuid());
+                    PlayerMetricsJpaEntity metricsJpaEntity = playerMetricsJpaConverter.toJpa(player.getMetrics());
+                    metricsJpaEntity.setPlayerId(savedPlayerJpaEntity.getPlayerId());
+                    metricsJpaEntity.setPlayer(savedPlayerJpaEntity);
+                    return metricsJpaEntity;
+                })
+                .collect(Collectors.toList());
+
+        List<PredictionsJpaEntity> predictionsJpaEntities = players.stream()
+                .map(player -> {
+                    PlayerJpaEntity savedPlayerJpaEntity = playerEntityMap.get(player.getPlayerId().uuid());
+                    PredictionsJpaEntity predictionsJpaEntity = predictionsJpaConverter.toJpa(player.getPredictions());
+                    predictionsJpaEntity.setPlayerId(savedPlayerJpaEntity.getPlayerId());
+                    predictionsJpaEntity.setPlayer(savedPlayerJpaEntity);
+                    return predictionsJpaEntity;
+                })
+                .collect(Collectors.toList());
+
+        playerMetricsJpaRepository.saveAll(metricsJpaEntities);
+        predictionsJpaRepository.saveAll(predictionsJpaEntities);
+
+        return savedPlayerJpaEntities.stream().map(playerJpaConverter::toDomain).collect(Collectors.toList());
     }
 
     @Override
