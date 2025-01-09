@@ -94,7 +94,7 @@ public class PlayerJpaEntity {
                 player.getAge(),
                 player.getGender(),
                 player.getUsername(),
-                player.getFriends().stream().map(
+                player.getFriends() == null ? null : player.getFriends().stream().map(
                         friend -> new PlayerJpaEntity(
                                 friend.getPlayerId().uuid(),
                                 friend.getUsername(),

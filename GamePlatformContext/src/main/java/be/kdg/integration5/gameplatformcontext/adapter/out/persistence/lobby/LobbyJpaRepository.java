@@ -15,6 +15,7 @@ public interface LobbyJpaRepository extends JpaRepository<LobbyJpaEntity, UUID> 
     "left join fetch l.game g " +
     "left join fetch l.lobbyPlayers lp " +
     "left join fetch lp.player p " +
+            "left join fetch p.friends f " +
     "where g.gameId = :gameId and " +
     "size(lp) < g.maxLobbyPlayerAmount and " +
     "l.isPrivate = :privacy")
@@ -24,6 +25,7 @@ public interface LobbyJpaRepository extends JpaRepository<LobbyJpaEntity, UUID> 
     "left join fetch l.game g " +
     "left join fetch l.lobbyPlayers lp " +
     "left join fetch lp.player p " +
+            "left join fetch p.friends f " +
     "where l.lobbyId in ( " +
             "        select lInner.lobbyId from LobbyJpaEntity lInner " +
             "        join lInner.lobbyPlayers lpInner " +
@@ -37,6 +39,7 @@ public interface LobbyJpaRepository extends JpaRepository<LobbyJpaEntity, UUID> 
     "left join fetch l.game g " +
     "left join fetch l.lobbyPlayers lp " +
     "left join fetch lp.player p " +
+            "left join fetch p.friends f " +
     "where l.lobbyId = :lobbyId")
     Optional <LobbyJpaEntity> findByLobbyIdFetched(UUID lobbyId);
 
