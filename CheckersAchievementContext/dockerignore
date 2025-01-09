@@ -4,8 +4,8 @@
 *Context*/
 
 # CheckersContext and its contents
-!CheckersContext/
-!CheckersContext/**
+!CheckersAchievementContext/
+!CheckersAchievementContext/**
 
 # Compiled class file
 *.class
