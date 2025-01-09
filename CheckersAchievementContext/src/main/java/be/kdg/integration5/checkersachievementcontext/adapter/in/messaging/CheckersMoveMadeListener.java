@@ -1,6 +1,6 @@
-package be.kdg.integration5.checkersachievementcontext.adapter.in;
+package be.kdg.integration5.checkersachievementcontext.adapter.in.messaging;
 
-import be.kdg.integration5.checkersachievementcontext.adapter.in.event.CheckersMoveMadeEvent;
+import be.kdg.integration5.checkersachievementcontext.adapter.in.messaging.event.CheckersMoveMadeEvent;
 import be.kdg.integration5.checkersachievementcontext.domain.GameId;
 import be.kdg.integration5.checkersachievementcontext.domain.PiecePosition;
 import be.kdg.integration5.checkersachievementcontext.domain.PlayerId;

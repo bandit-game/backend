@@ -35,6 +35,12 @@ public abstract class Achievement {
         this.isAchieved = true;
     }
 
-    public abstract boolean isFulfilled(Game game, PlayerId playerId);
+    public boolean isFulfilled(Game game, PlayerId playerId) {
+        if (this.isAchieved)
+            return true;
+        return isConditionMet(game, playerId);
+    }
+
+    protected abstract boolean isConditionMet(Game game, PlayerId playerId);
 
 }

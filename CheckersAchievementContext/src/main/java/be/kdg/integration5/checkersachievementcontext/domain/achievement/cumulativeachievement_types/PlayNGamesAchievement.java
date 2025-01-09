@@ -18,6 +18,16 @@ public class PlayNGamesAchievement extends CumulativeAchievement<Integer, Set<Ga
     }
 
     @Override
+    public long getGoalInNumber() {
+        return goal;
+    }
+
+    @Override
+    public long getCounterInNumber() {
+        return counter.size();
+    }
+
+    @Override
     public boolean compare(Integer goal, Set<GameId> counter) {
         return counter.size() >= goal;
     }

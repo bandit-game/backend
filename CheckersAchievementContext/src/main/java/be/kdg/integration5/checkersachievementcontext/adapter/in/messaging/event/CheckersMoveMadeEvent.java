@@ -1,4 +1,4 @@
-package be.kdg.integration5.checkersachievementcontext.adapter.in.event;
+package be.kdg.integration5.checkersachievementcontext.adapter.in.messaging.event;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

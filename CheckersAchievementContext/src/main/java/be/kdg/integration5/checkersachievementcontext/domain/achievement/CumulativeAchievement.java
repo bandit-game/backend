@@ -21,12 +21,15 @@ public abstract class CumulativeAchievement<GoalClass, CounterClass> extends Ach
         this.counter = counter;
     }
 
+    public abstract long getGoalInNumber();
+    public abstract long getCounterInNumber();
+
     public abstract boolean compare(GoalClass goal, CounterClass counter);
 
     public abstract void checkConditionAndHandle(Game game, PlayerId playerId);
 
     @Override
-    public boolean isFulfilled(Game game, PlayerId playerId) {
+    public boolean isConditionMet(Game game, PlayerId playerId) {
         checkConditionAndHandle(game, playerId);
 
         return compare(goal, counter);
