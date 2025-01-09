@@ -21,6 +21,9 @@ public class GameJpaEntity {
     @Column(name = "game_id", nullable = false, unique = true, updatable = false)
     private UUID gameId;
 
+    @Column(nullable = false)
+    private boolean isFinished;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "games_players",
@@ -32,8 +35,9 @@ public class GameJpaEntity {
     @OneToMany(mappedBy = "game")
     private List<MoveJpaEntity> moves;
 
-    public GameJpaEntity(UUID gameId, Set<PlayerJpaEntity> players) {
+    public GameJpaEntity(UUID gameId, boolean isFinished, Set<PlayerJpaEntity> players) {
         this.gameId = gameId;
+        this.isFinished = isFinished;
         this.players = players;
     }
 }

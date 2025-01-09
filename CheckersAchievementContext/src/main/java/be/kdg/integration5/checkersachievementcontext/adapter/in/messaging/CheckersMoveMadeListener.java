@@ -23,14 +23,14 @@ public class CheckersMoveMadeListener {
     }
 
     @RabbitListener(queues = CHECKERS_MOVE_MADE, messageConverter = "#{jackson2JsonMessageConverter}")
-    public void createGameFromLobby(CheckersMoveMadeEvent lobbyCreatedEvent) {
-        logger.info("Receive checkers move made event: {}", lobbyCreatedEvent.gameId());
+    public void createGameFromLobby(CheckersMoveMadeEvent checkersMoveMadeEvent) {
+        logger.info("Receive checkers move made event: {}", checkersMoveMadeEvent.gameId());
         HandleCheckersMoveMadeCommand handleCheckersMoveMadeCommand = new HandleCheckersMoveMadeCommand(
-                new GameId(lobbyCreatedEvent.gameId()),
-                new PlayerId(lobbyCreatedEvent.moverId()),
-                new PiecePosition(lobbyCreatedEvent.oldPosition().x(), lobbyCreatedEvent.oldPosition().y()),
-                new PiecePosition(lobbyCreatedEvent.newPosition().x(), lobbyCreatedEvent.newPosition().y()),
-                lobbyCreatedEvent.madeAt()
+                new GameId(checkersMoveMadeEvent.gameId()),
+                new PlayerId(checkersMoveMadeEvent.moverId()),
+                new PiecePosition(checkersMoveMadeEvent.oldPosition().x(), checkersMoveMadeEvent.oldPosition().y()),
+                new PiecePosition(checkersMoveMadeEvent.newPosition().x(), checkersMoveMadeEvent.newPosition().y()),
+                checkersMoveMadeEvent.madeAt()
         );
         handleCheckersMoveMadeUseCase.handleCheckersMoveMade(handleCheckersMoveMadeCommand);
     }

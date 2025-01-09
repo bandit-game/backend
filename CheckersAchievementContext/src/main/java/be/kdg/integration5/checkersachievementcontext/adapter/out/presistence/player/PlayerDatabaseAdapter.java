@@ -36,6 +36,16 @@ public class PlayerDatabaseAdapter implements FindPlayerPort, PersistPlayerPort 
     }
 
     @Override
+    public List<Player> findAllById(List<PlayerId> playerIds) {
+        List<Player> players = new ArrayList<>();
+
+        for (PlayerId playerId : playerIds)
+            players.add(findById(playerId));
+
+        return players;
+    }
+
+    @Override
     public List<Player> saveAll(List<Player> players) {
         List<PlayerJpaEntity> playerJpaEntities = players.stream().map(playerJpaConverter::toJpa).toList();
         List<PlayerJpaEntity> savedPlayerJpaEntities = new ArrayList<>();

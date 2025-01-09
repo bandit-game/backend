@@ -24,6 +24,7 @@ public class GameJpaConverter {
         UUID gameId = game.getGameId().uuid();
         GameJpaEntity gameJpaEntity = new GameJpaEntity(
                 gameId,
+                game.isFinished(),
                 game.getPlayers().stream().map(playerJpaConverter::toJpa).collect(Collectors.toSet())
         );
         gameJpaEntity.setMoves(game.getBoard().movesHistory().stream().map(move -> {
@@ -45,6 +46,7 @@ public class GameJpaConverter {
         return new Game(
                 new GameId(gameJpaEntity.getGameId()),
                 gameJpaEntity.getPlayers().stream().map(playerJpaConverter::toDomain).toList(),
+                gameJpaEntity.isFinished(),
                 new Board(gameJpaEntity.getMoves().stream().map(moveJpaEntity -> new Move(
                                 new Player(new PlayerId(moveJpaEntity.getMover().getPlayerId())),
                                 new PiecePosition(moveJpaEntity.getOldX(), moveJpaEntity.getOldY()),
