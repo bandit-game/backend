@@ -74,7 +74,7 @@ class GameDatabaseAdapterTest {
         ));
         Board board = new Board(movesHistory);
         GameId gameId = new GameId(UUID.randomUUID());
-        game = new Game(gameId, List.of(player1, player2), board);
+        game = new Game(gameId, List.of(player1, player2), false, board);
     }
 
     @Test
