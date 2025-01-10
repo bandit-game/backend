@@ -65,8 +65,6 @@ Here is an example flow of how should you add your game to our platform.
 
 ## Backend configuration
 
-### SSO configuration
-
 ### RabbitMQ messaging configuration
 All the necessary url's for configuring the connection to our RabbitMQ instance are provided in the email.
 
@@ -82,11 +80,13 @@ Here is a list of all the necessary queues and exchanges that you have to connec
        - Exchange name: "game_events_exchange";
        - Routing key: "game.#.started";
        - Description: Register that a match/session has started for players in a lobby. Players in a lobby are supplied by `lobby_queue`;
+       - Specification: Id for the session should be `the same` as **lobby_id** in [lobby_created_event_schema](#lobby_created_event_schema);
        - When to send: After receiving an event from `lobby_queue` directed towards your game;
        - JSON event schema name: [start_game_session_event_schema](#start_game_session_event_schema);
    3. Publish event of player move:
        - Exchange name: "game_events_exchange";
        - Routing key: "player.#.moved";
+       - Specification: Id for the session should be `the same` as **lobby_id** in [lobby_created_event_schema](#lobby_created_event_schema);
        - Description: Register that a player has performed a move. The ID of next player must be supplied;
        - When to send: After a player has finished a move within his session;
        - JSON event schema name: [player_move_event_schema](#player_move_event_schema);
@@ -98,13 +98,27 @@ Here is a list of all the necessary queues and exchanges that you have to connec
        - JSON event schema name: [finish_game_session_event_schema](#finish_game_session_event_schema);
 
 2. For subscribing:
-
+    1. Subscribe to receive event of lobby created
+       - Queue name: "lobby_queue";
+       - Description: An event that contains a lobby of players, id of the lobby and the id of who is the owner/first player in the lobby;
+       - JSON event schema name: [lobby_created_event_schema](#lobby_created_event_schema)
 
 ### API configuration
 
-## Frontend configuration
-Information
+If your game contains achievements, you have to create an API to retrieve the information about achievements and which players unlocked them.
+Here are the rules you must follow:
 
+* API name must be: "/api/v1/achievements'
+* JSON Event schema for achievement DTO: [achievement_schema](#achievement_schema)
+
+
+## Frontend configuration
+
+After all players in lobby will be ready to play your game, they will get redirected to your frontend URL.
+The URL they will get redirected to is: http://<your-frontend-url>/<lobby-id>.
+You will retrieve the lobby id from the received `lobby_created_event` (schema: [lobby_created_event_schema](#lobby_created_event_schema)).
+
+Keycloak resource server URLs are provided in email. When players are redirected, they must remain authenticated.
 
 ## JSON schema of event objects:
 
@@ -289,6 +303,92 @@ Information
       }
     }
   }
+}
+
+```
+
+### Lobby_created_event_schema
+
+```
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "lobbyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "firstPlayerId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "players": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "playerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": ["playerId", "username"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["lobbyId", "firstPlayerId", "players"],
+  "additionalProperties": false
+}
+
+```
+
+### Achievement_schema
+
+```
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "achievementId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the achievement."
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the achievement."
+    },
+    "description": {
+      "type": "string",
+      "description": "A description of the achievement."
+    },
+    "imageUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "A URL to an image representing the achievement."
+    },
+    "achievementType": {
+      "type": "string",
+      "description": "The type/category of the achievement."
+    },
+    "isAchieved": {
+      "type": "boolean",
+      "description": "Indicates whether the achievement has been achieved."
+    }
+  },
+  "required": [
+    "achievementId",
+    "name",
+    "description",
+    "imageUrl",
+    "achievementType",
+    "isAchieved"
+  ],
+  "additionalProperties": false
 }
 
 ```
