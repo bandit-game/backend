@@ -40,7 +40,7 @@ public class RegisterNewGameUseCaseImpl implements RegisterNewGameUseCase {
                 event.maxLobbyPlayersAmount(),
                 event.description()
         );
-        Game savedGame = persistGamePort.save(game);
+        Game savedGame = persistGamePort.saveOrUpdate(game);
         logger.info(savedGame.toString());
         sendGamePort.sendGame(savedGame);
         notifyChatBotPort.notify(event);
