@@ -6,10 +6,9 @@ import be.kdg.integration5.checkerscontext.domain.PlayerId;
 
 import java.util.Objects;
 
-public record CheckersMoveMadeCommand(GameId gameId, PlayerId moverId, PlayerId nextPlayerId, Move move) {
+public record CheckersMoveMadeCommand(GameId gameId, PlayerId moverId, Move move) {
     public CheckersMoveMadeCommand {
         Objects.requireNonNull(moverId);
         Objects.requireNonNull(move);
-        Objects.requireNonNull(nextPlayerId);
     }
 }

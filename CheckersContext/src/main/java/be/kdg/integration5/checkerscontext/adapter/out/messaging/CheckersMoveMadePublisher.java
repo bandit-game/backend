@@ -4,7 +4,6 @@ import be.kdg.integration5.checkerscontext.adapter.out.messaging.event.CheckersM
 import be.kdg.integration5.checkerscontext.domain.PiecePosition;
 import be.kdg.integration5.checkerscontext.port.out.CheckersMoveMadeCommand;
 import be.kdg.integration5.checkerscontext.port.out.NotifyCheckersMoveMadePort;
-import be.kdg.integration5.common.events.PlayerMoveEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -16,7 +15,7 @@ import java.util.UUID;
 @Component
 public class CheckersMoveMadePublisher implements NotifyCheckersMoveMadePort {
     private static final Logger LOGGER = LoggerFactory.getLogger(GameEndEventPublisher.class);
-    private static final String EXCHANGE_NAME = "game_events";
+    private static final String EXCHANGE_NAME = "checkers_events";
 
     private final RabbitTemplate rabbitTemplate;
 
@@ -27,16 +26,18 @@ public class CheckersMoveMadePublisher implements NotifyCheckersMoveMadePort {
     @Override
     public void notifyCheckersMoveMade(CheckersMoveMadeCommand checkersMoveMadeCommand) {
         UUID gameUUID = checkersMoveMadeCommand.gameId().uuid();
-        final String ROUTING_KEY = String.format("player.%s.moved", UUID.randomUUID());
+        final String ROUTING_KEY = String.format("checkers.%s.move.made", gameUUID);
         LOGGER.info("Notifying RabbitMQ: {}", ROUTING_KEY);
 
         UUID moverId = checkersMoveMadeCommand.moverId().uuid();
-        UUID nextPlayerId = checkersMoveMadeCommand.nextPlayerId().uuid();
+        PiecePosition initialPosition = checkersMoveMadeCommand.move().getInitialPosition();
+        PiecePosition futurePosition = checkersMoveMadeCommand.move().getFuturePosition();
 
-        rabbitTemplate.convertAndSend(EXCHANGE_NAME, ROUTING_KEY, new PlayerMoveEvent(
+        rabbitTemplate.convertAndSend(EXCHANGE_NAME, ROUTING_KEY, new CheckersMoveMadeEvent(
                 gameUUID,
                 moverId,
-                nextPlayerId,
+                new CheckersMoveMadeEvent.CheckersMovePosition(initialPosition.x(), initialPosition.y()),
+                new CheckersMoveMadeEvent.CheckersMovePosition(futurePosition.x(), futurePosition.y()),
                 LocalDateTime.now()
         ));
     }

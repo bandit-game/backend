@@ -114,6 +114,7 @@ public class LobbyAdapterUnitTest {
         // Assert
         assertEquals(1, lobbies.size());
         assertEquals(lobbies.getFirst().getLobbyOwner().getPlayerId(), player.getPlayerId());
+        assertEquals(lobbies.getFirst().getPlayingGame().getTitle(), game.getTitle());
         assertEquals(1, lobbies.getFirst().getPlayers().size());
     }
 
