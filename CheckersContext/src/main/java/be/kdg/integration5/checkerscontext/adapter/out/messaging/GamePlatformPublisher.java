@@ -18,7 +18,7 @@ import java.util.UUID;
 public class GamePlatformPublisher implements NotifyGamePlatformPort {
 
     private static final String PLATFORM_GAME_EXCHANGE = "platform_game_exchange";
-    private static final Logger LOGGER = LoggerFactory.getLogger(GameEndEventPublisher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GamePlatformPublisher.class);
     private final RabbitTemplate rabbitTemplate;
     private final RulesLoader rulesLoader;
 

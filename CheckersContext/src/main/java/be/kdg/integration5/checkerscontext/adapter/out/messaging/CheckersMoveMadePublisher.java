@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Component
 public class CheckersMoveMadePublisher implements NotifyCheckersMoveMadePort {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GameEndEventPublisher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CheckersMoveMadePublisher.class);
     private static final String EXCHANGE_NAME = "checkers_events";
 
     private final RabbitTemplate rabbitTemplate;
