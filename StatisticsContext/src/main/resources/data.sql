@@ -1,6 +1,5 @@
 insert into games(game_id, name)
-values ('7a0ff880-adf8-4b6c-821f-607f3d6d5895', 'game'),
-       ('203028d1-4ce6-426e-9b4b-de9ec03f12be', 'checkers');
+values ('7a0ff880-adf8-4b6c-821f-607f3d6d5895', 'game');
 
 
 insert into players(player_id, age, gender, player_name, country, city)

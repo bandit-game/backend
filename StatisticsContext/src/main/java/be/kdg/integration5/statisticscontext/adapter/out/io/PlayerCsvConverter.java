@@ -14,6 +14,7 @@ public class PlayerCsvConverter {
         List<String[]> rows = new ArrayList<>();
         for (Player player: players) {
             Metrics metrics = player.getMetrics();
+            Predictions predictions = player.getPredictions();
             rows.add(new String[]{
                     player.getPlayerId().uuid().toString(),
                     player.getLocation().country(),
@@ -26,14 +27,15 @@ public class PlayerCsvConverter {
                     Integer.toString(metrics.getTotalDraws()),
                     Integer.toString(metrics.getTotalIsFirst()),
                     Double.toString(metrics.getAvgMoveDuration()),
-                    Double.toString(metrics.getAvgMoveAmount()),
-                    Double.toString(metrics.getAvgGameDuration()),
                     Integer.toString(metrics.getTotalWeekdaysPlayed()),
                     Integer.toString(metrics.getTotalWeekendsPlayed()),
                     Integer.toString(metrics.getTotalMorningPlays()),
                     Integer.toString(metrics.getTotalAfternoonPlays()),
                     Integer.toString(metrics.getTotalEveningPlays()),
                     Integer.toString(metrics.getTotalNightPlays()),
+                    Double.toString(predictions.getChurn()),
+                    Double.toString(predictions.getFirstMoveWinProbability()),
+                    predictions.getPlayerClass().name()
             });
         }
         return rows;
