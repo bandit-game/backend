@@ -4,8 +4,11 @@ import be.kdg.integration5.checkerscontext.domain.*;
 import be.kdg.integration5.checkerscontext.port.in.MovePieceCommand;
 import be.kdg.integration5.checkerscontext.port.in.MovePieceUseCase;
 import be.kdg.integration5.checkerscontext.port.out.*;
+import be.kdg.integration5.common.events.PlayerMoveEvent;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -14,14 +17,16 @@ public class MovePieceUseCaseImpl implements MovePieceUseCase {
     private final PersistGamePort persistGamePort;
     private final NotifyPlayerPort notifyPlayerPort;
     private final NotifyGameEndPort notifyGameEndPort;
+    private final NotifyStatisticsPort notifyStatisticsPort;
     private final NotifyCheckersMoveMadePort notifyCheckersMoveMadePort;
     private final NotifyCheckersGameFinishedPort notifyCheckersGameFinishedPort;
 
-    public MovePieceUseCaseImpl(FindGamePort findGamePort, PersistGamePort persistGamePort, NotifyPlayerPort notifyPlayerPort, NotifyGameEndPort notifyGameEndPort, NotifyCheckersMoveMadePort notifyCheckersMoveMadePort, NotifyCheckersGameFinishedPort notifyCheckersGameFinishedPort) {
+    public MovePieceUseCaseImpl(FindGamePort findGamePort, PersistGamePort persistGamePort, NotifyPlayerPort notifyPlayerPort, NotifyGameEndPort notifyGameEndPort, NotifyStatisticsPort notifyStatisticsPort, NotifyCheckersMoveMadePort notifyCheckersMoveMadePort, NotifyCheckersGameFinishedPort notifyCheckersGameFinishedPort) {
         this.findGamePort = findGamePort;
         this.persistGamePort = persistGamePort;
         this.notifyPlayerPort = notifyPlayerPort;
         this.notifyGameEndPort = notifyGameEndPort;
+        this.notifyStatisticsPort = notifyStatisticsPort;
         this.notifyCheckersMoveMadePort = notifyCheckersMoveMadePort;
         this.notifyCheckersGameFinishedPort = notifyCheckersGameFinishedPort;
     }
@@ -38,8 +43,11 @@ public class MovePieceUseCaseImpl implements MovePieceUseCase {
 
             game.getBoard().movePiece(moverId, move);
             updatedGame = persistGamePort.update(game);
+            PlayerId nextPlayerId = updatedGame.getBoard().getCurrentPlayer().getPlayerId();
+
 
             notifyCheckersMoveMadePort.notifyCheckersMoveMade(new CheckersMoveMadeCommand(gameId, moverId, move));
+            notifyStatisticsPort.notifyPlayerMove(new PlayerMoveEvent(gameId.uuid(), moverId.uuid(), nextPlayerId.uuid(), LocalDateTime.now()));
             if (updatedGame.checkForGameOver()) {
                 notifyGameEndPort.notifyGameEnd(game);
                 notifyCheckersGameFinishedPort.notifyCheckersGameFinished(new CheckersGameFinishedCommand(gameId, game.getWinner().getPlayerId(), game.isDraw()));
