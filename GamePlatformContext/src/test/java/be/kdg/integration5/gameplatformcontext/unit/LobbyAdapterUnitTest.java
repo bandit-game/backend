@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { GamePlatformContextApplication.class })
 @SpringBootTest
+@EnableAutoConfiguration(exclude = {RabbitAutoConfiguration.class})
 public class LobbyAdapterUnitTest {
 
     @MockBean
