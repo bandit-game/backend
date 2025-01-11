@@ -45,8 +45,9 @@ public class PlayerDatabaseAdapter implements FindPlayerPort, PersistPlayerPort 
 
     @Override
     public Player save(Player player) {
-        playerJpaRepository.saveAll(player.getFriends()
-                .stream().map(PlayerJpaEntity::of).toList());
+        if (player.getFriends() != null)
+            playerJpaRepository.saveAll(player.getFriends()
+                    .stream().map(PlayerJpaEntity::of).toList());
         return playerJpaRepository.save(PlayerJpaEntity.of(player)).toDomain();
     }
 

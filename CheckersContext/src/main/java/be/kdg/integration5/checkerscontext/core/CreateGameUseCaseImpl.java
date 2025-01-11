@@ -38,6 +38,6 @@ public class CreateGameUseCaseImpl implements CreateGameUseCase {
         game.start();
         persistGamePort.save(game);
 
-        notifyCheckersGameStartedPort.notifyCheckersGameStarted(new CheckersGameStartedCommand(game.getPlayedMatchId(), game.getPlayers()));
+        notifyCheckersGameStartedPort.notifyCheckersGameStarted(new CheckersGameStartedCommand(game.getPlayedMatchId(), game.getPlayers(), game.getBoard().getCurrentPlayer()));
     }
 }

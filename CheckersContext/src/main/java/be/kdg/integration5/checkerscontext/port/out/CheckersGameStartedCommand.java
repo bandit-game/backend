@@ -6,9 +6,10 @@ import be.kdg.integration5.checkerscontext.domain.Player;
 import java.util.List;
 import java.util.Objects;
 
-public record CheckersGameStartedCommand(GameId gameId, List<Player> players) {
+public record CheckersGameStartedCommand(GameId gameId, List<Player> players, Player firstPlayer) {
     public CheckersGameStartedCommand {
         Objects.requireNonNull(gameId);
         Objects.requireNonNull(players);
+        Objects.requireNonNull(firstPlayer);
     }
 }

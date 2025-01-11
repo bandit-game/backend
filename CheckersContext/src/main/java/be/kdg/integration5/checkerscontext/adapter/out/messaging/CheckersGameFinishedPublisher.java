@@ -7,6 +7,7 @@ import be.kdg.integration5.checkerscontext.port.out.CheckersGameFinishedCommand;
 import be.kdg.integration5.checkerscontext.port.out.CheckersGameStartedCommand;
 import be.kdg.integration5.checkerscontext.port.out.NotifyCheckersGameFinishedPort;
 import be.kdg.integration5.checkerscontext.port.out.NotifyCheckersGameStartedPort;
+import be.kdg.integration5.common.events.FinishGameSessionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Component
 public class CheckersGameFinishedPublisher implements NotifyCheckersGameFinishedPort {
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckersGameFinishedPublisher.class);
-    private static final String EXCHANGE_NAME = "checkers_events";
+    private static final String EXCHANGE_NAME = "game_events";
 
     private final RabbitTemplate rabbitTemplate;
 
@@ -30,16 +31,16 @@ public class CheckersGameFinishedPublisher implements NotifyCheckersGameFinished
     @Override
     public void notifyCheckersGameFinished(CheckersGameFinishedCommand checkersGameFinishedCommand) {
         UUID gameUUID = checkersGameFinishedCommand.gameId().uuid();
-        final String ROUTING_KEY = String.format("checkers.game.%s.finished", gameUUID);
+        final String ROUTING_KEY = String.format("game.%s.finished", gameUUID);
         LOGGER.info("Notifying RabbitMQ: {}", ROUTING_KEY);
         UUID winnerUUID = checkersGameFinishedCommand.winnerId() != null ? checkersGameFinishedCommand.winnerId().uuid() : null;
         Boolean isDraw = checkersGameFinishedCommand.isDraw();
 
-        rabbitTemplate.convertAndSend(EXCHANGE_NAME, ROUTING_KEY, new CheckersGameFinishedEvent(
-                gameUUID,
-                winnerUUID,
-                isDraw,
-                LocalDateTime.now()
-        ));
+        rabbitTemplate.convertAndSend(EXCHANGE_NAME, ROUTING_KEY, new FinishGameSessionEvent(
+                        gameUUID,
+                        winnerUUID,
+                LocalDateTime.now(),
+                isDraw
+                ));
     }
 }
