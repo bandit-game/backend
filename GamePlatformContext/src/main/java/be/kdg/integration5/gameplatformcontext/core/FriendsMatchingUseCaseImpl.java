@@ -68,14 +68,15 @@ public class FriendsMatchingUseCaseImpl implements FriendsMatchingUseCase {
             request.setStatus(FriendRequest.Status.DECLINED);
         }
 
-        // Save the friend request with updated status
         friendRequestPort.saveFriends(request);
     }
 
 
     @Override
     public List<FriendRequest> getPendingFriendRequests(PlayerId playerId) {
-        return friendRequestPort.findPendingRequestsByReceiver(playerId);
+        List<FriendRequest> requests = friendRequestPort.findPendingRequestsByReceiverFetched(playerId);
+        System.out.println("IMPL Fetched Requests: " + requests);
+        return requests;
     }
 
     @Override

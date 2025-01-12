@@ -9,13 +9,8 @@ import java.util.UUID;
 
 public interface FriendsRequestPort {
     void saveFriends(FriendRequest friendRequest);
-
-    @Query("select fr from FriendsRequestJpaEntity fr join fetch fr.receiver r join fetch r.friends join fetch fr.sender s join fetch s.friends where fr.requestId = :requestId")
     FriendRequest findFriendRequestById(UUID requestId);
-
     void updateFriendRequest(FriendRequest friendRequest);
-    List<FriendRequest> findPendingRequestsByReceiver(PlayerId receiverId);
-//    List<PlayerId> findFriendsByPlayer(PlayerId playerId);
-//    FriendRequest findSenderById(PlayerId senderId);
+    List<FriendRequest> findPendingRequestsByReceiverFetched(PlayerId receiverId);
     FriendRequest findReceiverById(PlayerId receiverId);
 }

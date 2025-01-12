@@ -33,7 +33,7 @@ public class FriendsRequestDatabaseAdapter implements FriendsRequestPort {
     }
 
     @Override
-    public List<FriendRequest> findPendingRequestsByReceiver(PlayerId receiverId) {
+    public List<FriendRequest> findPendingRequestsByReceiverFetched(PlayerId receiverId) {
         return repository.findByReceiver_PlayerIdAndStatus(receiverId.uuid(), FriendRequest.Status.PENDING)
                 .stream()
                 .map(FriendsRequestJpaEntity::toDomain)
