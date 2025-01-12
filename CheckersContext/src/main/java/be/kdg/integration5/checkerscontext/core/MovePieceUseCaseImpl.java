@@ -42,13 +42,14 @@ public class MovePieceUseCaseImpl implements MovePieceUseCase {
             Move move = movePieceCommand.move();
 
             game.getBoard().movePiece(moverId, move);
+            boolean isGameOver = updatedGame.checkForGameOver();
+
             updatedGame = persistGamePort.update(game);
             PlayerId nextPlayerId = updatedGame.getBoard().getCurrentPlayer().getPlayerId();
 
-
             notifyCheckersMoveMadePort.notifyCheckersMoveMade(new CheckersMoveMadeCommand(gameId, moverId, move));
             notifyStatisticsPort.notifyPlayerMove(new PlayerMoveEvent(gameId.uuid(), moverId.uuid(), nextPlayerId.uuid(), LocalDateTime.now()));
-            if (updatedGame.checkForGameOver()) {
+            if (isGameOver) {
                 notifyGameEndPort.notifyGameEnd(updatedGame);
                 notifyCheckersGameFinishedPort.notifyCheckersGameFinished(new CheckersGameFinishedCommand(gameId, updatedGame.getWinner().getPlayerId(), updatedGame.isDraw()));
             }
