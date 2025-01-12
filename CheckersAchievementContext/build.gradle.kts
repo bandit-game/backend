@@ -1,5 +1,6 @@
 plugins {
 	id("module-config")
+	id("com.adarshr.test-logger") version "4.0.0"
 }
 
 dependencies {
@@ -24,4 +25,28 @@ dependencies {
 	testImplementation("org.springframework.amqp:spring-rabbit-test")
 //	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+subprojects {
+	apply {
+		plugin("com.adarshr.test-logger")
+	}
+}
+
+tasks.withType<Test> {
+	useJUnitPlatform()
+}
+
+
+// Integration Tests
+val integrationTest by tasks.registering(Test::class) {
+	description = "Runs integration tests."
+	group = "verification"
+	useJUnitPlatform()
+	include("**/integration/**")
+}
+
+// Add all tasks to check lifecycle
+tasks.named("check") {
+	dependsOn(integrationTest)
 }
