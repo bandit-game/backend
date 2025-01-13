@@ -1,8 +1,6 @@
 package be.kdg.integration5.checkerscontext.adapter.out.messaging;
 
-import be.kdg.integration5.checkerscontext.domain.Player;
 import be.kdg.integration5.checkerscontext.port.out.NotifyGamePlatformPort;
-import be.kdg.integration5.common.events.FinishGameSessionEvent;
 import be.kdg.integration5.common.events.GameAddedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +8,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,7 +37,7 @@ public class GamePlatformPublisher implements NotifyGamePlatformPort {
     @Value("${game.frontendUrl}")
     private String frontendUrl;
 
-    @Value("${game.backendApiUrl}")
+    @Value("${game.achieviementsApiUrl}")
     private String backendApiUrl;
 
     @Value("${game.gameImageUrl}")
