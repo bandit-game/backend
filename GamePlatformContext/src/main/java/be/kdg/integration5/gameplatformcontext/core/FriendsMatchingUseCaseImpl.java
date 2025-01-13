@@ -6,6 +6,7 @@ import be.kdg.integration5.gameplatformcontext.domain.PlayerId;
 import be.kdg.integration5.gameplatformcontext.port.in.FriendsMatchingUseCase;
 import be.kdg.integration5.gameplatformcontext.port.out.FindPlayerPort;
 import be.kdg.integration5.gameplatformcontext.port.out.FriendsRequestPort;
+import be.kdg.integration5.gameplatformcontext.port.out.PersistFriendsRequestPort;
 import be.kdg.integration5.gameplatformcontext.port.out.PersistPlayerPort;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +18,13 @@ public class FriendsMatchingUseCaseImpl implements FriendsMatchingUseCase {
     private final FriendsRequestPort friendRequestPort;
     private final FindPlayerPort findPlayerPort;
     private final PersistPlayerPort persistPlayerPort;
+    private final PersistFriendsRequestPort persistFriendsRequestPort;
 
-    public FriendsMatchingUseCaseImpl(FriendsRequestPort friendRequestPort, FindPlayerPort findPlayerPort, PersistPlayerPort persistPlayerPort) {
+    public FriendsMatchingUseCaseImpl(FriendsRequestPort friendRequestPort, FindPlayerPort findPlayerPort, PersistPlayerPort persistPlayerPort, PersistFriendsRequestPort persistFriendsRequestPort) {
         this.friendRequestPort = friendRequestPort;
         this.findPlayerPort = findPlayerPort;
         this.persistPlayerPort = persistPlayerPort;
+        this.persistFriendsRequestPort = persistFriendsRequestPort;
     }
 
 
@@ -36,7 +39,7 @@ public class FriendsMatchingUseCaseImpl implements FriendsMatchingUseCase {
             throw new IllegalArgumentException("Already friends!");
         }else{
             FriendRequest friendsRequest = new FriendRequest(UUID.randomUUID(), sender, receiver, FriendRequest.Status.PENDING);
-            friendRequestPort.saveFriends(friendsRequest);
+            persistFriendsRequestPort.saveFriends(friendsRequest);
         }
     }
 
@@ -68,7 +71,7 @@ public class FriendsMatchingUseCaseImpl implements FriendsMatchingUseCase {
             request.setStatus(FriendRequest.Status.DECLINED);
         }
 
-        friendRequestPort.saveFriends(request);
+        persistFriendsRequestPort.saveFriends(request);
     }
 
 
@@ -77,12 +80,5 @@ public class FriendsMatchingUseCaseImpl implements FriendsMatchingUseCase {
         List<FriendRequest> requests = friendRequestPort.findPendingRequestsByReceiverFetched(playerId);
         System.out.println("IMPL Fetched Requests: " + requests);
         return requests;
-    }
-
-    @Override
-    public List<Player> getFriends(PlayerId playerId) {
-        return findPlayerPort.findFriends(playerId)
-                .stream()
-                .toList();
     }
 }
