@@ -45,7 +45,7 @@ steps:
       'all-traffic',
       '--ingress',
       'internal',
-      '--allow-unauthenticated',
+      '--allow-unauthenticated'
     ]
 
 substitutions:
