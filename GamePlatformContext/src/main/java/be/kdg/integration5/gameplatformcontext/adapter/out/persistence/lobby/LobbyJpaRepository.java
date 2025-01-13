@@ -32,7 +32,7 @@ public interface LobbyJpaRepository extends JpaRepository<LobbyJpaEntity, UUID> 
             "        join lpInner.player pInner " +
             "        where pInner.playerId = :playerId " +
             "    ) and l.isReady = :isReady")
-    Optional<LobbyJpaEntity> findByPlayerIdAndIsReadyCustom(UUID playerId, boolean isReady);
+    Optional<LobbyJpaEntity>    findByPlayerIdAndIsReadyCustom(UUID playerId, boolean isReady);
 
 
     @Query("select l from LobbyJpaEntity l " +
