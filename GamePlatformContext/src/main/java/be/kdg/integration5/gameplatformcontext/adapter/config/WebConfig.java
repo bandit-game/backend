@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("${platform.url}")
+    @Value("${gamePlatformFrontend.url}")
     private String platformUrl;
 
     @Override
