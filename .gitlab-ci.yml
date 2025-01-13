@@ -23,7 +23,7 @@ include:
         changes:
            - 'StatisticsContext/**/*'
   
-   - local: '/CheckersAchievementContext/achievement-context-gitlab-ci.yml'
+  - local: '/CheckersAchievementContext/achievement-context-gitlab-ci.yml'
     rules:
       - if: $CI_PIPELINE_SOURCE != "merge_request_event" && $CI_COMMIT_BRANCH == "main"
         changes:
