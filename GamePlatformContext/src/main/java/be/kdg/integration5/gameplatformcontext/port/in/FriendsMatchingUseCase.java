@@ -9,8 +9,6 @@ import java.util.UUID;
 
 public interface FriendsMatchingUseCase {
     void sendFriendsRequest (PlayerId sender, PlayerId receiver);
-//    void receiveFriendsRequest (PlayerId sender, PlayerId receiver, boolean acceptedStatus);
     void respondToFriendRequest(UUID requestId, boolean accepted);
     List<FriendRequest> getPendingFriendRequests(PlayerId playerId);
-    List<PlayerId> getFriends(PlayerId playerId);
 }

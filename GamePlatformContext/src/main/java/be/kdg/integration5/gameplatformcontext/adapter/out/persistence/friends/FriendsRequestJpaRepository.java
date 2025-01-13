@@ -12,7 +12,14 @@ import java.util.UUID;
 
 @Repository
 public interface FriendsRequestJpaRepository extends JpaRepository<FriendsRequestJpaEntity, UUID> {
-    @Query("select fr from FriendsRequestJpaEntity fr join fetch fr.receiver r join fetch r.friends join fetch fr.sender s join fetch s.friends where fr.receiver.playerId = :receiverId and fr.status = :status")
+    @Query("select fr " +
+            "from FriendsRequestJpaEntity fr " +
+            "left join fetch fr.receiver r " +
+            "left join fetch r.friends " +
+            "left join fetch fr.sender s " +
+            "left join fetch s.friends " +
+            "where r.playerId = :receiverId " +
+            "and fr.status = :status")
     List<FriendsRequestJpaEntity> findByReceiver_PlayerIdAndStatus(UUID receiverId, FriendRequest.Status status);
     @Query("select fr from FriendsRequestJpaEntity fr join fetch fr.receiver r join fetch r.friends join fetch fr.sender s join fetch s.friends where fr.receiver.playerId = :receiverId")
     FriendsRequestJpaEntity findByReceiver_PlayerId(UUID receiverId);

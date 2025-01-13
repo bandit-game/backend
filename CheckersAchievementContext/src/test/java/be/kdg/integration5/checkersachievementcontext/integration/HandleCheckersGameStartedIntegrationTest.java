@@ -1,19 +1,26 @@
-package be.kdg.integration5.checkersachievementcontext.core;
+package be.kdg.integration5.checkersachievementcontext.integration;
 
+import be.kdg.integration5.checkersachievementcontext.CheckersAchievementContextApplication;
+import be.kdg.integration5.checkersachievementcontext.core.HandleCheckersGameStartedUseCaseImpl;
 import be.kdg.integration5.checkersachievementcontext.domain.Game;
 import be.kdg.integration5.checkersachievementcontext.domain.GameId;
 import be.kdg.integration5.checkersachievementcontext.domain.Player;
 import be.kdg.integration5.checkersachievementcontext.domain.PlayerId;
 import be.kdg.integration5.checkersachievementcontext.port.in.HandleCheckersGameStartedCommand;
 import be.kdg.integration5.checkersachievementcontext.port.out.FindGamePort;
-import be.kdg.integration5.checkersachievementcontext.port.out.FindPlayerPort;
 import be.kdg.integration5.checkersachievementcontext.port.out.PersistGamePort;
 import be.kdg.integration5.checkersachievementcontext.port.out.PersistPlayerPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -26,7 +33,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @SpringBootTest
 @Testcontainers
+@EnableAutoConfiguration(exclude = {RabbitAutoConfiguration.class})
+@ContextConfiguration(classes = {CheckersAchievementContextApplication.class})
 class HandleCheckersGameStartedIntegrationTest {
+
+    @MockBean
+    private RabbitTemplate rabbitTemplate;
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
 
     @Autowired
     private HandleCheckersGameStartedUseCaseImpl useCase;

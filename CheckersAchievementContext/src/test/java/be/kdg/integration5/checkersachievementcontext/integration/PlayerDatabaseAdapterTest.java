@@ -1,10 +1,11 @@
-package be.kdg.integration5.checkersachievementcontext.adapter.out.presistence.player;
+package be.kdg.integration5.checkersachievementcontext.integration;
 
+import be.kdg.integration5.checkersachievementcontext.CheckersAchievementContextApplication;
 import be.kdg.integration5.checkersachievementcontext.adapter.out.presistence.achievement.AchievementJpaEntity;
 import be.kdg.integration5.checkersachievementcontext.adapter.out.presistence.achievement.AchievementJpaRepository;
-import be.kdg.integration5.checkersachievementcontext.adapter.out.presistence.game.GameDatabaseAdapter;
-import be.kdg.integration5.checkersachievementcontext.adapter.out.presistence.game.GameJpaRepository;
-import be.kdg.integration5.checkersachievementcontext.adapter.out.presistence.move.MoveJpaRepository;
+import be.kdg.integration5.checkersachievementcontext.adapter.out.presistence.player.PlayerDatabaseAdapter;
+import be.kdg.integration5.checkersachievementcontext.adapter.out.presistence.player.PlayerJpaEntity;
+import be.kdg.integration5.checkersachievementcontext.adapter.out.presistence.player.PlayerJpaRepository;
 import be.kdg.integration5.checkersachievementcontext.domain.Player;
 import be.kdg.integration5.checkersachievementcontext.domain.PlayerId;
 import be.kdg.integration5.checkersachievementcontext.domain.achievement.Achievement;
@@ -12,9 +13,15 @@ import be.kdg.integration5.checkersachievementcontext.domain.achievement.Achieve
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -27,7 +34,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @SpringBootTest
 @Testcontainers
+@EnableAutoConfiguration(exclude = {RabbitAutoConfiguration.class})
+@ContextConfiguration(classes = {CheckersAchievementContextApplication.class})
 class PlayerDatabaseAdapterTest {
+
+    @MockBean
+    private RabbitTemplate rabbitTemplate;
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
 
     @Container
     private static final PostgreSQLContainer<?> postgreSQLContainer =
