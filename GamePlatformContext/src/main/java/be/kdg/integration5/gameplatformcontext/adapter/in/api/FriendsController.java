@@ -18,21 +18,24 @@ public class FriendsController {
         this.friendsMatchingUseCase = friendsMatchingUseCase;
     }
 
-    @PostMapping("/send")
-    public ResponseEntity<?> sendFriendRequest(@RequestParam UUID senderId, @RequestParam UUID receiverId) {
+    @PostMapping("/send/{senderId}/{receiverId}")
+    public ResponseEntity<?> sendFriendRequest(@PathVariable UUID senderId, @PathVariable UUID receiverId) {
+        System.out.println("Sender: " + senderId + ", Receiver: " + receiverId);
         friendsMatchingUseCase.sendFriendsRequest(new PlayerId(senderId), new PlayerId(receiverId));
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/respond")
-    public ResponseEntity<?> respondToFriendRequest(@RequestParam UUID requestId, @RequestParam boolean accepted) {
+    @PostMapping("/respond/{requestId}/{accepted}")
+    public ResponseEntity<?> respondToFriendRequest(@PathVariable UUID requestId, @PathVariable boolean accepted) {
         friendsMatchingUseCase.respondToFriendRequest(requestId, accepted);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/pending")
-    public ResponseEntity<List<FriendRequest>> getPendingRequests(@RequestParam UUID playerId) {
+    @GetMapping("/pending/{playerId}")
+    public ResponseEntity<List<FriendRequest>> getPendingRequests(@PathVariable UUID playerId) {
+        System.out.println("Fetching pending requests for: " + playerId);
         List<FriendRequest> requests = friendsMatchingUseCase.getPendingFriendRequests(new PlayerId(playerId));
+        System.out.println("Pending Requests: " + requests);
         return ResponseEntity.ok(requests);
     }
 

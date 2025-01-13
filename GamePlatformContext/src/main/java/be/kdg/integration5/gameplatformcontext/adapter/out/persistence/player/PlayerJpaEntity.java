@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PlayerJpaEntity {
     @Id
-    @Column(nullable = false, unique = true, updatable = false)
+    @Column(nullable = false, unique = true, updatable = false, name = "player_id")
     private UUID playerId;
 
     @Column(nullable = false)
@@ -44,6 +44,11 @@ public class PlayerJpaEntity {
     private List<LobbyPlayerJpaEntity> lobbyPlayers;
 
     @ManyToMany
+    @JoinTable(
+            name = "players_friends",
+            joinColumns = @JoinColumn(name = "player_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
     private Set<PlayerJpaEntity> friends;
 
     public PlayerJpaEntity(UUID playerId, int age, Player.Gender gender, String username) {

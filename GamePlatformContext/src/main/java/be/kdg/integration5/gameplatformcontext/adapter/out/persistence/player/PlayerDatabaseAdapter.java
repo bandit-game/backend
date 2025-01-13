@@ -7,7 +7,6 @@ import be.kdg.integration5.gameplatformcontext.port.out.FindPlayerPort;
 import be.kdg.integration5.gameplatformcontext.port.out.PersistPlayerPort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +52,7 @@ public class PlayerDatabaseAdapter implements FindPlayerPort, PersistPlayerPort 
 
     @Override
     public List<Player> findFriends(PlayerId playerId) {
-        Optional<PlayerJpaEntity> friends = playerJpaRepository.findByPlayerIdFetchedFriends(playerId.uuid());
+        List<PlayerJpaEntity> friends = playerJpaRepository.findPlayersFriendsFetched(playerId.uuid());
         return friends.stream().map(PlayerJpaEntity::toDomain).toList();
     }
 
