@@ -4,6 +4,7 @@ import be.kdg.integration5.checkerscontext.adapter.out.persistence.exception.Gam
 import be.kdg.integration5.checkerscontext.adapter.out.persistence.piece.PieceJpaEntity;
 import be.kdg.integration5.checkerscontext.adapter.out.persistence.piece.PieceJpaEntityId;
 import be.kdg.integration5.checkerscontext.adapter.out.persistence.piece.PieceJpaRepository;
+import be.kdg.integration5.checkerscontext.adapter.out.persistence.player.PlayerJpaEntity;
 import be.kdg.integration5.checkerscontext.adapter.out.persistence.player.PlayerJpaRepository;
 import be.kdg.integration5.checkerscontext.domain.*;
 import be.kdg.integration5.checkerscontext.port.out.DeleteGamePort;
@@ -52,6 +53,12 @@ public class GameDatabaseAdapter implements PersistGamePort, FindGamePort {
         UUID currentPlayerId = game.getBoard().getCurrentPlayer().getPlayerId().uuid();
         gameJpaEntity.setCurrentPlayer(playerJparepository.getReferenceById(currentPlayerId));
         gameJpaEntity.setFinished(game.isFinished());
+
+        if (game.getWinner() != null) {
+            PlayerJpaEntity winnerJpaEntity = playerJparepository.getReferenceById(game.getWinner().getPlayerId().uuid());
+            gameJpaEntity.setWinner(winnerJpaEntity);
+        }
+
         gameJpaRepository.save(gameJpaEntity);
 
         // Update pieces
