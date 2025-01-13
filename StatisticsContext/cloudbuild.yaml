@@ -50,7 +50,7 @@ steps:
 
 substitutions:
   _LOCATION: 'europe-west1'
-  _SERVICE_NAME: 'gameplatform-service'
+  _SERVICE_NAME: 'statistics-service'
   _DOCKER_IMAGE_PATH: 'europe-west1-docker.pkg.dev/banditgames-back/banditgames-repo/statistics-service:latest'
 
 options:
