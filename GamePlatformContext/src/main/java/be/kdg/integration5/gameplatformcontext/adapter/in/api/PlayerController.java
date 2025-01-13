@@ -2,10 +2,9 @@ package be.kdg.integration5.gameplatformcontext.adapter.in.api;
 
 import be.kdg.integration5.gameplatformcontext.adapter.in.api.dto.PlayerDTO;
 import be.kdg.integration5.gameplatformcontext.adapter.in.api.dto.PlayerRegisterDTO;
-import be.kdg.integration5.gameplatformcontext.domain.FriendRequest;
 import be.kdg.integration5.gameplatformcontext.domain.Player;
 import be.kdg.integration5.gameplatformcontext.domain.PlayerId;
-import be.kdg.integration5.gameplatformcontext.port.in.FriendsMatchingUseCase;
+import be.kdg.integration5.gameplatformcontext.port.in.GetFriendsListUseCase;
 import be.kdg.integration5.gameplatformcontext.port.in.GetPlayersByUserNameUseCase;
 import be.kdg.integration5.gameplatformcontext.port.in.RegisterNewPlayerUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +23,12 @@ public class PlayerController {
     private final GetPlayersByUserNameUseCase getPlayersByUserNameUseCase;
 
     @Autowired
-    private final FriendsMatchingUseCase friendsMatchingUseCase;
+    private final GetFriendsListUseCase getFriendsListUseCase;
 
-    public PlayerController(RegisterNewPlayerUseCase registerNewPlayerUseCase, GetPlayersByUserNameUseCase getPlayersByUserNameUseCase, FriendsMatchingUseCase friendsMatchingUseCase) {
+    public PlayerController(RegisterNewPlayerUseCase registerNewPlayerUseCase, GetPlayersByUserNameUseCase getPlayersByUserNameUseCase, GetFriendsListUseCase getFriendsListUseCase) {
         this.registerNewPlayerUseCase = registerNewPlayerUseCase;
         this.getPlayersByUserNameUseCase = getPlayersByUserNameUseCase;
-        this.friendsMatchingUseCase = friendsMatchingUseCase;
+        this.getFriendsListUseCase = getFriendsListUseCase;
     }
 
     @PostMapping
@@ -53,8 +52,8 @@ public class PlayerController {
     }
 
     @GetMapping("/{playerId}/friends")
-    public ResponseEntity<List<PlayerId>> getFriends(@PathVariable UUID playerId) {
-        List<PlayerId> friends = friendsMatchingUseCase.getFriends(new PlayerId(playerId));
+    public ResponseEntity<List<Player>> getFriends(@PathVariable UUID playerId) {
+        List<Player> friends = getFriendsListUseCase.getFriends(new PlayerId(playerId));
         return ResponseEntity.ok(friends);
     }
 }
