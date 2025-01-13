@@ -53,8 +53,8 @@ public class PlayerController {
     }
 
     @GetMapping("/{playerId}/friends")
-    public ResponseEntity<List<PlayerId>> getFriends(@PathVariable UUID playerId) {
-        List<PlayerId> friends = friendsMatchingUseCase.getFriends(new PlayerId(playerId));
+    public ResponseEntity<List<Player>> getFriends(@PathVariable UUID playerId) {
+        List<Player> friends = friendsMatchingUseCase.getFriends(new PlayerId(playerId));
         return ResponseEntity.ok(friends);
     }
 }

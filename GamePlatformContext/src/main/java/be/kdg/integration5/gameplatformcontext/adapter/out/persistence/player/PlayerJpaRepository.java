@@ -16,4 +16,7 @@ public interface PlayerJpaRepository extends JpaRepository<PlayerJpaEntity, UUID
     @Query("select p from PlayerJpaEntity p left join fetch p.friends where p.playerId = :playerId")
     Optional<PlayerJpaEntity> findByPlayerIdFetchedFriends(UUID playerId);
 
+    @Query("select p from PlayerJpaEntity p left join fetch p.friends f where f.playerId = :playerId")
+    List<PlayerJpaEntity> findPlayersFriendsFetched(UUID playerId);
+
 }

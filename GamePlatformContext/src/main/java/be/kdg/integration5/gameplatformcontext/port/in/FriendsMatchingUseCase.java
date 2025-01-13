@@ -2,6 +2,7 @@ package be.kdg.integration5.gameplatformcontext.port.in;
 
 
 import be.kdg.integration5.gameplatformcontext.domain.FriendRequest;
+import be.kdg.integration5.gameplatformcontext.domain.Player;
 import be.kdg.integration5.gameplatformcontext.domain.PlayerId;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,5 +14,5 @@ public interface FriendsMatchingUseCase {
 //    void receiveFriendsRequest (PlayerId sender, PlayerId receiver, boolean acceptedStatus);
     void respondToFriendRequest(UUID requestId, boolean accepted);
     List<FriendRequest> getPendingFriendRequests(PlayerId playerId);
-    List<PlayerId> getFriends(PlayerId playerId);
+    List<Player> getFriends(PlayerId playerId);
 }

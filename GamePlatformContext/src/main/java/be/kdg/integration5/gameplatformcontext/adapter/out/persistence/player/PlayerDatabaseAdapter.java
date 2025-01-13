@@ -53,7 +53,7 @@ public class PlayerDatabaseAdapter implements FindPlayerPort, PersistPlayerPort 
 
     @Override
     public List<Player> findFriends(PlayerId playerId) {
-        Optional<PlayerJpaEntity> friends = playerJpaRepository.findByPlayerIdFetchedFriends(playerId.uuid());
+        List<PlayerJpaEntity> friends = playerJpaRepository.findPlayersFriendsFetched(playerId.uuid());
         return friends.stream().map(PlayerJpaEntity::toDomain).toList();
     }
 
