@@ -13,7 +13,7 @@ steps:
       'build',
       '-t', '$_DOCKER_IMAGE_PATH',
       '--cache-from', '$_DOCKER_IMAGE_PATH',
-      '-f', 'GamePlatformContext/Dockerfile',
+      '-f', 'CheckersAchievementContext/Dockerfile',
       '.'
     ]
 
@@ -50,8 +50,8 @@ steps:
 
 substitutions:
   _LOCATION: 'europe-west1'
-  _SERVICE_NAME: 'gameplatform-service'
-  _DOCKER_IMAGE_PATH: 'europe-west1-docker.pkg.dev/banditgames-back/banditgames-repo/gameplatform-service:latest'
+  _SERVICE_NAME: 'achievement-service'
+  _DOCKER_IMAGE_PATH: 'europe-west1-docker.pkg.dev/banditgames-back/banditgames-repo/achievement-service:latest'
 
 options:
   automapSubstitutions: true
