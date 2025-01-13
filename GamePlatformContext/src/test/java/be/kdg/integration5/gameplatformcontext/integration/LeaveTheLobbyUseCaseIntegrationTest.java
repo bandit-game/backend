@@ -1,29 +1,42 @@
-package be.kdg.integration5.gameplatformcontext.core;
+package be.kdg.integration5.gameplatformcontext.integration;
 
+import be.kdg.integration5.gameplatformcontext.GamePlatformContextApplication;
 import be.kdg.integration5.gameplatformcontext.domain.*;
 import be.kdg.integration5.gameplatformcontext.port.in.LeaveTheLobbyUseCase;
-import be.kdg.integration5.gameplatformcontext.port.out.*;
+import be.kdg.integration5.gameplatformcontext.port.out.FindGamePort;
+import be.kdg.integration5.gameplatformcontext.port.out.FindLobbyPort;
+import be.kdg.integration5.gameplatformcontext.port.out.FindPlayerPort;
+import be.kdg.integration5.gameplatformcontext.port.out.PersistLobbyPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 @ActiveProfiles("test")
+@ContextConfiguration(classes = { GamePlatformContextApplication.class })
+@SpringBootTest
+@AutoConfigureMockMvc
+@EnableAutoConfiguration(exclude = {RabbitAutoConfiguration.class})
 @Testcontainers
-class LeaveTheLobbyUseCaseIntegrationTest {
+public class LeaveTheLobbyUseCaseIntegrationTest {
 
     @Autowired
     private LeaveTheLobbyUseCase leaveTheLobbyUseCase;
@@ -39,6 +52,12 @@ class LeaveTheLobbyUseCaseIntegrationTest {
 
     @Autowired
     private FindPlayerPort findPlayerPort;
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
+
+    @MockBean
+    private RabbitTemplate rabbitTemplate;
 
     @Container
     private static final PostgreSQLContainer<?> postgreSQLContainer =
