@@ -45,6 +45,8 @@ steps:
       'all-traffic',
       '--ingress',
       'internal',
+      '--min-instances',
+      '1',
       '--allow-unauthenticated'
     ]
 
