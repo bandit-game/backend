@@ -1,7 +1,5 @@
-# Integration 5
+## Project name: Bandit Games
 
-## Project name: Bandit games
-## Team: 9
 ## Team members:
 * Anna Deineko
 * Oleksandr Shmelov
@@ -9,7 +7,7 @@
 * Mykhailo Kruts
 * Yevhen Zinenko
 
-Game description:
+Platform description:
 ```
 BanditGames is an emerging digital gaming platform
 dedicated to creating a vibrant, interactive space for
